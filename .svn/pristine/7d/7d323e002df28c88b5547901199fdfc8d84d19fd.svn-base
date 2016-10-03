@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+		<h:form id="form">
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Historique Par Catégorie"
+			action="/pages/historique.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" icon="add" action="#{historiqueCatBean.vider()}"
+			oncomplete="undisplaymodif();diag_ajout.show()"
+			></p:commandButton>
+		<p:commandButton id="modif" value="Modifier"
+			oncomplete="diag_modif.show()" icon="update"
+			style="display:none"></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer"
+			oncomplete="diag_supprim.show()" icon="delete" style="display:none"></p:commandButton>
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+		</p:toolbar>
+			<p:growl id="msg"></p:growl>			
+			<div id="toptimeline " class="ui-widget-header"
+				style="width: 100%; height: 30px; padding-top: 10px;">
+
+				<h:panelGrid columns="4" cellspacing="0" style="margin-bottom:10px;">
+					<p:commandButton value="Mois"
+						action="#{historiqueCatBean.displaymonth}" update="timeline"></p:commandButton>
+					<p:commandButton value="Année"
+						action="#{historiqueCatBean.displayYear}" update="timeline"></p:commandButton>
+
+
+				</h:panelGrid>
+			</div>
+
+			<p:scrollPanel style="height:800px;overflow-x:hidden;" mode="native">
+				<pe:timeline id="timeline" value="#{historiqueCatBean.model}"
+					editable="false" eventMargin="20" eventMarginAxis="20" locale="#{contextBean.locale}"
+					style="margin-top:20px;" browserTimeZone="false"
+					groupsChangeable="false" timeZone="#{historiqueCatBean.timeZone}"
+					start="#{historiqueCatBean.start}" end="#{historiqueCatBean.end}"
+					showNavigation="false" showCurrentTime="true" snapEvents="false"
+					showButtonNew="false" widgetVar="timelineh" axisOnTop="true"
+					themable="false" moveable="true">
+					<p:ajax event="select" listener="#{historiqueCatBean.onSelect}"
+						update="msg" 
+						oncomplete="displaymodif();" />
+					<p:ajax event="rangechanged"
+						listener="#{historiqueCatBean.zoomchange}" update="msg" />
+				</pe:timeline>
+			</p:scrollPanel>
+
+<!-- 			<pe:blockUI widgetVar="blockUIWidget" -->
+				
+<!-- 				cssOverlay="{backgroundColor: 'red'}" timeout="2000" centerY="false"> -->
+<!-- 				<h:panelGrid columns="2" style="width:50px; height:50px" > -->
+<!-- 					<h:graphicImage value="/resources/img/ajax-loader1.gif" -->
+<!-- 						style="margin-right: 12px; vertical-align: middle;" /> -->
+<!-- 					<h:outputText value="En cours de chargement..." -->
+<!-- 						style="white-space: nowrap;" /> -->
+<!-- 				</h:panelGrid> -->
+<!-- 			</pe:blockUI> -->
+		</h:form>
+		<p:dialog id="personnel" header="Ajout d'un historique"	 appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true" width="400px" height="400px;">
+			<h:form id="form2">
+				<h:panelGrid id="grid" columns="2" cellpadding="5px"
+					cellspacing="8px" columnClasses="formLabel,formEdit">
+					<p:outputLabel value="Nom du Personnel :"></p:outputLabel>
+					<p:selectOneMenu id="personnel"
+						value="#{historiqueCatBean.historique.personnel}"
+						converter="personnelConverter" filter="true"
+						filterMatchMode="contains" style="width:180px;" required="true"
+						requiredMessage="Selectionner un personnel">
+						<f:selectItem  itemLabel="Choisissez..." />
+						<f:selectItems value="#{historiqueCatBean.listpersonnel}"
+							var="pers"
+							itemLabel="#{pers.civilite} #{pers.nom} #{pers.prenom}"
+							itemValue="#{pers}"></f:selectItems>
+						<p:ajax event="change"  update=":form2 :form2:psstDate"  />
+					</p:selectOneMenu>
+					<p:outputLabel value="Date Debut :"></p:outputLabel>
+					<p:calendar id="psstDate" value="#{historiqueCatBean.historique.du}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline" 
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueCatBean.historique.personnel.debutContrat}" maxdate="#{historiqueCatBean.historique.personnel.finContrat}"
+						title="#{component.valid ? 'Entrer date debut' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10" locale="#{contextBean.locale}">
+						<p:ajax event="dateSelect" ignoreAutoUpdate="true" update=":form2:futureDate" />
+						<f:convertDateTime pattern="yyyy-MM-dd" type="date" />
+					</p:calendar>
+					<p:outputLabel value="Date Fin :"></p:outputLabel>
+					<p:calendar id="futureDate" value="#{historiqueCatBean.historique.au}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueCatBean.historique.du}" maxdate="#{historiqueCatBean.historique.personnel.finContrat}"
+						title="#{component.valid ? 'Entrer date fin' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10" locale="#{contextBean.locale}">
+				     <f:convertDateTime  pattern="yyyy-MM-dd" type="date" />
+				    <f:attribute name="psstDate" value="#{historiqueCatBean.historique.du}" /><f:validator validatorId="primeDateRangeValidator" />
+					</p:calendar>
+					<p:outputLabel value="Palinfié Par :"></p:outputLabel>
+					<p:selectBooleanButton onLabel="Catégorie"
+						offLabel="Sequence des jours" value="#{historiqueCatBean.showSeq}">
+						<p:ajax update="display1"></p:ajax>
+					</p:selectBooleanButton>
+				</h:panelGrid>
+				<p:outputPanel id="display1">
+					<h:panelGrid columns="2" cellpadding="5px" cellspacing="8px"
+						columnClasses="formLabel,formEdit">
+						<p:outputLabel value="Categorie :"
+							rendered="#{historiqueCatBean.showSeq}"></p:outputLabel>
+						<p:selectOneMenu id="cat" value="#{historiqueCatBean.idCategorie}"
+							rendered="#{historiqueCatBean.showSeq}" filter="true"
+							filterMatchMode="contains" style="width:180px;" required="true"
+							requiredMessage="Selectionner une affiliation">
+							<f:selectItems value="#{historiqueCatBean.listcategorie}"></f:selectItems>
+
+						</p:selectOneMenu>
+						<p:outputLabel value="Description :"
+							rendered="#{!historiqueCatBean.showSeq}"></p:outputLabel>
+						<p:selectOneMenu value="#{historiqueCatBean.historique.sequence}"
+							converter="sequenceConverter"
+							rendered="#{!historiqueCatBean.showSeq}">
+							<p:ajax event="change" update="numseq" ></p:ajax>
+							<f:selectItem itemLabel="Choisissez..."/>
+							<f:selectItems value="#{historiqueCatBean.listsequence}"
+								var="seq" itemLabel="#{seq.desigSeq}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Jour N° :"
+							rendered="#{!historiqueCatBean.showSeq}"></p:outputLabel>
+						<p:selectOneMenu id="numseq" value="#{historiqueCatBean.historique.clejour}" converter="javax.faces.Integer" rendered="#{!historiqueCatBean.showSeq}" > 
+						<f:selectItems value="#{historiqueCatBean.detailseq}" var="seq" 
+						itemLabel="#{historiqueCatBean.displayDetail(seq)}"
+						itemValue="#{seq.jour}" >
+</f:selectItems></p:selectOneMenu>						
+
+						<p:commandButton value="Valider" icon="accept"
+							action="#{historiqueCatBean.insertHistorique}"
+							update="form2 :form:timeline " ajax="true"
+							oncomplete="if (!args.validationFailed) {diag_ajout.hide()}"></p:commandButton>
+						<p:commandButton value="Annuler" icon="cancel" oncomplete="diag_ajout.hide()"></p:commandButton>
+
+					</h:panelGrid>
+				</p:outputPanel>
+
+
+			</h:form>
+
+		</p:dialog>
+		<p:dialog id="modifpersonnel" header="Modifier" modal="true" appendTo="@(body)"
+			widgetVar="diag_modif" width="650">
+			<h:form id="formmodifier">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Nom du Personnel :"></p:outputLabel>
+						<p:outputLabel id="personnel"
+							value=" #{historiqueCatBean.selectedHistorique.personnel.civilite} #{historiqueCatBean.selectedHistorique.personnel.nom} #{historiqueCatBean.selectedHistorique.personnel.prenom}"></p:outputLabel>
+						<p:outputLabel value="Date Debut :"></p:outputLabel>
+							<p:calendar id="psstDate" value="#{historiqueCatBean.selectedHistorique.du}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueCatBean.selectedHistorique.personnel.debutContrat}"
+						title="#{component.valid ? 'Entrer date debut' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10">
+						<p:ajax event="dateSelect" update="futureDate" />
+						<f:convertDateTime locale="fr" pattern="yyyy-MM-dd" type="date" />
+					</p:calendar>
+					<p:outputLabel value="Date Fin :"></p:outputLabel>
+					<p:calendar id="futureDate" value="#{historiqueCatBean.selectedHistorique.au}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueCatBean.selectedHistorique.du}"
+						title="#{component.valid ? 'Entrer date fin' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10"
+						maxdate="#{historiqueCatBean.selectedHistorique.personnel.finContrat}">
+				     <f:convertDateTime locale="fr" pattern="yyyy-MM-dd" type="date" />
+				    <f:attribute name="psstDate" value="#{historiqueCatBean.selectedHistorique.du}" /><f:validator validatorId="primeDateRangeValidator" />
+					</p:calendar>
+						<p:outputLabel value="Categorie :"
+							rendered="#{historiqueCatBean.selectedHistorique.categorie!=null}"></p:outputLabel>
+						<p:selectOneMenu id="cat" value="#{historiqueCatBean.idCategorie}"
+							rendered="#{historiqueCatBean.selectedHistorique.categorie!=null}" filter="true"
+							filterMatchMode="contains" style="width:180px;" required="true"
+							requiredMessage="Selectionner une affiliation">
+							<f:selectItems value="#{historiqueCatBean.listcategorie}"></f:selectItems>
+
+						</p:selectOneMenu>
+						<p:outputLabel value="Description :"
+							rendered="#{historiqueCatBean.selectedHistorique.sequence!=null}"></p:outputLabel>
+						<p:selectOneMenu value="#{historiqueCatBean.selectedHistorique.sequence}"
+							converter="sequenceConverter"
+							rendered="#{historiqueCatBean.selectedHistorique.sequence!=null}">
+							<p:ajax event="change" update="numseq" process="@this"
+								partialSubmit="true"></p:ajax>
+							<f:selectItems value="#{historiqueCatBean.listsequence}"
+								var="seq" itemLabel="#{seq.desigSeq}" />
+						</p:selectOneMenu>
+						<p:outputLabel value="Jour N° :"
+							rendered="#{historiqueCatBean.selectedHistorique.sequence!=null}"></p:outputLabel>
+					
+						<p:selectOneMenu id="numseq" value="#{historiqueCatBean.selectedHistorique.clejour}" converter="javax.faces.Integer" rendered="#{historiqueCatBean.selectedHistorique.sequence!=null}" > 
+						<f:selectItems value="#{historiqueCatBean.detailseq}" var="seq" 
+						itemLabel="#{historiqueCatBean.displayDetail(seq)}"
+						itemValue="#{seq.jour}" >
+</f:selectItems></p:selectOneMenu>	
+					</h:panelGrid>
+
+				</p:outputPanel>
+				<p:commandButton value="Valider" icon="accept"
+					action="#{historiqueCatBean.updateHistorique}"
+					update="formmodifier :form:timeline" ajax="true"
+					oncomplete="if (!args.validationFailed) {diag_modif.hide()}"></p:commandButton>
+				<p:commandButton value="Annuler" icon="cancel" oncomplete="diag_modif.hide()"></p:commandButton>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="supprimpersonnel" header="Supprimer personnel" modal="true"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="Vous éte sure pour la supprission de cette historique !!"></p:outputLabel>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Valider" icon="accept"
+								action="#{historiqueCatBean.deleteHistorique}"
+								update=":form:timeline :form:msg" ajax="true"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Annuler" icon="cancel" oncomplete="diag_supprim.hide()"></p:commandButton>
+
+						</h:panelGrid>
+
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	</body>
+	</html>

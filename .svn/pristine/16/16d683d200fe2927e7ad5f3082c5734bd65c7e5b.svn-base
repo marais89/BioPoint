@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core" >
+<f:view >
+
+	<h:head>	
+	<h:outputStylesheet name="login.css" library="css"></h:outputStylesheet>
+	<title>Login</title>
+ <!--[if lt IE 9]>
+          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+	</h:head>
+	<h:body style="background-image:url('${request.contextPath}/resources/img/login.jpg')">
+	<h:form id="loginForm" prependId="false"> 
+<center>
+		
+
+  
+	<p:panel header="#{msg['login.titre']}" style="border-radius:10px;width:35%;margin-top:18%;align:center" styleClass="box">
+	<p:messages id="msg"></p:messages>       	
+	<h:panelGrid columns="2" cellspacing="8" cellpadding="8">
+	<h:outputLabel for="j_username" value="#{msg['login.login']}" />
+<h:inputText   id="j_username" name="login" required="true" label="username" styleClass="user"  requiredMessage="Nom d'utilisateur vide" autocomplete="off" />
+	<h:outputLabel for="j_password" value="#{msg['login.pass']}" />
+  <h:inputSecret   id="j_password"  label="password" required="true"  styleClass="user" requiredMessage="Mot de passe vide " autocomplete="off"/>
+	
+	
+	</h:panelGrid>
+	<center><h:commandButton  type="submit" id="login" value="#{msg['login.connect']}" 
+        action="#{loginController.doLogin}"  styleClass="ui-widget-header btcon"/>
+       
+        
+                <h:commandButton id="cancel"  styleClass="ui-widget-header btcon" type="reset" value="#{msg['page.annuler']}" style="margin-left:20px" /></center>
+	 		 <c:if test="${param.fail!=null}">  
+    <h3 style="font-size:20; color:#FF1C19;">#{msg['login.error']}</h3>
+    
+</c:if> 
+ <c:if test="${param.acess!=null}">  
+    <h3 style="font-size:20; color:#FF1C19;">#{msg['login.acess']}</h3>
+    
+</c:if> 
+	</p:panel>
+</center>	
+	
+	</h:form>
+	</h:body>
+	</f:view>
+	</html>

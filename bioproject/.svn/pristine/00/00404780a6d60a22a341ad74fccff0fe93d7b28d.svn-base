@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+		
+	
+
+		<h:form id="form">
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Historique Par Affiliation"
+			action="/pages/historique.xhtml" style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" icon="add"
+			oncomplete="undisplaymodif();diag_ajout.show()"></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" icon="update"
+			oncomplete="diag_modif.show()" style="display:none"></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete"
+			oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+		</p:toolbar>
+			<p:growl id="msg"></p:growl>
+			<div id="toptimeline " class="ui-widget-header"
+				style="width: 100%; height: 30px; padding-top: 10px;">
+
+
+				<h:panelGrid columns="3" cellspacing="0" style="margin-bottom:10px;">
+
+					<p:commandButton value="Mois"
+						action="#{historiqueBean.displaymonth}" update="timeline"></p:commandButton>
+					<p:commandButton value="Année"
+						action="#{historiqueBean.displayYear}" update="timeline"></p:commandButton>
+
+					<p:commandButton id="affiliation"
+						value="Branche"></p:commandButton>
+
+				</h:panelGrid>
+			</div>
+			<p:overlayPanel for="affiliation" widgetVar="wid_aff">
+				<p:tree id="arbre" value="#{affiliationBean.toor}" var="node"
+					selectionMode="checkbox"  orientation="vertical"
+					selection="#{historiqueBean.selectednode}" animate="true">
+
+					<p:ajax event="select" update=":form:affiliation" />
+					<p:ajax event="unselect" update=":form:affiliation" />
+					<p:treeNode expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Valider"
+						action="#{historiqueBean.filtreAffiliation}"
+						oncomplete="wid_aff.hide()"></p:commandButton>
+					<p:commandButton value="Fermer"
+						action="#{historiqueBean.filtreAffiliation}"
+						oncomplete="wid_aff.hide()"></p:commandButton>
+				</h:panelGrid>
+			</p:overlayPanel>
+
+			<p:scrollPanel style="height:800px;overflow-x:hidden;" mode="native">
+
+				<pe:timeline id="timeline" value="#{historiqueBean.model}"
+					editable="false" eventMargin="20" eventMarginAxis="20" locale="#{contextBean.locale}"
+					style="margin-top:20px;" browserTimeZone="true"
+					groupsChangeable="false" timeZone="#{historiqueBean.timeZone}"
+					start="#{historiqueBean.start}" end="#{historiqueBean.end}"
+					showNavigation="false" showCurrentTime="true" snapEvents="true"
+					showButtonNew="false" widgetVar="timelineh" axisOnTop="true"
+					themable="false">
+					<p:ajax event="select" listener="#{historiqueBean.onSelect}"
+						update="msg" oncomplete="displaymodif()" />
+
+				</pe:timeline>
+			</p:scrollPanel>
+
+	
+		</h:form>
+		<pe:tooltip global="true" position="left center"
+			targetPosition="right center" forSelector=".ui-state-error" />
+
+		<p:dialog id="personnel" header="Ajout d'un historique" appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true" width="400px" height="400px;">
+			<h:form id="form2">
+				<h:panelGrid id="grid" columns="2" cellspacing="7px" cellpadding="7px">
+					<p:outputLabel value="Nom du Personnel :"></p:outputLabel>
+					<p:selectOneMenu id="personnel"
+						value="#{historiqueBean.historique.personnel}"
+						converter="personnelConverter" filter="true"
+						filterMatchMode="contains" style="width:180px;" required="true"
+						requiredMessage="Selectionner un personnel">
+						<p:ajax event="change" partialSubmit="true" process="@this" update=":form2 :form2:psstDate :form2:futureDate" ></p:ajax>
+						<f:selectItem itemLabel="choisissez..." />
+						<f:selectItems value="#{historiqueBean.listpersonnel}" var="pers"
+							itemLabel="#{pers.civilite} #{pers.nom} #{pers.prenom}"
+							itemValue="#{pers}"></f:selectItems>
+
+					</p:selectOneMenu>
+					<p:outputLabel value="Date Debut :"></p:outputLabel>
+					<p:calendar id="psstDate" value="#{historiqueBean.historique.du}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide" locale="#{contextBean.locale}"
+						mindate="#{historiqueBean.historique.personnel.debutContrat}" maxdate="#{historiqueBean.historique.personnel.finContrat}"
+						title="#{component.valid ? 'Entrer date debut' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10">
+						<p:ajax event="dateSelect" update=":form2:futureDate" />
+						<f:convertDateTime  pattern="yyyy-MM-dd" type="date" />
+					</p:calendar>
+					<p:outputLabel value="Date Fin :"></p:outputLabel>
+					<p:calendar id="futureDate" value="#{historiqueBean.historique.au}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueBean.historique.du}"
+						title="#{component.valid ? 'Entrer date fin' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10" locale="#{contextBean.locale}"
+						maxdate="#{historiqueBean.historique.personnel.finContrat}">
+				     <f:convertDateTime  pattern="yyyy-MM-dd" type="date" />
+				    <f:attribute name="psstDate" value="#{historiqueBean.historique.du}" /><f:validator validatorId="primeDateRangeValidator" />
+					</p:calendar>
+
+					<p:outputLabel value="Affiliation :"></p:outputLabel>
+					<p:selectOneMenu id="aff" value="#{historiqueBean.idAffliation}"
+						filter="true" filterMatchMode="contains" style="width:180px;"
+						required="true" requiredMessage="Selectionner une catégorie">
+						<f:selectItem itemLabel="Choisissez... "  />
+						<f:selectItems value="#{historiqueBean.listaffliation}"></f:selectItems>
+					</p:selectOneMenu>
+				</h:panelGrid>
+				
+					<p:commandButton value="Valider" icon="accept"
+						action="#{historiqueBean.insertHistorique}"
+						update="form2 :form:timeline " ajax="true" 
+						oncomplete="if (!args.validationFailed) {diag_ajout.hide()}"></p:commandButton>
+				<p:commandButton value="Annuler" icon="cancel" oncomplete="diag_ajout.hide()" ></p:commandButton>
+
+				
+
+
+			</h:form>
+
+		</p:dialog>
+		<p:dialog id="modifpersonnel" header="Modifier" modal="true" appendTo="@(body)"
+			widgetVar="diag_modif" width="650">
+			<h:form id="formmodifier">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="2" cellspacing="7px" cellpadding="7px">
+						<p:outputLabel value="Nom du Personnel :"></p:outputLabel>
+						<p:outputLabel id="personnel"
+							value=" #{historiqueBean.selectedHistorique.personnel.civilite} #{historiqueBean.selectedHistorique.personnel.nom} #{historiqueBean.selectedHistorique.personnel.prenom}"></p:outputLabel>
+
+						<p:outputLabel value="Date Debut :"></p:outputLabel>
+							<p:calendar id="psstDate" value="#{historiqueBean.selectedHistorique.du}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueBean.selectedHistorique.personnel.debutContrat}"
+						title="#{component.valid ? 'Entrer date debut' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10" locale="#{contextBean.locale}">
+						<p:ajax event="dateSelect" update="futureDate" />
+						<f:convertDateTime  pattern="yyyy-MM-dd" type="date" />
+					</p:calendar>
+					<p:outputLabel value="Date Fin :"></p:outputLabel>
+					<p:calendar id="futureDate" value="#{historiqueBean.selectedHistorique.au}"
+						required="true" requiredMessage="Selectionner une date"
+						pattern="yyyy-MM-dd" navigator="true" display="inline"
+						effect="drop" converterMessage="Date Invalide"
+						mindate="#{historiqueBean.selectedHistorique.du}"
+						title="#{component.valid ? 'Entrer date fin' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="10" locale="#{contextBean.locale}"
+						maxdate="#{historiqueBean.selectedHistorique.personnel.finContrat}">
+				     <f:convertDateTime pattern="yyyy-MM-dd" type="date" />
+				    <f:attribute name="psstDate" value="#{historiqueBean.selectedHistorique.du}" /><f:validator validatorId="primeDateRangeValidator" />
+					</p:calendar>
+						<p:outputLabel value="Affiliation :"></p:outputLabel>
+						<p:selectOneMenu id="aff" value="#{historiqueBean.idAffliation}"
+							filter="true" filterMatchMode="contains" style="width:180px;"
+							required="true" requiredMessage="Selectionner un affiliation">
+							<f:selectItems value="#{historiqueBean.listaffliation}"></f:selectItems>
+
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:outputPanel>
+				<p:commandButton value="Valider" icon="accept"
+					action="#{historiqueBean.updateHistorique}"
+					update="formmodifier :form:timeline" ajax="true"
+					oncomplete="if (!args.validationFailed) {diag_modif.hide()}"></p:commandButton>
+				<p:commandButton value="Annuler" icon="cancel" oncomplete="diag_modif.hide()"></p:commandButton>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="supprimpersonnel" header="Supprimer personnel" modal="true"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="Vous éte sure pour la supprission de cette historique !!"></p:outputLabel>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Valider" icon="accept"
+								action="#{historiqueBean.deleteHistorique}"
+								update=":form:timeline :form:msg" ajax="true"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Annuler" oncomplete="diag_supprim.hide()" icon="cancel"></p:commandButton>
+
+						</h:panelGrid>
+
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+	
+</body>
+</html>

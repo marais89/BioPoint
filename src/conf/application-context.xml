@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.1.22:3306/BiopointKb2i" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	<bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+   <property name="driverClass" value="com.mysql.jdbc.Driver" />
+   <property name="jdbcUrl" value="${url}" />
+   <property name="username" value="${username}"/>
+   <property name="password" value="${password}"/>
+   <property name="idleConnectionTestPeriod" value="60"/>
+   <property name="idleMaxAge" value="240"/>
+   <property name="maxConnectionsPerPartition" value="30"/>
+   <property name="minConnectionsPerPartition" value="10"/>
+   <property name="partitionCount" value="3"/>
+   <property name="acquireIncrement" value="5"/>
+   <property name="statementsCacheSize" value="100"/>
+   <property name="releaseHelperThreads" value="3"/>
+</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+ <property name="packagesToScan" value="org.bio.model"/>
+		<property name="hibernateProperties">
+			<props>
+		<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+		<prop key="hibernate.show_sql">false</prop>
+		<prop key="hibernate.format_sql">false</prop>
+		<prop key="hibernate.use_sql_comments">false</prop>	
+        <prop key="hibernate.cache.use_query_cache">true</prop>
+        <prop key="hibernate.cache.use_second_level_cache">true</prop>
+        <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider></prop>
+        <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+        <prop key="hibernate.cache.provider_configuration_file_resource_path">classpath:ehcache.xml</prop>
+        <prop key="hibernate.generate_statistics">true</prop>
+        <prop key="hibernate.cache.use_structured_entries">true</prop> 	
+			</props>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+		<tx:method name="get*" read-only="true" />
+		<tx:method name="find*" read-only="true" />
+	    </tx:attributes>
+	</tx:advice>
+	<aop:config>
+	    <aop:pointcut id="userServicePointCut"
+		expression="execution(* org.bio.service.*Service.*(..))" />
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="userServicePointCut" />
+	</aop:config>
+ <context:property-placeholder location="classpath:conf/conf.ini" ignore-resource-not-found="false" file-encoding="iso-8859-1" local-override="true" order="1"/>	
+	<context:annotation-config />
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<context:component-scan base-package="org.bio.dao" />
+	<context:component-scan base-package="org.bio.service" />
+		<context:component-scan base-package="org.bio.util" />
+	
+</beans>

@@ -1,0 +1,126 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="title">Rapport</ui:define>
+	<ui:define name="crud">
+		
+		
+	</ui:define>
+
+
+	<ui:define name="content">
+
+		<h:form id="form">
+			<p:growl id="messaget"></p:growl>
+			<center>
+			<p:panel style="width:70%" >
+			 <center>
+			  <h:panelGrid columns="5">
+			  <p:outputLabel value="Du" />
+			<p:calendar effect="drop"
+			value="#{reportDynamicBean.datedebut}"
+			converterMessage="format date invalide" maxlength="8"
+			title="#{component.valid ? 'Date debut' : tooltipsController.getErrorMessage(component.clientId)}">
+				<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+			</p:calendar>
+			  
+			  <p:outputLabel value="Au" />
+			 <p:calendar effect="drop"
+			value="#{reportDynamicBean.datefin}"
+			converterMessage="format date invalide" maxlength="8"
+			title="#{component.valid ? 'Date fin' : tooltipsController.getErrorMessage(component.clientId)}">
+				<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+			</p:calendar>
+			
+			  </h:panelGrid>
+			
+			  </center>
+			<p:separator id="separator" style="margin-top:20px;margin-bottom:20px" /> 
+				
+				<h:panelGrid columns="3" >
+			
+			<p:commandLink id="filterBtn"  style="margin-left:30px" >
+					<p:graphicImage value="/resources/icons/root.jpg" height="40px"
+									width="40px" title="Hiérarchi" />
+			</p:commandLink>
+			
+			<p:overlayPanel id="chartPanel" for="filterBtn" hideEffect="fade"  >  
+       					<p:tree value="#{reportDynamicBean.toor}" var="node"
+					selectionMode="checkbox" orientation="vertical"
+					selection="#{reportDynamicBean.selectedNodes}" animate="true">
+					<p:ajax event="select" listener="#{reportDynamicBean.selectNode}"
+						 />
+					<p:ajax event="unselect" listener="#{reportDynamicBean.unSelectNode}"
+						 />
+					<p:treeNode expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
+            </p:overlayPanel> 	
+						
+						<p:outputLabel value=" KB2I" />
+				</h:panelGrid>		
+			
+			<p:separator id="separator2" style="margin-top:20px;margin-bottom:20px" /> 
+			
+			<h:panelGrid  id="panel" columns="2" >
+			<h:panelGrid id="panel1" columns="3" rendered="#{reportDynamicBean.flagPanel}" >
+			
+			<p:selectOneMenu value="#{reportDynamicBean.champ}" style="width:150px">
+			<f:selectItem itemLabel="Champs" />
+			<f:selectItems value="#{reportDynamicBean.liste1}" />
+			<p:ajax  event="change" listener="#{reportDynamicBean.aff()}" ignoreAutoUpdate="true" update=":form:list2 :form:list3 :form:inputTxt" />
+			</p:selectOneMenu>
+			
+			
+			<p:selectOneMenu id="list2" value="#{reportDynamicBean.condition}" style="width:150px">
+			<f:selectItem itemLabel="Condition" />
+			<f:selectItems value="#{reportDynamicBean.liste21}" />
+			</p:selectOneMenu>
+			
+			<p:outputPanel autoUpdate="true" >
+			<p:selectOneMenu id="list3" value="#{reportDynamicBean.valeur}"  rendered="#{reportDynamicBean.bol1}" style="width:150px">
+			<f:selectItem itemLabel="Valeur" />
+			<f:selectItems value="#{reportDynamicBean.liste3}" />
+			</p:selectOneMenu>
+			<p:calendar value="#{reportDynamicBean.dateFilter}" rendered="#{reportDynamicBean.bol2}" style="width:150px" ></p:calendar>
+			<p:inputText id="inputTxt" value="#{reportDynamicBean.valeur}" rendered="#{reportDynamicBean.bol3}" style="width:150px" ></p:inputText>			
+			 <pe:timePicker value="#{reportDynamicBean.houreFilter}" mode="popup"  rendered="#{reportDynamicBean.bol4}" style="width:150px"
+                   label="Popup time picker"/>  
+			</p:outputPanel>
+			
+			</h:panelGrid>
+			<p:panelGrid id="panel2" columns="2" >
+			<p:commandLink id="filterBtn2"  style="margin-left:30px" >
+					<p:graphicImage value="/resources/icons/add.png" height="40px"
+									width="40px" title="Ajouter Filter" />
+			</p:commandLink>
+			<p:commandLink id="filterBtn3"  style="margin-left:30px" rendered="#{reportDynamicBean.flagUnion}" >
+					<p:graphicImage value="/resources/icons/union.jpeg" height="40px"
+									width="40px" title="Union" />
+			</p:commandLink>
+			</p:panelGrid>
+			</h:panelGrid>
+			<p:separator id="separator3" style="margin-top:20px;margin-bottom:20px" /> 
+
+ <h:commandButton id="generer" value="Générer le rapport"
+			 action="#{reportDynamicBean.export}" ></h:commandButton>
+
+			</p:panel>	
+			</center>
+		</h:form>
+				
+	
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+	
+
+		
+
+	</ui:define>
+</ui:composition>

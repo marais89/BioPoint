@@ -1,0 +1,259 @@
+
+.ui-icon-anchor
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/anchor.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.ui-icon-home
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/house.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.ui-icon-print
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/printer.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.ui-icon-disk
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/disk.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.ui-icon-arrowstop-1-s
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/pin.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.ui-icon-arrow-1-e
+{
+ background:url("/BioPointV1-KB2I/resources/icons16/dr.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+.ui-icon-arrow-1-w
+{
+	background:url("/BioPointV1-KB2I/resources/icons16/gc.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+.ui-icon-arrowstop-1-w
+{
+	background:url("/BioPointV1-KB2I/resources/icons16/axgc.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+.ui-icon-arrowstop-1-e
+{
+	background:url("/BioPointV1-KB2I/resources/icons16/axdr.png") no-repeat !important;
+         width:20px;
+         height:16px;	
+}
+
+.personnel {
+         background:url("/BioPointV1-KB2I/resources/icons16/user_business.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        
+        .operateur {
+         background:url("/BioPointV1-KB2I/resources/icons16/user.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .categorie {
+         background:url("/BioPointV1-KB2I/resources/icons16/drawer.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .calender {
+         background:url("/BioPointV1-KB2I/resources/icons16/calendar_1.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .printer {
+         background:url("/BioPointV1-KB2I/resources/icons16/printer.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+          .play {
+         background:url("/BioPointV1-KB2I/resources/icons16/play.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .wait {
+         background:url("/BioPointV1-KB2I/resources/icons16/wait.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .console {
+         background:url("/BioPointV1-KB2I/resources/icons16/flag_blue.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .terminal {
+         background:url("/BioPointV1-KB2I/resources/icons16/monitor.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .historiquea {
+         background:url("/BioPointV1-KB2I/resources/icons16/timeline_marker.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .historiquec {
+         background:url("/BioPointV1-KB2I/resources/icons16/timeline_marker.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .clock {
+         background:url("/BioPointV1-KB2I/resources/icons16/clock.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .modif {
+         background:url("/BioPointV1-KB2I/resources/icons16/pencil.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .rapport {
+         background:url("/BioPointV1-KB2I/resources/icons16/doc_table.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .status {
+         background:url("/BioPointV1-KB2I/resources/icons16/status_online.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .role {
+         background:url("/BioPointV1-KB2I/resources/icons16/application_add.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .group {
+         background:url("/BioPointV1-KB2I/resources/icons16/group.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .trace {
+         background:url("/BioPointV1-KB2I/resources/icons16/transmit.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        .disconnect
+        {
+     background:url("/BioPointV1-KB2I/resources/icons16/disconnect.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+          .config
+        {
+     background:url("/BioPointV1-KB2I/resources/icons16/hammer_screwdriver.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+              .find
+        {
+     background:url("/BioPointV1-KB2I/resources/icons16/find.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+           .disk
+        {
+     background:url("/BioPointV1-KB2I/resources/icons16/disk.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+     .conf
+        {
+     background:url("/BioPointV1-KB2I/resources/icons16/conf.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        /*.ui-icon-closethick
+        {
+         background:url("/BioPointV1-KB2I/resources/icons16/close.png") no-repeat !important;
+         width:24px;
+         height:24px;
+        }*/
+        .plan {
+         background:url("/BioPointV1-KB2I/resources/icons16/paste_plain.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .conge {
+         background:url("/BioPointV1-KB2I/resources/icons16/door_in.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+         .motif {
+         background:url("/BioPointV1-KB2I/resources/icons16/magnet.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+             .data {
+         background:url("/BioPointV1-KB2I/resources/icons16/data.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+             .add {
+         background:url("/BioPointV1-KB2I/resources/icons16/add.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+             .delete {
+         background:url("/BioPointV1-KB2I/resources/icons16/delete.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+             .update, .ui-icon-pencil {
+         background:url("/BioPointV1-KB2I/resources/icons16/pencil.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        /*  .ui-icon-check  */
+		.accept{
+         background:url("/BioPointV1-KB2I/resources/icons16/accept.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        /* .ui-icon-close*/
+        .cancel{
+         background:url("/BioPointV1-KB2I/resources/icons16/cancel.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }
+        
+
+         .lui-icon-circle-triangle-e {
+         background:url("/BioPointV1-KB2I/resources/icons16/add.png") no-repeat !important;
+         width:30px;
+         height:30px;}
+        .lui-icon-circle-triangle-s{
+         background:url("/BioPointV1-KB2I/resources/icons16/cancel.png") no-repeat !important;
+         width:30px;
+         height:30px;}
+          .synchronize {
+         background:url("/BioPointV1-KB2I/resources/icons16/arrow_refresh.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        } 
+        .upgrade {
+         background:url("/BioPointV1-KB2I/resources/icons16/arrow_right.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }  .load {
+         background:url("/BioPointV1-KB2I/resources/icons16/arrow_divid.png") no-repeat !important;
+         width:20px;
+         height:16px;
+        }

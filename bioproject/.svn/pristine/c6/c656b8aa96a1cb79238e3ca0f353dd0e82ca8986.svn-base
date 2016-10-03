@@ -1,0 +1,24 @@
+
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="title">Dash</ui:define>
+	<ui:define name="titre">
+		<p:commandLink value="Dashboard" action="/pages/spagoOlap.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+	</ui:define>	
+	<ui:define name="content">
+
+		<h:form id="form7" enctype="multipart/form-data">
+			<p:growl id="msg"></p:growl>
+
+			 <iframe  id="myframe" name="myframe" width="100%" height="920 px" scrolling="no" marginheight="0" frameborder="0" src="#{spagoBean.getUrlOlap()}" style="border:0px none !important"> </iframe> 
+			</h:form>
+		</ui:define>	
+		 		
+	</ui:composition>		

@@ -1,0 +1,248 @@
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<ui:define name="title">Terminaux-personnels</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<p:growl id="messaget"></p:growl>
+
+			<h:inputHidden value="#{personnelTerminalBean.sizeliste}"
+				id="listsize" />
+
+			<div id="cache2"
+				style="width: 37.5px; height: 40px; position: absolute; margin-top: 40px"
+				class="ui-widget-header"></div>
+			<div id="cache"
+				style="width: 37.5px; height: 900px; position: absolute; margin-top: 82px; margin-left: 1px"
+				class="collmnx"></div>
+
+			<script type="text/javascript"> 
+function init(){
+
+	var modif = document.getElementById('formheader:modif');
+	var supp = document.getElementById('formheader:supprim');
+
+	modif.style.display='none';
+	supp.style.display='none';
+};
+window.onload = init();
+</script>
+			<p:outputPanel autoUpdate="true">
+				<p:dataTable id="tab_ter" var="per_ter"
+					value="#{personnelTerminalBean.listpersonnelterminal}"
+					widgetVar="diag_tp"
+					emptyMessage=" ____ la liste des relation personnel-terminaux est vide "
+					paginator="true" rows="24"
+					filteredValue="#{personnelTerminalBean.filtredlisttp}"
+					selection="#{personnelTerminalBean.listetpselectionner}"
+					rowKey="#{per_ter.id.idper}" paginatorAlwaysVisible="true"
+					paginatorPosition="bottom"
+					currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+					<f:facet name="header">
+						<p:commandButton id="sel" icon="ui-icon-check"
+							onclick="cachecol(#{personnelTerminalBean.flag})"
+							action="#{personnelTerminalBean.activate()}" update="tab_ter"
+							style="margin-right:20px" />
+
+
+
+						<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+							onkeyup="diag_tp.filter()"
+							style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+						</p:inputText>
+
+					</f:facet>
+					<p:ajax event="toggleSelect" 
+					update=":form:listsize :formheader:modif :formheader:supprim"
+					oncomplete="getsize()" ></p:ajax>
+					<p:ajax event="rowSelect"
+						listener="#{personnelTerminalBean.affect}"
+						update=":form:listsize :formheader:modif :formheader:supprim"
+						oncomplete="getsize()" ></p:ajax>
+
+					<p:ajax event="rowSelectCheckbox"
+						listener="#{personnelTerminalBean.affect}"
+						update=":form:listsize :formheader:modif :formheader:supprim"
+						oncomplete="getsize()"></p:ajax>
+
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:listsize :formheader:modif :formheader:supprim"
+						oncomplete="unsize()"></p:ajax>
+
+					<p:ajax event="rowUnselect"
+						update=":form:listsize :formheader:modif :formheader:supprim"
+						oncomplete="unsize()"></p:ajax>
+
+
+
+
+					<p:columnGroup type="header">
+						<p:row>
+							<p:column rowspan="3" selectionMode="multiple" />
+							<p:column colspan="2" headerText="Personnels" />
+							<p:column colspan="2" headerText="Terminaux" />
+						</p:row>
+						<p:row>
+							<p:column id="matricule" filterBy="personnel.matricule"
+								sortBy="personnel.matricule" filterMatchMode="contains"
+								headerText="Matricule" />
+							<p:column id="nom" filterBy="personnel.nom"
+								sortBy="personnel.nom" filterMatchMode="contains"
+								headerText="nom_prenom" />
+							<p:column id="libelle" filterBy="terminaux.libelle"
+								sortBy="terminaux.libelle" filterMatchMode="contains"
+								headerText="libelle" />
+							<p:column id="nserie" filterBy="terminaux.nserie"
+								sortBy="terminaux.nserie" filterMatchMode="contains"
+								headerText="numero_serie" />
+						</p:row>
+					</p:columnGroup>
+					<p:column id="col1" style="width:2%" selectionMode="multiple" />
+					<p:column>
+						<p:outputLabel value="#{per_ter.personnel.matricule}"></p:outputLabel>
+					</p:column>
+
+					<p:column>
+						<p:outputLabel
+							value="#{per_ter.personnel.nom} #{per_ter.personnel.prenom} "></p:outputLabel>
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="#{per_ter.terminaux.libelle}"></p:outputLabel>
+					</p:column>
+
+					<p:column>
+						<p:outputLabel value="#{per_ter.terminaux.nserie}"></p:outputLabel>
+					</p:column>
+
+				</p:dataTable>
+			</p:outputPanel>
+		</h:form>
+		<p:outputPanel></p:outputPanel>
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+		<!-- ************************** DIAG AJOUT *********************** -->
+
+		<p:dialog id="diag_ajout" header="affectation personnels-terminaux"	appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true" resizable="false">
+			<h:form id="form_ajout_term">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<f:facet name="header">
+							<p:messages />
+						</f:facet>
+						<h:panelGrid columns="3">
+							<p:selectCheckboxMenu value="#{personnelTerminalBean.listIdPer}"
+								converter="javax.faces.Integer" label="Personnels" filter="true"
+								filterText="Filter" filterMatchMode="contains"
+								panelStyle="width:220px"
+								style="height:20px; margin-top:8px; width:100px">
+								<f:selectItems value="#{personnelTerminalBean.hlistpersonnel}" />
+							</p:selectCheckboxMenu>
+							<p:commandButton update="datalist" style="height:22px"
+								action="#{personnelTerminalBean.detectIdPer()}"
+								icon="ui-icon-arrow-1-e" />
+							<p:dataList id="datalist"
+								value="#{personnelTerminalBean.selectListpersonnels}"
+								var="personnels" emptyMessage="Aucune prsonne selectionné"
+								type="ordered">  
+                                 #{personnels.matricule},  #{personnels.nom},  #{personnels.prenom}
+                             </p:dataList>
+
+							<p:selectCheckboxMenu value="#{personnelTerminalBean.listIdTer}"
+								converter="javax.faces.Integer" label="terminaux" filter="true"
+								filterText="Filter" filterMatchMode="contains"
+								panelStyle="width:220px"
+								style="height:20px; margin-top:8px; width:100px">
+								<f:selectItems value="#{personnelTerminalBean.hlistterminaux}" />
+							</p:selectCheckboxMenu>
+							<p:commandButton update="datalist2" style="heigh:22px"
+								action="#{personnelTerminalBean.detectIdterm()}"
+								icon="ui-icon-arrow-1-e" />
+
+							<p:dataList id="datalist2"
+								value="#{personnelTerminalBean.selectListTerminaux}"
+								var="terminal" emptyMessage="Aucun terminal selectionné"
+								type="ordered">  
+                                 #{terminal.libelle},#{terminal.nserie}
+                             </p:dataList>
+						</h:panelGrid>
+						<p:panelGrid columns="1" style="width:100%">
+							<p:outputLabel value="descrption :" />
+							<p:inputTextarea queryDelay="450" minQueryLength="4"
+								style="width:96%"
+								value="#{personnelTerminalBean.personnelterminal.info}" />
+						</p:panelGrid>
+						<p:commandButton value="Valider"
+							style=" width:25%; margin-left:25%; margin-top:40px"
+							action="#{personnelTerminalBean.ajouterPerTer()}"
+							update=":form:messaget " oncomplete="diag_ajout.hide()">
+						</p:commandButton>
+						<p:commandButton value="Annuler" process="@this"
+							style="margin-left:10px; width:25%;margin-top:40px"
+							oncomplete="diag_ajout.hide()" />
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+		<!-- ***************************** DIAG MODIF ******************************* -->
+
+		<!-- ************************* DIAG SUPPRIME ************************ -->
+
+		<p:dialog id="supprimperter"
+			header="Supprimer relation personnel-terminal" modal="true" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim">
+			<h:form id="formsupprim">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<center style="margin-top: 10px">
+
+							<p:graphicImage value="/resources/icons/alert.gif" width="20"
+								height="20" style="margin-top:10px"></p:graphicImage>
+							<p:outputLabel style="color:red; margin-left:10px"
+								value="Voulez vous supprimer l(es) relation personnel-terminal(s) suivante(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="supcat" style="margin-top:30px"
+							value="#{categorieBean.selectlistcategorie}" var="categorie">
+
+							<p:column id="designation" headerText="Désignation">
+								<p:outputLabel value="#{categorie.desigCat}"></p:outputLabel>
+							</p:column>
+
+							<p:column id="typeSeq" headerText="Type_catégorie">
+								<p:outputLabel value="#{categorie.typeSeq}"></p:outputLabel>
+							</p:column>
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{categorieBean.removecategorie(categorie)}"
+									update="supcat"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px; width:20%"
+								action="#{categorieBean.supprimCategorie()}"
+								update=":form:messaget :form:tab_cat"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Non" oncomplete="diag_supprim.hide()"
+								style="margin-left:10px; width:20% "></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+
+
+	</ui:define>
+</ui:composition>

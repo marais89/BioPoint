@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="personnelRpt" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="report_FR" uuid="c69c54e5-da48-4022-bc0b-f63beaea9886">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#A9A9A9">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#DCDCDC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TH" mode="Opaque" backcolor="#DCDCDC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 3_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TH" mode="Opaque" backcolor="#DCDCDC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TH" mode="Opaque" backcolor="#DCDCDC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 5_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TH" mode="Opaque" backcolor="#DCDCDC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_CH" mode="Opaque" backcolor="#FFBFBF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 6_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TH" mode="Opaque" backcolor="#45678A">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_CH" mode="Opaque" backcolor="#CFDAE6">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 7_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 8">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 8_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 8_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 8_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 9">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 9_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 9_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 9_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 10">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 10_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 10_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 10_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 11">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 11_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 11_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 11_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 12">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 12_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 12_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 12_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 13">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 13_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 13_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 13_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 14">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 14_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 14_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 14_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 15">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 15_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 15_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 15_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 16">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 16_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 16_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 16_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 17">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 17_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 17_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 17_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table 18">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 18_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 18_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 18_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 19">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 19_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 19_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 19_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<parameter name="DynamicQuery" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["personnel.`matricule`   <>  ''"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramGroup" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{REPORT_SCRIPTLET}.getFieldValue( $F{affiliation_designation} )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="orderParam" class="java.lang.String">
+		<defaultValueExpression><![CDATA["pointage.`jour` DESC"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="periode" class="java.lang.String"/>
+	<parameter name="paramGroup1" class="java.lang.String"/>
+	<parameter name="paramGroup2" class="java.lang.String"/>
+	<parameter name="paramGroup3" class="java.lang.String"/>
+	<parameter name="paramGroup4" class="java.lang.String"/>
+	<parameter name="paramSum1" class="java.lang.String">
+		<defaultValueExpression><![CDATA[( $P{paramSum1}!= null ? $P{paramGroup1} : "" )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramSum2" class="java.lang.String">
+		<defaultValueExpression><![CDATA[( $P{paramSum1}!= null && $P{paramSum2}!= null ? ","+$P{paramGroup2} :
+
+    (
+    $P{paramSum1} == null && $P{paramSum2}!= null ? $P{paramGroup2} :
+    ""
+)
+ )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramSum3" class="java.lang.String">
+		<defaultValueExpression><![CDATA[( ($P{paramSum1}!= null || $P{paramSum2}!= null)
+    && $P{paramSum3}!= null ? ","+$P{paramGroup3} :
+
+    (     $P{paramSum1} == null && $P{paramSum2}== null && $P{paramSum3}!= null ?
+
+
+        $P{paramGroup3} :     "" )  )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramSum4" class="java.lang.String">
+		<defaultValueExpression><![CDATA[( ($P{paramSum1}!= null || $P{paramSum2}!= null || $P{paramSum3}!= null )
+    && $P{paramSum4}!= null ? ","+$P{paramGroup4}+" " :
+
+    (     $P{paramSum1} == null && $P{paramSum2}== null && $P{paramSum3}== null && $P{paramSum4}!= null ?
+
+
+        $P{paramGroup4} :     "" )  )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramGroupBy" class="java.lang.String">
+		<defaultValueExpression><![CDATA[( $P{paramGroup1}  != null  && $P{paramGroup2}  != null && $P{paramGroup3}  != null && $P{paramGroup4}  != null ?  " " + "group by"+" " : " " )]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramEspace" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="filtre" class="java.lang.String"/>
+	<parameter name="libParamGroup1" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Group1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="libParamGroup2" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Group2"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="libParamGroup3" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Group3"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="libParamGroup4" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Group4"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramFormatDate" class="java.lang.String">
+		<defaultValueExpression><![CDATA["dd/MM/yyyy"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="paramFormatTime" class="java.lang.String">
+		<defaultValueExpression><![CDATA["hh:mm"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="societe" class="java.lang.String">
+		<defaultValueExpression><![CDATA["KB2I"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     CASE WHEN absent=1 THEN 'Absent' when conge=1 then 'Conge' Else '' END AS 'ABS/Congé',
+     personnel.`matricule` AS personnel_matricule,
+     personnel.`nom` AS personnel_nom,
+     personnel.`prenom` AS personnel_prenom,
+     pointage.`jour` AS pointage_jour,
+     pointage.`idper` AS pointage_idper,
+     pointage.`e1` AS pointage_e1,
+     pointage.`s1` AS pointage_s1,
+     pointage.`e2` AS pointage_e2,
+     pointage.`s2` AS pointage_s2,
+     pointage.`absent` AS pointage_absent,
+     pointage.`presenceHrMn` AS pointage_presenceHrMn,
+     pointage.`retardHrMn` AS pointage_retardHrMn,
+     pointage.`hSupHrMn` AS pointage_hSupHrMn,
+     pointage.`ferie` AS pointage_ferie,
+     pointage.`conge` AS pointage_conge,
+     pointage.`autorisation` AS pointage_autorisation,
+     pointage.`detailJour` AS pointage_detailJour,
+     affiliation.`idaff` AS affiliation_idaff,
+     affiliation.`designation` AS affiliation_designation,
+     affiliation.`description` AS affiliation_description,
+     affiliation.`type` AS affiliation_type,
+     affiliation.`idpar` AS affiliation_idpar,
+     affiliation.`codeteam` AS affiliation_codeteam,
+     historique.`idhis` AS historique_idhis,
+     historique.`Du` AS historique_Du,
+     historique.`Au` AS historique_Au,
+     historique.`idaff` AS historique_idaff,
+     historique.`idper` AS historique_idper,
+     historique.`idcat` AS historique_idcat,
+     historique_cat.`idhistorique_cat` AS historique_cat_idhistorique_cat,
+     historique_cat.`du` AS historique_cat_du,
+     historique_cat.`au` AS historique_cat_au,
+     historique_cat.`idseq` AS historique_cat_idseq,
+     historique_cat.`cle_jour` AS historique_cat_cle_jour,
+     historique_cat.`idcat` AS historique_cat_idcat,
+     historique_cat.`idper` AS historique_cat_idper,
+     categorie.`idcat` AS categorie_idcat,
+     categorie.`desigCat` AS categorie_desigCat,
+sum(pointage.`absent`) AS sumAbs,
+sum(pointage.`conge`) AS sumCong,
+sum(pointage.`absent` + pointage.`conge`) as sumTot,
+$P!{paramGroup1} as paramGroup1,
+$P!{paramGroup2} as paramGroup2,
+$P!{paramGroup3} as paramGroup3,
+$P!{paramGroup4} as paramGroup4
+FROM
+     `personnel` personnel INNER JOIN `pointage` pointage ON personnel.`idper` = pointage.`idper`
+     LEFT OUTER JOIN `historique` historique ON personnel.`idper` = historique.`idper`
+     LEFT OUTER JOIN `historique_cat` historique_cat ON personnel.`idper` = historique_cat.`idper`
+     LEFT OUTER JOIN `categorie` categorie ON historique_cat.`idcat` = categorie.`idcat`
+     LEFT OUTER JOIN `affiliation` affiliation ON historique.`idaff` = affiliation.`idaff`
+   LEFT OUTER JOIN  `sequence_detail` sequence_detail ON pointage.`detailJour` = sequence_detail.`idseqd`
+      LEFT OUTER JOIN  `sequence` sequence ON sequence_detail.`idseq` = sequence.`idseq`
+WHERE
+$P!{DynamicQuery} and historique.`Du` <= pointage.`jour` and pointage.`jour` <= historique.`Au` and ( (historique_cat.`idcat` IS NOT NULL) or (historique_cat.`idseq` IS NOT NULL) ) and historique_cat.`du` <= pointage.`jour` and pointage.`jour` <= historique_cat.`au`
+group by $P!{paramSum1}$P!{paramSum2}$P!{paramSum3}$P!{paramSum4}$P!{paramEspace},personnel.`matricule`
+order by $P!{orderParam}]]>
+	</queryString>
+	<field name="personnel_matricule" class="java.lang.String"/>
+	<field name="personnel_nom" class="java.lang.String"/>
+	<field name="personnel_prenom" class="java.lang.String"/>
+	<field name="pointage_jour" class="java.sql.Date"/>
+	<field name="pointage_idper" class="java.lang.Integer"/>
+	<field name="pointage_e1" class="java.sql.Time"/>
+	<field name="pointage_s1" class="java.sql.Time"/>
+	<field name="pointage_e2" class="java.sql.Time"/>
+	<field name="pointage_s2" class="java.sql.Time"/>
+	<field name="pointage_absent" class="java.lang.Boolean"/>
+	<field name="pointage_presenceHrMn" class="java.sql.Time"/>
+	<field name="pointage_retardHrMn" class="java.sql.Time"/>
+	<field name="pointage_hSupHrMn" class="java.sql.Time"/>
+	<field name="pointage_ferie" class="java.lang.Boolean"/>
+	<field name="pointage_conge" class="java.lang.Boolean"/>
+	<field name="pointage_autorisation" class="java.lang.Boolean"/>
+	<field name="pointage_detailJour" class="java.lang.Integer"/>
+	<field name="affiliation_idaff" class="java.lang.Integer"/>
+	<field name="affiliation_designation" class="java.lang.String"/>
+	<field name="affiliation_description" class="java.lang.String"/>
+	<field name="affiliation_type" class="java.lang.String"/>
+	<field name="affiliation_idpar" class="java.lang.Integer"/>
+	<field name="affiliation_codeteam" class="java.lang.String"/>
+	<field name="historique_idhis" class="java.lang.Integer"/>
+	<field name="historique_Du" class="java.sql.Date"/>
+	<field name="historique_Au" class="java.sql.Date"/>
+	<field name="historique_idaff" class="java.lang.Integer"/>
+	<field name="historique_idper" class="java.lang.Integer"/>
+	<field name="historique_idcat" class="java.lang.Integer"/>
+	<field name="ABS/Congé" class="java.lang.String"/>
+	<field name="sumAbs" class="java.lang.Integer"/>
+	<field name="sumCong" class="java.lang.Integer"/>
+	<field name="sumTot" class="java.lang.Integer"/>
+	<field name="paramGroup1" class="java.lang.String"/>
+	<field name="paramGroup2" class="java.lang.String"/>
+	<field name="paramGroup3" class="java.lang.String"/>
+	<field name="paramGroup4" class="java.lang.String"/>
+	<group name="nomAffiliation">
+		<groupExpression><![CDATA[$P{REPORT_SCRIPTLET}.getParameterValue( $P{paramGroup} )]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
+	<group name="Group1" keepTogether="true">
+		<groupExpression><![CDATA[$F{paramGroup1}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<printWhenExpression><![CDATA[$P{paramGroup1} != null && $P{paramGroup1} != ""]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group1" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="19" forecolor="#000000" backcolor="#60AFF0" uuid="c591e421-ded4-49a7-9ef2-c5fd5acd348d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10" isBold="true"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $P{paramGroup1}.equals("categorie.`desigCat`") && $F{paramGroup1} == null ? $P{libParamGroup1}+" : Sequence" :
+
+    ( $F{paramGroup1} == null ? $P{libParamGroup1}+" : - " : $P{libParamGroup1}+" : "+ $F{paramGroup1})
+
+   )]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group2" keepTogether="true">
+		<groupExpression><![CDATA[$F{paramGroup2}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<printWhenExpression><![CDATA[$P{paramGroup2} != null && $P{paramGroup2} != ""]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group2" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="21" backcolor="#8EC6F0" uuid="7ec2c487-52a4-4836-8913-31b7f772dce4"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $P{paramGroup2}.equals("categorie.`desigCat`") && $F{paramGroup2} == null ? $P{libParamGroup2}+" : Sequence" :
+
+    ( $F{paramGroup2} == null ? $P{libParamGroup2}+" : - " : $P{libParamGroup2}+" : "+ $F{paramGroup2})
+
+   )]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="-1" width="555" height="1" uuid="94130fa2-7060-4d64-8180-4ad12f7c02c1"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group3" keepTogether="true">
+		<groupExpression><![CDATA[$F{paramGroup3}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<printWhenExpression><![CDATA[$P{paramGroup3} != null && $P{paramGroup3} != ""]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group3" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="0" y="1" width="555" height="22" backcolor="#BEDAF0" uuid="864cbd1f-d10a-4ad6-b13f-293c0ecf3297"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph>
+							<tabStop position="14" alignment="Left"/>
+						</paragraph>
+					</textElement>
+					<textFieldExpression><![CDATA[( $P{paramGroup3}.equals("categorie.`desigCat`") && $F{paramGroup3} == null ? $P{libParamGroup3}+" : Sequence" :
+
+    ( $F{paramGroup3} == null ? $P{libParamGroup3}+" : - " : $P{libParamGroup3}+" : "+ $F{paramGroup3})
+
+   )]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="555" height="1" uuid="8b6473a9-7b33-4794-810c-820318c8f22b"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="Group4" keepTogether="true">
+		<groupExpression><![CDATA[$F{paramGroup4}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<printWhenExpression><![CDATA[$P{paramGroup4} != null && $P{paramGroup4} != ""]]></printWhenExpression>
+				<textField evaluationTime="Group" evaluationGroup="Group4" isBlankWhenNull="false">
+					<reportElement mode="Opaque" x="0" y="0" width="555" height="23" backcolor="#D8E5F0" uuid="0932953e-533f-4575-bf6c-679aade7c3fc"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+						<paragraph>
+							<tabStop position="14" alignment="Left"/>
+						</paragraph>
+					</textElement>
+					<textFieldExpression><![CDATA[( $P{paramGroup4}.equals("categorie.`desigCat`") && $F{paramGroup4} == null ? $P{libParamGroup4}+" : Sequence" :
+
+    ( $F{paramGroup4} == null ? $P{libParamGroup4}+" : - " : $P{libParamGroup4}+" : "+ $F{paramGroup4})
+
+   )]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="0" width="555" height="1" uuid="62b12cff-9f03-44ef-85fc-1c9b4d1cda5b"/>
+				</line>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="145" height="79" uuid="1a60c39f-506e-486a-b130-bc09454aaf57"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="410" y="0" width="145" height="79" uuid="e012e84e-4c55-4f9b-91d1-a29365a915b0"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="145" y="0" width="265" height="79" uuid="461ee683-887e-4c72-a96b-8a0c584d9b4f"/>
+			</rectangle>
+			<textField>
+				<reportElement x="145" y="4" width="265" height="20" uuid="41e0ee60-93cb-4c3e-a7a3-5afffd219b5c"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$R{etatAbsence}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="155" y="37" width="245" height="1" uuid="0974b73b-2764-4eed-b58f-89ebe23a4fcb"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="145" y="24" width="265" height="13" uuid="f51891fc-1d60-4869-bf9c-f10f7cf65923"/>
+				<textElement textAlignment="Center">
+					<font fontName="Monospaced" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{periode}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="10" width="110" height="60" uuid="68a2f0f3-60ba-4ed7-9f78-087150b4f8d1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{filtre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="145" y="51" width="265" height="20" uuid="885af541-00ab-4f16-a737-6127dea9fa7a"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($R{imprime}.getBytes("ISO-8859-1"), "UTF-8")+": "+
+new SimpleDateFormat($P{paramFormatDate}).format(new java.util.Date()).toString()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="15" y="10" width="109" height="60" uuid="73c95242-34aa-4642-8a49-8aada544b122"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{societe}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="17" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="1" width="93" height="20" backcolor="#E0E0E0" uuid="e36ac2ac-d984-4f4b-8dab-10614391251a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "+new String($R{matricule}.getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="93" y="1" width="112" height="20" backcolor="#E0E0E0" uuid="acd6f232-f54f-446d-862c-044900ec1d71"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($R{nom&Prenom}.getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="205" y="1" width="126" height="20" backcolor="#E0E0E0" uuid="100a3609-c625-4014-a587-dbb6fcc16aa3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["  "+new String($R{AbsenceNonJust}.getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="331" y="1" width="108" height="20" backcolor="#E0E0E0" uuid="84714c2c-dc07-465a-a2c4-d22ff2a009f4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($R{AbsenceJust}.getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="439" y="1" width="116" height="20" backcolor="#E0E0E0" uuid="34d2b8cf-1bfa-42a6-9ad9-63a751a8ce53"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new String($R{absenceTot}.getBytes("ISO-8859-1"), "UTF-8")]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="555" height="1" uuid="7b966955-da6e-4cdd-822b-26c367112b8e"/>
+			</line>
+			<line>
+				<reportElement x="206" y="2" width="1" height="20" uuid="d6009b2c-790e-436a-92c3-b01c902d2dee"/>
+			</line>
+			<line>
+				<reportElement x="0" y="21" width="555" height="1" uuid="5f9d611f-a1a6-4e94-ac1f-d76c698856b5"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="9" y="0" width="84" height="21" uuid="8da073d2-73a0-4c1e-af23-907dd251c3d0"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{personnel_matricule}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="0" width="112" height="21" uuid="2620c67b-9d5b-4670-a6f8-bd6426354fe9"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{personnel_nom}+" "+$F{personnel_prenom}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="2" width="89" height="19" uuid="70896705-ee29-4554-8ed0-92c3d038492a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sumAbs}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="2" width="80" height="19" uuid="ee58c93c-94b4-4f62-b0ab-4613f01590bd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sumCong}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="439" y="2" width="80" height="19" uuid="cfb4d885-10ff-43b1-ab41-ea4c8af6706a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sumTot}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="55e5a5e7-21c8-4f18-b5aa-455bb5e4c311"/>
+			</line>
+			<line>
+				<reportElement x="206" y="0" width="1" height="22" uuid="b930e15a-8915-4e8d-9722-502568aa39a3"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="86" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement x="432" y="0" width="80" height="20" uuid="60774800-d1af-43ea-9e7c-dcf3a68f2229"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$R{page}+" "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="512" y="0" width="40" height="20" uuid="d9d7ccfe-c5da-42f6-9b1c-06474b331b43"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<line>
+				<reportElement x="1" y="0" width="554" height="1" uuid="4f38337e-1e3a-40db-bd3f-5426c19436ae"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>	
+	
+		<h:form id="form" >		
+			<p:growl id="messages"></p:growl>			
+			
+			<h:inputHidden value="#{personnelBean.sizeliste}" id="listsize" />			
+			
+			<p:toolbar style="margin-bottom: 7px">
+	<p:toolbarGroup align="left" >
+			<p:commandLink value="Personnel" action="/pages/personnel.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter"  
+			action="#{personnelBean.switchcreate}" icon="add"
+			oncomplete="undisplaymodif();diag_ajout.show()"	
+			update=":formajout "
+			></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" 
+			action="#{personnelBean.switchUpdate}" rendered="#{profileBean.loadRights('/pages/personel.xhtml')}"
+			update=":formajout :personneldiag"
+			oncomplete="diag_ajout.show();wiz1.loadStep (wiz1.cfg.steps [0], true)" style="display:none" icon="update">
+			</p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete" rendered="#{profileBean.loadRights('/pages/personel.xhtml')}"
+			oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+			</p:toolbar>
+			
+			<pe:blockUI widgetVar="thinking" 
+				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+				cssOverlay="{backgroundColor: 'gray'}"  centerY="false">
+				<h:panelGrid columns="2">
+					<h:graphicImage library="img" name="ajax_loading.gif"
+						style="margin-right: 12px; vertical-align: middle;width:30px;height:30px " />
+					<h:outputText 
+						value="Chargement des pointages en cours..."
+						style="white-space: nowrap;width: 50px" />
+						 
+				</h:panelGrid>
+			</pe:blockUI>
+
+<p:dataTable id="personnels" var="personnel"
+				value="#{personnelBean.listpersonnel}" widgetVar="diag_personel"
+				emptyMessage=" ____ la liste des personnels est vide "
+				filteredValue="#{personnelBean.filtredlistPersonnel}"
+				paginator="true" rows="20"
+				selection="#{personnelBean.selectedpersonnels}"
+				rowKey="#{personnel.idper}" paginatorAlwaysVisible="true"
+				paginatorPosition="bottom"
+				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100">
+				<f:facet name="header">
+					<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+						onkeyup="diag_personel.filter()"
+						style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+					</p:inputText>
+				</f:facet>
+				<p:ajax event="rowSelect" listener="#{personnelBean.affect}"  oncomplete="getsize()"
+					update=":form:listsize :form:modif :form:supprim"
+					 ></p:ajax>
+					
+						<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" partialSubmit="true"></p:ajax>
+					
+				<p:ajax event="rowSelectCheckbox" listener="#{personnelBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()"></p:ajax>
+                <p:ajax event="rowUnselectCheckbox"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+				<p:ajax event="rowUnselect"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+					<p:ajax event="rowDblselect" oncomplete="wdetail.show()"></p:ajax>
+				<p:column id="col1" style="width:2%" selectionMode="multiple"
+					 />
+								
+								<p:column style="width:2%" rendered="false" >
+				<p:commandButton icon="find" action="#{personnelBean.detail(personnel)}" oncomplete="wdetail.show()">
+				</p:commandButton>
+				</p:column>		
+				
+						<p:column style="width:5%">				
+					<p:graphicImage value="#{personnelBean.convertToFile(personnel)}" width="50" height="40" >
+					</p:graphicImage>				
+
+			
+										
+				</p:column>
+				
+				<p:column id="matricule" filterBy="matricule" headerText="Matricule"
+					sortBy="matricule" filterMatchMode="contains">
+					<h:outputText value="#{personnel.matricule}" />
+				</p:column>
+				<p:column id="nom" filterBy="fullname" headerText="Nom Prenom"
+					sortBy="fullname" filterMatchMode="contains">
+
+					<h:outputText value="#{personnel.fullname}" />
+				</p:column>
+				<p:column id="ville" filterBy="ville" headerText="Ville"
+					sortBy="ville" filterMatchMode="contains">
+					<h:outputText value="#{personnel.ville}" />
+				</p:column>
+				<p:column id="dn" sortBy="typeContrat" headerText="Type contrat">
+					<h:outputText value="#{personnel.typeContrat}" />
+				</p:column>
+				<p:column id="datefin" sortBy="finContrat" headerText="Fin contrat">
+
+					<h:outputFormat value="#{personnel.finContrat==null?'Indeterminé':personnel.finContrat}">
+					<f:convertDateTime pattern="#{contextBean.listparam.get('dateformat')}" locale="#{contextBean.locale}"/>
+					</h:outputFormat>
+				</p:column>
+				<p:column id="affiliation" headerText="Affiliation" >
+				<center>
+					<h:outputText
+						value="#{personnel.currentAffiliation.designation}" />
+						<p:graphicImage value="/resources/img/info.png" width="35px" height="35px" rendered="#{!chartView.conpaireDate(personnel.finContrat)}" />
+						</center>
+				</p:column>				
+			</p:dataTable>
+			
+
+<p:dialog widgetVar="wdetail" id="detail" modal="true" appendTo="@(body)" width="700" >
+<p:outputPanel id="displaydetail" autoUpdate="true">
+<h:panelGrid columns="4" style="border:1px solid black;height:100px;width:100%; text-align: center;">
+<h:graphicImage value="#{contextBean.logo}" alt="#{contextBean.societe.designation}" width="120" height="60" style=" text-align: center;"/>
+<h:panelGrid columns="2" style="height:100px;border-left:1px solid black;padding-left:10px; text-align: center;" cellpadding="4px" cellspacing="4px" >
+<h:outputText value="Tel :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{contextBean.societe.societe.numTel}" />
+<h:outputText value="Fax :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{contextBean.societe.societe.numFax}" />	
+<h:outputText value="Adresse :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{contextBean.societe.societe.adresse}" />				
+</h:panelGrid>
+<h:panelGrid columns="1"  style="border-left:1px solid black;height:100px;">
+<h:outputText value="Fiche Personnel" style="margin-left:20px;font-size:18px; !important" ></h:outputText>
+
+</h:panelGrid>
+<h:panelGrid columns="1"  style="padding-left:20px;border-left:1px solid black;height:100px; text-align: center;">
+<h:outputFormat value="#{currentDate}" style="padding-left:20px;" >
+<f:convertDateTime pattern="#{contextBean.listparam.get('dateformat')}"/>
+</h:outputFormat>
+</h:panelGrid>
+</h:panelGrid>
+<h:panelGrid columns="2" style="margin-top:20px;">
+<h:graphicImage value="#{personnelBean.convertToFile(personnelBean.personnel)}" width="150"  height="150" style="cursor:pointer;postion:absolute;"></h:graphicImage>
+<h:panelGrid columns="2" style="height:150px;margin-left:40px !important" cellpadding="8px" cellspacing="8px"><f:facet name="header">
+<h:outputText value="#{personnelBean.personnel.fullname}" style="margin-left:20px;font-size:20px; !important"/>
+</f:facet>
+<h:outputText value="Matricule :"  styleClass="titrelabel"/>
+<p:outputLabel value="#{personnelBean.personnel.matricule}"></p:outputLabel>
+<h:outputText value="CIN :" styleClass="titrelabel"></h:outputText>
+<p:outputLabel value="#{personnelBean.personnel.cin}"></p:outputLabel>
+<h:outputText value="Date Nés :" styleClass="titrelabel"></h:outputText>
+<p:outputLabel value="#{personnelBean.personnel.dateNaissance}"></p:outputLabel>
+</h:panelGrid>
+</h:panelGrid>
+<fieldset>
+<legend><h:outputText value="Informations Génerale" /></legend>
+<h:panelGrid columns="4" style="padding-left:20px" cellpadding="8px" cellspacing="8px" columnClasses="tdfiche" >
+<h:outputText value="Télephone Portable :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.telGsm}" />
+<h:outputText value="Adresse :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.adresse}" />
+<h:outputText value="Télephone Fixe :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.telFixe}" />						
+<h:outputText value="Ville :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.ville}" />
+	<h:outputText value="Email :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.mail}" />
+<h:outputText value="Code Postale :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.cp}" />
+								
+</h:panelGrid>
+</fieldset>
+<fieldset>
+<legend><h:outputText value="Contrat" /></legend>
+<h:panelGrid columns="4" style="padding-left:20px" cellpadding="8px" cellspacing="8px" columnClasses="tdfiche">
+<h:outputText value="Date début :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.debutContrat}" />
+<h:outputText value="Date fin :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.finContrat==null?'Inditerminé':personnelBean.personnel.finContrat}" />
+<h:outputText value="Type Contrat :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.typeContrat}" />						
+<h:outputText value="Catégorie Horaire :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.currentHisto.categorie.desigCat}" />
+</h:panelGrid>
+</fieldset>
+<fieldset>
+<legend><h:outputText value="Sociéte" /></legend>
+<h:panelGrid columns="4" style="padding-left:20px" cellpadding="8px" cellspacing="8px" columnClasses="tdfiche" >
+<h:outputText value="Affiliation :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.currentAffiliation.affiliation.designation}" />
+<h:outputText value="Terminal de pointage"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.terminaux.libelle}" />
+<h:outputText value="Id sur Terminal :"  styleClass="titrelabel"></h:outputText>
+<h:outputText value="#{personnelBean.personnel.bckIdEnroll==null?'Inconnue':personnelBean.personnel.bckIdEnroll}" />						
+</h:panelGrid>
+</fieldset>
+</p:outputPanel>
+<p:spacer height="30px"></p:spacer>
+<p:commandButton value="Annuler" icon="cancel" oncomplete="wdetail.hide()" style="float:right"></p:commandButton>
+<p:commandButton value="Imprimer" icon="printer" style="float:right">
+    <p:printer target="displaydetail" />
+</p:commandButton>
+</p:dialog>
+			<!-- /*/*/***/*/**/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ -->
+			<!-- /*/*/***/*/**/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ -->
+			<!-- <p:overlayPanel id="carPanel" for="form:personnels:filterbtn"
+				hideEffect="fade" dynamic="true">
+
+				<p:tree value="#{affiliationBean.toor}" var="node"
+					selectionMode="checkbox" orientation="vertical"
+					selection="#{affiliationBean.selectedNodes}" animate="true">
+					<p:ajax event="select" listener="#{affiliationBean.selectNode}"
+						update=":form:personnels:fdata" />
+					<p:ajax event="unselect" listener="#{affiliationBean.unSelectNode}"
+						update=":form:personnels:fdata" />
+
+					<p:treeNode expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
+
+			</p:overlayPanel>
+ -->
+ 
+		</h:form>
+		<pe:tooltip global="true" position="left center"
+			targetPosition="right center" forSelector=".ui-state-error" />  
+		  
+		
+		<p:dialog id="personneldiag" header="#{personnelBean.key}" 
+			minWidth="800"  minimizable="false"
+			appendTo="@(body)" maximizable="true" width="650" height="550"
+			widgetVar="diag_ajout" modal="true">
+			<h:form id="formajout" enctype="multipart/form-data">
+				  <p:wizard flowListener="#{personnelBean.onFlowProcess}" id="tabpersonnel" effect="fade" widgetVar="wiz1" >
+					<p:tab title="Personnel" >
+						<p:fieldset legend="Identification" >
+							<h:panelGrid columns="2" >
+								<h:panelGrid columns="1" id="panelphoto">
+									<p:outputPanel autoUpdate="true">
+										<h:graphicImage value="#{personnelBean.convertToFile(personnelBean.personnel)}"
+											width="120" id="upfile" height="120"
+											style="cursor:pointer;postion:absolute;-webkit-border-radius: 100px;-moz-border-radius: 100px;border-radius: 100px;"
+											onclick="$('.ui-photo').click();">
+										</h:graphicImage>
+									</p:outputPanel>
+									<p:fileUpload id="photo" auto="true" styleClass="ui-photo"
+										style="display:none"
+										fileUploadListener="#{personnelBean.handleFileUpload}"
+										label="Photo" update="upfile" mode="advanced" multiple="false"
+										sizeLimit="10000000" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+								</h:panelGrid>
+							
+								<h:panelGrid columns="4" cellpadding="5px" cellspacing="8px"
+									columnClasses="formLabel,formEdit">
+									<p:outputLabel value="Matricule" styleClass="right"></p:outputLabel>
+										<p:inputText id="mat" maxlength="15" 
+											value="#{personnelBean.personnel.matricule}" required="true"
+											requiredMessage="Matricule est vide" 
+											title="#{component.valid ? 'Entrer Matricule' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+										<p:outputLabel value="Cin" styleClass="right"></p:outputLabel>
+										<p:inputText id="cin2" maxlength="15" 
+											value="#{personnelBean.personnel.cin}" 
+											title="#{component.valid ? 'Entrer cin' : tooltipsController.getErrorMessage(component.clientId)}">
+										</p:inputText>
+									<p:outputLabel value="Civilité " styleClass="right" ></p:outputLabel>
+									<p:selectOneMenu id="civ" style="width: 140px;margin-left:10px "
+										value="#{personnelBean.personnel.civilite}">
+										<f:selectItem itemLabel="Mr." itemValue="Mr." />
+										<f:selectItem itemLabel="Mme" itemValue="Mme" />
+										<f:selectItem itemLabel="Mlle" itemValue="Mlle" />
+									</p:selectOneMenu>
+									<p:outputLabel value="Prénom" styleClass="right"></p:outputLabel>
+										<p:inputText id="prenomi" maxlength="30" 
+											value="#{personnelBean.personnel.prenom}" required="true"
+											requiredMessage="Prénom est vide"
+											title="#{component.valid ? 'Entrer le Prénom' : tooltipsController.getErrorMessage(component.clientId)}"
+											validatorMessage="Prénom invalid">
+										</p:inputText>
+									<p:outputLabel value="Nom "  styleClass="right" ></p:outputLabel>
+									<p:inputText id="nomi" maxlength="30" 
+										value="#{personnelBean.personnel.nom}" required="true"
+										requiredMessage="Nom est vide"
+										title="#{component.valid ? 'Entrer le nom' : tooltipsController.getErrorMessage(component.clientId)}"
+										validatorMessage="Nom invalid"></p:inputText>
+										<p:outputLabel value="Date Naiss" styleClass="right"  ></p:outputLabel>
+										<p:calendar id="idnes" mindate="4/1/80"  style="margin-left:10px"
+											value="#{personnelBean.personnel.dateNaissance}"
+											effect="drop" navigator="true" 
+											converterMessage="Date Invalide"
+											validatorMessage="Date Invalide"
+											title="#{component.valid ? 'Entrer date naissance' : tooltipsController.getErrorMessage(component.clientId)}"
+											maxlength="20">
+											<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+										</p:calendar>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:fieldset>
+						<p:spacer height="10px"></p:spacer>
+						<p:fieldset legend="Information de Base">
+							<h:panelGrid columns="4" style="border:0px none !important;"
+								cellpadding="5px" cellspacing="8px"
+								columnClasses="formLabel,formEdit">
+                            <p:outputLabel value="Télephone Portable " styleClass="right" ></p:outputLabel>
+								<p:inputText id="telpo"
+									value="#{personnelBean.personnel.telGsm}"
+									title="#{component.valid ? 'Télephone Portable' : tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="8" validatorMessage="Numéro portable invalide">
+									<f:validateRegex pattern="[0-9]*" />
+
+								</p:inputText>
+								<p:outputLabel value="Adresse "  style="margin-left:20px !important"></p:outputLabel>
+								<p:inputTextarea id="adr"
+									value="#{personnelBean.personnel.adresse}"
+									style="width:180px;height:40px;"
+									title="#{component.valid?'Saisir adresse':tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="100"></p:inputTextarea>
+								<p:outputLabel value="Télephone Fixe " styleClass="right" ></p:outputLabel>
+								<p:inputText id="tel1"
+									value="#{personnelBean.personnel.telFixe}"
+									title="#{component.valid ? 'Télephone Fixe' : tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="8" validatorMessage="Numéro fixe invalide">
+									<f:validateRegex pattern="[0-9]*" />
+								</p:inputText>
+								
+								<p:outputLabel value="Ville " styleClass="right" ></p:outputLabel>
+								<p:inputText id="villei" style="width: 180px !important;"
+									value="#{personnelBean.personnel.ville}"
+									title="#{component.valid ? 'Saisir le ville' : tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="10" validatorMessage="Ville invalid">
+									
+								</p:inputText>
+									<p:outputLabel value="Email " styleClass="right" ></p:outputLabel>
+								<p:inputText id="emaili" value="#{personnelBean.personnel.mail}"
+									title="#{component.valid ? 'Entrer une Courrier électronique' : tooltipsController.getErrorMessage(component.clientId)}"
+									validatorMessage="Email invalide" maxlength="28">
+<!-- 									<f:validateRegex -->
+<!-- 										pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" /> -->
+
+								</p:inputText>
+								<p:outputLabel value="Code Postal " styleClass="right" ></p:outputLabel>
+								<p:inputText id="cpi" value="#{personnelBean.personnel.cp}"
+									maxlength="5" style="width: 180px !important;"
+									title="#{component.valid ? 'Saisir la code postale' : tooltipsController.getErrorMessage(component.clientId)}"
+									validatorMessage="Code Postale invalid"
+									converterMessage="Code Postale Invalid">
+								</p:inputText>
+								</h:panelGrid>
+						</p:fieldset>
+						<p:commandButton value="Annuler" icon="cancel" update=":formajout" partialSubmit="true" type="reset" 
+					 style="float:right" actionListener="#{personnelBean.resetAll}" process="@this" onclick="diag_ajout.hide()"
+					   />
+						</p:tab>
+					<p:tab title="Société" >
+						<p:fieldset legend="Contrat" >
+							<h:panelGrid columns="4" style="border:0px none !important;"
+								
+								>
+								<h:panelGrid columns="2" style="margin-left:35px">
+								<p:outputLabel value="Date Debut " styleClass="right" ></p:outputLabel>
+								<p:calendar id="psstDate"  
+									value="#{personnelBean.personnel.debutContrat}" required="true"
+									requiredMessage="Selectionner une date" 
+									navigator="true" display="inline" effect="drop"
+									converterMessage="Date Invalide"
+									title="#{component.valid ? 'Entrer date debut contrat' : tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="10">
+									<p:ajax event="dateSelect" update="futureDate" />
+									<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+								</p:calendar>
+								
+								<p:outputLabel value="Type " styleClass="right" ></p:outputLabel>
+								<p:selectOneMenu id="type" style="width:150px !important;margin-top:10px !important"
+									title="Type de contrat"
+									value="#{personnelBean.personnel.typeContrat}" required="true">
+									<p:ajax event="change" process="@this" partialSubmit="true" update="contrat"></p:ajax>
+									
+									<f:selectItem itemLabel="CDD" itemValue="CDD" />
+									<f:selectItem itemLabel="CDI" itemValue="CDI" />
+									<f:selectItem itemLabel="SIVP" itemValue="SIVP" />
+									<f:selectItem itemLabel="SIVP2" itemValue="SIVP2" />
+									<f:selectItem itemLabel="Stage" itemValue="Stage" />
+
+								</p:selectOneMenu>
+								</h:panelGrid>
+								
+								<h:panelGrid columns="2" style="margin-left:35px" >
+								<p:outputLabel value="Date Fin " styleClass="right" style="margin-lef:20px !important;"  ></p:outputLabel>
+								<p:outputPanel id="contrat">
+								<p:outputLabel value="Indéterminé" rendered="#{!personnelBean.switchContrat()}"></p:outputLabel>
+								<p:calendar id="futureDate" widgetVar="fdate" 
+									value="#{personnelBean.personnel.finContrat}" required="true" rendered="#{personnelBean.switchContrat()}"
+									requiredMessage="Selectionner une date" 
+									navigator="true" display="inline" effect="drop"
+									converterMessage="Date Invalide"
+									mindate="#{personnelBean.personnel.debutContrat}"
+									title="#{component.valid ? 'Entrer date fin' : tooltipsController.getErrorMessage(component.clientId)}"
+									maxlength="20">
+									<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+									<f:attribute name="psstDate"
+										value="#{personnelBean.personnel.debutContrat}" />
+									<f:validator validatorId="primeDateRangeValidator" />
+								</p:calendar></p:outputPanel>
+								
+
+								<p:outputLabel value="Catégorie " styleClass="right" style=" margin-lef:10px !important;"   ></p:outputLabel>
+								<p:selectOneMenu id="cat" value="#{personnelBean.idCategorie}"
+									label="Catégorie Horaire" filter="true"
+									filterMatchMode="contains" style="width:150px !important;margin-top:10px !important" required="true"
+									requiredMessage="Selectionner une catégorie">
+									<f:selectItem  itemLabel="#{personnelBean.strCategorie}" />
+									<f:selectItems value="#{historiqueCatBean.listcategorie}"></f:selectItems>
+
+								</p:selectOneMenu>
+									</h:panelGrid>
+							</h:panelGrid>
+						</p:fieldset>
+						<h:panelGrid columns="2" 
+							cellpadding="4px" cellspacing="7px">
+							<p:fieldset id="legaff" legend="Affiliation" style="width:300px;height:100px;" >
+								<p:outputPanel  id="outaff" autoUpdate="true">
+
+									<h:panelGrid id="pgaff"  columns="3" style="border:0px none !important;"
+										columnClasses="formLabel,formEdit" cellpadding="5px"
+										cellspacing="8px">
+										<p:outputLabel value="Affiliation" styleClass="right" ></p:outputLabel>
+
+									<p:inputText id="affiliation" value="#{personnelBean.node}" style="width: 160px !important;"
+											required="true" requiredMessage="Entrer le nom d'affiliation"
+											readonly="true"></p:inputText>
+
+										<p:message for="affiliation"></p:message>
+
+									</h:panelGrid>
+								</p:outputPanel>
+							</p:fieldset>
+							<p:fieldset legend="Droit Congé" style="width:300px;height:100px; margin-left:10px" >
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Nombre de jour" ></p:outputLabel>
+									<p:spinner value="#{personnelBean.personnel.droitConge}"
+										max="60" min="1"></p:spinner>
+								</h:panelGrid>
+							</p:fieldset>
+						</h:panelGrid>
+
+				<!-- 		<p:fieldset legend="Documents">
+							<p:outputPanel autoUpdate="true">
+								<p:dataTable id="docs" value="#{personnelBean.listdocuments}"
+									emptyMessage="Liste du document est vide" var="doc" rows="10">
+									<f:facet name="header">
+										<p:commandButton icon="ui-icon-circle-plus" value="Document"
+											oncomplete="diag_doc.show()"></p:commandButton>
+									</f:facet>
+
+									<p:column headerText="Nome de fichier">
+										<p:outputLabel value="#{doc.designation}"></p:outputLabel>
+									</p:column>
+									<p:column headerText="Type">
+										<p:outputLabel value="#{doc.typedoc}"></p:outputLabel>
+									</p:column>
+								</p:dataTable>
+							</p:outputPanel>
+						</p:fieldset>  -->
+	<!--  -->						<p:commandButton value="Annuler" icon="cancel" update=":formajout" partialSubmit="false" type="reset"
+					oncomplete="diag_ajout.hide()" style="float:right" actionListener="#{personnelBean.resetAll}" process="@this" ondblclick="diag_ajout.hide()"
+					onclick="PF('wiz1').loadStep (PF('wiz1').cfg.steps [0], true)"  />
+					</p:tab>
+					<p:tab title="Pointage">
+						<h:panelGrid columns="2">
+							<p:fieldset legend="Identification sur Terminal">
+								<h:panelGrid columns="2" style="border:0px none !important;"
+									columnClasses="formLabel,formEdit" cellpadding="5px"
+									cellspacing="8px">
+									<p:outputLabel value="Identifiant"></p:outputLabel>
+									<p:inputText value="#{personnelBean.personnel.bckIdEnroll}" autocomplete="off" ></p:inputText>
+									<p:outputLabel value="Nom affiché"></p:outputLabel>
+									<p:inputText value="#{personnelBean.personnel.bckNom}" autocomplete="off"></p:inputText>
+								</h:panelGrid>
+							</p:fieldset>
+							<p:fieldset legend="Terminal d'enrollement"
+								style="margin-left:20px;height:118px; width:100%">
+								<h:panelGrid id="pantermenrol" columns="2" style="border:0px none !important;"
+									cellpadding="5px" cellspacing="8px"
+									columnClasses="formLabel,formEdit">
+									<p:outputLabel value="Terminal " style="margin-top:40px !important;"></p:outputLabel>
+									
+									<p:selectOneMenu id="termenrol" style="width:160px;margin-top:15px;"
+										value="#{personnelBean.termEnrol}"  converter="terminauxConverter" >	
+											<f:selectItem itemLabel="#{personnelBean.msgAffiche}" ></f:selectItem>							
+										<f:selectItems value="#{personnelBean.listeTerminauxenroll}" var="term" itemLabel="#{term.idter} #{term.libelle}" itemValue="#{term}"  ></f:selectItems>
+									</p:selectOneMenu>
+									
+								</h:panelGrid>
+
+							</p:fieldset>
+						</h:panelGrid>
+						<p:fieldset legend="Terminaux de pointage"	>
+						<center>	
+						<p:pickList id="PojoPickList" value="#{personnelBean.listTerminals}" var="ter" effect="clip"
+                itemValue="#{ter}" itemLabel="#{ter}" showSourceControls="false" showTargetControls="false" showCheckbox="false"
+                filterMatchMode="contains" converter="terminauxConverter">
+                
+                
+                <p:column style="width:25%">
+            <h:outputText value="#{ter.idter}" />
+        </p:column>
+ 
+        <p:column style="width:75%;">
+            <h:outputText value="#{ter.libelle}" />
+        </p:column>
+                </p:pickList>
+                </center>
+						</p:fieldset>
+						
+						<p:commandButton value="Annuler" update=":formajout " partialSubmit="false" type="reset"
+					oncomplete="diag_ajout.hide();getsize()" icon="cancel" style="float:right"
+					actionListener="#{personnelBean.resetAll}" process="@this" ignoreAutoUpdate="true"
+					onclick="diag_ajout.hide();PF('wiz1').loadStep (PF('wiz1').cfg.steps [0], true)">
+
+				</p:commandButton>
+					<p:commandButton value="Valider" icon="accept" 
+					action="#{personnelBean.insertPersonnel()}" style="float:right"
+					update=":formajout  :form:personnels :form :content2"
+					onclick="PF('thinking').block();PF('tabpersonnel').loadStep (PF('wiz').cfg.steps [0], true)"
+					oncomplete="PF('thinking').unblock();#{pointageBean2.execut()};getsize();if (!args.validationFailed) {diag_ajout.hide()};diag_lost.show()"></p:commandButton>
+						
+					</p:tab>
+				</p:wizard>
+			<!--  -->			
+			<p:overlayPanel for="formajout:affiliation" 
+			 showCloseIcon="true" dismissable="true" >
+			<h:form>
+				<p:tree id="aff" value="#{affiliationBean.toorChild}" var="node"
+					selectionMode="single" orientation="vertical" cache="true"
+					selection="#{personnelBean.selectedNode}" animate="true">
+					<p:ajax event="select" ignoreAutoUpdate="true" update=":formajout:affiliation" />
+
+					<p:treeNode expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+						<h:outputText value="#{node}" />
+					</p:treeNode>
+				</p:tree>
+			</h:form>
+		</p:overlayPanel>
+				
+			</h:form>
+		</p:dialog>
+		
+		
+		
+		
+		
+		<!-- ///// index 1 ////// -->
+
+		<p:dialog id="supprimpersonnel" header="Supprimer personnel"
+			showEffect="fade" hideEffect="explode" modal="true"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="Voulez vous supprimer le(s) personnel(s) suivant(s) :"></p:outputLabel>
+
+					</h:panelGrid>
+					<p:spacer height="10px"></p:spacer>
+					
+					<p:dataTable id="suppersonnels"
+						value="#{personnelBean.selectedpersonnels}" var="personnel">
+						<p:column id="matricule" headerText="Matricule">
+							<p:outputLabel value="#{personnel.matricule}"></p:outputLabel>
+
+
+						</p:column>
+						<p:column id="nom" headerText="Nom Prenom">
+							<p:outputLabel
+								value="#{personnel.civilite} #{personnel.nom} #{personnel.prenom}"></p:outputLabel>
+						</p:column>
+
+
+						<p:column id="cin" headerText="CIN">
+							<p:outputLabel value="#{personnel.cin}"></p:outputLabel>
+
+						</p:column>
+						<p:column>
+							<p:commandButton icon="ui-icon-trash"
+								action="#{personnelBean.removeSelectedPersonnel(personnel)}"
+								update="suppersonnels"
+								oncomplete="getsize()"
+								></p:commandButton>
+						</p:column>
+					</p:dataTable>
+					</p:outputPanel>
+					<p:spacer height="10px"></p:spacer>
+					<center>
+					<h:panelGrid columns="2" >
+					<p:commandButton value="Oui"
+						action="#{personnelBean.deletePersonnel}"
+						update=":form:messages :form"
+						oncomplete="diag_supprim.hide();getsize()"></p:commandButton>
+					<p:commandButton value="Non" oncomplete="diag_supprim.hide()"></p:commandButton>
+				</h:panelGrid>
+				</center>
+			</h:form>
+
+		</p:dialog>
+	<!-- //// indice 2 //// -->
+	
+	</body>
+	</html>

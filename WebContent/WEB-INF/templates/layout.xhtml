@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="#{contextBean.language}"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	style="background-color: rgb(255, 255, 255) !important;width:100% !important;">
+<f:view locale="#{contextBean.locale}">
+
+
+	<h:head>
+	
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="edge, chrome=1" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+		<h:outputStylesheet name="newstyle.css" library="scss"/>
+		<h:outputStylesheet name="style.css" library="css" />
+		<h:outputStylesheet name="westMenu.css" library="css" />
+		<h:outputStylesheet name="icon.css" library="css" />
+		<h:outputStylesheet name="footer.css" library="css" />
+		<h:outputStylesheet name="pace.css" library="css" />
+		<h:outputScript name="local.js" library="js"></h:outputScript>
+<link rel="shortcut icon" type="image/x-icon" href="${request.contextPath}/resources/icons16/favicon.ico" />
+
+		<title><ui:insert name="title">BIO-POINT</ui:insert></title>
+		<h:outputScript name="functions.js" library="js"></h:outputScript>
+		<h:outputScript name="pace.js" library="js"></h:outputScript>
+	</h:head>
+	<h:body class="ui-widget-content" >
+	
+		<div id="wrapper">
+<div id="contentliquid" >
+				<div id="content" >
+					<div id="header" class="ui-widget-content" style="height:40px !important" >
+						<h:form id="formheader" >
+							<ui:insert name="header">
+								<ui:include src="./common/header.xhtml" />
+							</ui:insert>
+						</h:form>
+					</div>
+<hr style="width: 100%; color: white; height: 5px; border: 0px none;" />
+<h:panelGroup id="content2"  >
+					<ui:insert  name="content"  >Put default content here, if any.</ui:insert>
+</h:panelGroup>				
+				</div>
+			</div>
+			<div id="leftcolumn">
+				<ui:insert name="west">
+					<ui:include src="./common/west.xhtml" />
+				</ui:insert>
+			</div>
+			
+		</div>
+	</h:body>
+</f:view>
+</html>

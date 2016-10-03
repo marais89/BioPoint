@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+
+
+	<h:form id="form">
+
+		<p:toolbar>
+			<p:toolbarGroup align="left">
+				<p:commandLink value="Operateur" action="/pages/user.xhtml"
+					style="text-decoration: none;font-size:19px;margin-top:5px;" />
+				<p:commandButton id="ajout" value="Ajouter" icon="add"
+					actionListener="#{userBean.loadOnCreate}"
+					update=":form:formopajout:roles"
+					oncomplete="undisplaymodif();diag_ajout.show()"></p:commandButton>
+				<p:commandButton id="modif" value="Modifier" icon="update"
+					actionListener="#{userBean.loadonUpdate}"
+					oncomplete="diag_modif.show()" update=":form:formmodifier:roles"
+					style="display:none"></p:commandButton>
+				<p:commandButton id="supprim" value="Supprimer" icon="delete"
+					oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+			</p:toolbarGroup>
+
+			<p:toolbarGroup align="right">
+				<p:splitButton value="Import/Export">
+					<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+					<p:menuitem value="Export" update=":content2"
+						action="changeEmport()"></p:menuitem>
+				</p:splitButton>
+			</p:toolbarGroup>
+		</p:toolbar>
+
+
+		<p:growl id="msg"></p:growl>
+		<p:dataTable id="users" var="user" value="#{userBean.listusers}"
+			selection="#{userBean.selectedOperateur}" selectionMode="single"
+			rowKey="#{user.idop}">
+			<f:facet name="header">
+
+			</f:facet>
+
+			<p:ajax event="rowSelect" listener="#{userBean.clearLoad}"
+				update=":form:formmodifier:roles" onstart="displaymodif()"></p:ajax>
+
+			<p:ajax event="rowUnselect" onstart="undisplaymodif()"></p:ajax>
+			<p:column style="width:3%">
+				<h:graphicImage value="/resources/img/user_male_1-512.png"
+					width="35" height="30" />
+
+			</p:column>
+			<p:column headerText="Nom d'utilisateur"
+				style="text-transform:capitalize;">
+					#{user.login}
+
+
+				</p:column>
+		</p:dataTable>
+
+		<p:dialog id="personneldiag" header="Ajout d'un Operateur"
+			showEffect="fade" hideEffect="explode" appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true">
+			<h:form id="formopajout" enctype="multipart/form-data">
+				<p:layout fullPage="false"
+					style="width:700px; height:620px;text-align:left">
+
+					<p:layoutUnit position="north">
+						<h:panelGrid columns="2">
+							<p:fieldset id="fie1" legend="Identification" style="width:300px">
+								<h:panelGrid columns="2" columnClasses="formLabel,formEdit"
+									cellpadding="5px" cellspacing="8px">
+									<p:outputLabel value="Nom d'uilisateur :"></p:outputLabel>
+									<p:inputText id="login" value="#{userBean.operateur.login}"
+										requiredMessage="nom d'ultilisateur est vide" required="true"
+										autocomplete="off"
+										title="#{component.valid ? 'Entrer nom utilisateur' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+									<p:outputLabel value="Mot de passe :"></p:outputLabel>
+									<p:password id="mp7" value="#{userBean.operateur.motPasse}"
+										strongLabel="Trés Bien" weakLabel="Facile" goodLabel="Bien"
+										required="true" requiredMessage="entrer mot de passe"
+										feedback="false" placeholder="Mot de pass"
+										promptLabel="Entrer le mot de pass" autocomplete="off"></p:password>
+									<p:outputLabel value="Personnel :">
+									</p:outputLabel>
+									<p:selectOneMenu value="#{userBean.idPersonnel}">
+										<f:selectItem noSelectionOption="" />
+										<f:selectItems value="#{userBean.listPersonnel}"></f:selectItems>
+									</p:selectOneMenu>
+
+								</h:panelGrid>
+							</p:fieldset>
+							<p:fieldset id="fie2" legend="Droits d'accès" style="width:300px">
+
+								<h:panelGrid columns="2" style="border:0px none !important;">
+									<p:selectOneListbox id="types" value="#{userBean.type}"
+										style="height:110px !important;width:80px !important">
+										<p:ajax event="change" update=":form:formopajout:PojoPickList" oncomplete="#{userBean.loadonUpdate()}" ></p:ajax>
+										<f:selectItems value="#{userBean.types}" var="type"
+											itemLabel="#{type}" itemValue="#{type.substring(0,2)}">
+										</f:selectItems>
+									</p:selectOneListbox>
+									<p:selectManyMenu showCheckbox="true" id="PojoPickList"
+										value="#{userBean.selectedAffiliation}"
+										style="height:110px !important;width:220px !important"
+										converter="javax.faces.Integer">
+										<p:ajax listener="#{userBean.disableType}" update="types"></p:ajax>
+										<f:selectItems value="#{userBean.listaffiliations}" />
+									</p:selectManyMenu>
+
+								</h:panelGrid>
+							</p:fieldset>
+						</h:panelGrid>
+					</p:layoutUnit>
+					<p:layoutUnit id="pane1" position="center" minWidth="600px"
+						closable="true">
+						<p:dataTable id="roles" value="#{userBean.listroles}" var="role"
+							emptyMessage="" selectionMode="single"
+							selection="#{userBean.selectedOp}" rowKey="#{role.id.idrol}">
+							<p:ajax event="rowEdit" listener="#{userBean.onEdit}" />
+							<p:column headerText="Fonction">
+							#{role.role.roleName}
+							</p:column>
+							<p:column headerText="Droits">
+								<center>
+									<p:outputLabel
+										value="#{!role.r ?'Indisponible':(!role.w ? 'Lecture seule' :(!role.role.editable ? 'Lecture seule':'Accées total'))}"></p:outputLabel>
+								</center>
+							</p:column>
+
+
+							<p:column>
+
+								<center>
+
+									<p:panelGrid columns="3" styleClass="whitea">
+
+										<p:commandLink id="l1" disabled="#{!role.role.editable}">
+											<p:graphicImage id="at" title="Accées total"
+												value="/resources/imp/pencil.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeAtt(role)}" />
+										</p:commandLink>
+
+										<p:commandLink id="l2">
+											<p:graphicImage id="ls" title="Lécture seule"
+												value="/resources/imp/jumelle.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeLsl(role)}" />
+										</p:commandLink>
+
+										<p:commandLink id="l3">
+											<p:graphicImage id="ind" title="Indisponible"
+												value="/resources/imp/lock.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeInd(role)}" />
+										</p:commandLink>
+
+									</p:panelGrid>
+								</center>
+								<!-- 								<p:rowEditor> -->
+								<!-- 								</p:rowEditor> -->
+							</p:column>
+
+						</p:dataTable>
+					</p:layoutUnit>
+
+					<p:layoutUnit id="pane2" position="west" minWidth="600px">
+						<p:dataTable value="#{userBean.rebriques}" var="reb"
+							selection="#{userBean.currentMenu}" selectionMode="single"
+							rowKey="#{reb}" emptyMessage="">
+							<p:ajax event="rowSelect" listener="#{userBean.loadroles}"
+								update=":form:formopajout:roles"></p:ajax>
+							<p:column style="height:30px" headerText="Rôles">
+								<h:outputText value="#{msg[reb]}" />
+							</p:column>
+							<p:column headerText="Tous">
+								<p:selectBooleanCheckbox>
+									<p:ajax listener="#{userBean.selectAll(reb)}"
+										update=":form:formopajout:roles"></p:ajax>
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:dataTable>
+					</p:layoutUnit>
+					<p:layoutUnit position="south">
+						<p:commandButton value="Annuler" oncomplete="diag_ajout.hide()"
+							style="float:right" icon="cancel" type="reset"></p:commandButton>
+
+						<p:commandButton value="Valider" icon="accept" style="float:right"
+							action="#{userBean.insertoperateur}"
+							update=":form:msg :form:users"
+							oncomplete="if (!args.validationFailed) {diag_ajout.hide()}"></p:commandButton>
+					</p:layoutUnit>
+				</p:layout>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="modifpersonnel" header="Modifier" showEffect="fade"
+			hideEffect="explode" modal="true" appendTo="@(body)"
+			widgetVar="diag_modif">
+			<h:form id="formmodifier" enctype="multipart/form-data">
+				<p:layout fullPage="false"
+					style="width:700px; height:620px;text-align:left">
+
+					<p:layoutUnit position="north">
+						<h:panelGrid columns="2">
+							<p:fieldset id="fie1" legend="Identification" style="width:300px">
+								<h:panelGrid columns="2" columnClasses="formLabel,formEdit"
+									cellpadding="5px" cellspacing="8px">
+									<p:outputLabel value="Nom d'uilisateur :"></p:outputLabel>
+									<p:inputText id="login" value="#{userBean.operateur.login}"
+										requiredMessage="nom d'ultilisateur est vide" required="true"
+										autocomplete="off"
+										title="#{component.valid ? 'Entrer nom utilisateur' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+									<p:outputLabel value="Mot de passe :"></p:outputLabel>
+									<p:password id="mp7" value="#{userBean.operateur.motPasse}"
+										strongLabel="Trés Bien" weakLabel="Facile" goodLabel="Bien"
+										required="true" requiredMessage="entrer mot de passe"
+										feedback="false" placeholder="Mot de pass"
+										promptLabel="Entrer le mot de pass" autocomplete="off"></p:password>
+									<p:outputLabel value="Personnel :">
+									</p:outputLabel>
+									<p:selectOneMenu value="#{userBean.idPersonnel}">
+										<f:selectItem noSelectionOption="" />
+										<f:selectItems value="#{userBean.listPersonnel}"></f:selectItems>
+									</p:selectOneMenu>
+
+								</h:panelGrid>
+							</p:fieldset>
+							<p:fieldset id="fie2" legend="Droits d'accès" style="width:300px">
+
+								<h:panelGrid columns="2" style="border:0px none !important;">
+									<p:selectOneListbox id="types" value="#{userBean.type}"
+										style="height:110px !important;width:80px !important">
+										<p:ajax event="change" update=":form:formopajout:PojoPickList" ignoreAutoUpdate="true" partialSubmit="true" oncomplete="#{userBean.loadonUpdate()}" ></p:ajax>
+										<f:selectItems value="#{userBean.types}" var="type"
+											itemLabel="#{type}" itemValue="#{type.substring(0,2)}">
+										</f:selectItems>
+									</p:selectOneListbox>
+									<p:selectManyMenu showCheckbox="true" id="PojoPickList"
+										value="#{userBean.selectedAffiliation}"
+										style="height:110px !important;width:220px !important"
+										converter="javax.faces.Integer">
+										<p:ajax listener="#{userBean.disableType}" update="types"></p:ajax>
+										<f:selectItems value="#{userBean.listaffiliations}" />
+									</p:selectManyMenu>
+
+								</h:panelGrid>
+							</p:fieldset>
+						</h:panelGrid>
+					</p:layoutUnit>
+					<p:layoutUnit id="pane1" position="center" minWidth="600px"
+						closable="true">
+						<p:dataTable id="roles" value="#{userBean.listroles}" var="role"
+							emptyMessage="" selectionMode="single"
+							selection="#{userBean.selectedOp}" rowKey="#{role.id.idrol}">
+							<p:ajax event="rowEdit" listener="#{userBean.onEdit}" />
+							<p:column headerText="Fonction">
+							#{role.role.roleName}
+							</p:column>
+							<p:column headerText="Droits">
+								<!-- 								<p:cellEditor> -->
+								<!-- 									<f:facet name="output"> -->
+								<!-- 										<p:outputLabel value="#{role.r?'Read':''}"></p:outputLabel> -->
+								<!-- 										<p:spacer width="10px" rendered="#{role.role.editable}"></p:spacer> -->
+								<!-- 									<p:outputLabel value="#{role.w?'Write':''}" rendered="#{role.role.editable}"></p:outputLabel> -->
+
+								<!-- 									</f:facet> -->
+								<!-- 									<f:facet name="input"> -->
+
+								<!-- 											<p:selectBooleanCheckbox itemLabel="Read" value="#{role.r}"> -->
+								<!-- 											</p:selectBooleanCheckbox> -->
+								<!-- 																					<p:spacer width="10px" rendered="#{role.role.editable}"></p:spacer> -->
+
+								<!-- 											<p:selectBooleanCheckbox itemLabel="Write" value="#{role.w}" rendered="#{role.role.editable}"> -->
+								<!-- 											</p:selectBooleanCheckbox> -->
+
+								<!-- 									</f:facet> -->
+								<!-- 								</p:cellEditor> -->
+								<center>
+									<p:outputLabel
+										value="#{!role.r ?'Indisponible':(!role.w ? 'Lecture seule' :(!role.role.editable ? 'Lecture seule':'Accées total'))}"></p:outputLabel>
+								</center>
+							</p:column>
+
+
+							<p:column>
+
+								<center>
+
+									<p:panelGrid columns="3" styleClass="whitea">
+
+										<p:commandLink id="l1" disabled="#{!role.role.editable}">
+											<p:graphicImage id="at" title="Accées total"
+												value="/resources/imp/pencil.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeAtt(role)}" />
+										</p:commandLink>
+
+										<p:commandLink id="l2">
+											<p:graphicImage id="ls" title="Lécture seule"
+												value="/resources/imp/jumelle.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeLsl(role)}" />
+										</p:commandLink>
+
+										<p:commandLink id="l3">
+											<p:graphicImage id="ind" title="Indisponible"
+												value="/resources/imp/lock.png" width="25" height="25" />
+											<p:ajax event="click" listener="#{userBean.makeInd(role)}" />
+										</p:commandLink>
+
+									</p:panelGrid>
+								</center>
+								<!-- 								<p:rowEditor> -->
+								<!-- 								</p:rowEditor> -->
+							</p:column>
+
+						</p:dataTable>
+					</p:layoutUnit>
+
+					<p:layoutUnit id="pane2" position="west" minWidth="600px">
+						<p:dataTable value="#{userBean.rebriques}" var="reb"
+							selection="#{userBean.currentMenu}" selectionMode="single"
+							rowKey="#{reb}" emptyMessage="">
+							<p:ajax event="rowSelect" listener="#{userBean.loadroles}"
+								update=":form:formopajout:roles"></p:ajax>
+							<p:column style="height:30px" headerText="Rôles">
+								<h:outputText value="#{msg[reb]}" />
+							</p:column>
+							<p:column headerText="Tous">
+								<p:selectBooleanCheckbox>
+									<p:ajax listener="#{userBean.selectAll(reb)}"
+										update=":form:formopajout:roles"></p:ajax>
+								</p:selectBooleanCheckbox>
+							</p:column>
+						</p:dataTable>
+					</p:layoutUnit>
+					<p:layoutUnit position="south">
+						<p:commandButton value="Annuler" oncomplete="diag_ajout.hide()"
+							style="float:right" icon="cancel" type="reset"></p:commandButton>
+
+						<p:commandButton value="Valider" icon="accept" style="float:right"
+							action="#{userBean.insertoperateur}"
+							update=":form:msg :form:users"
+							oncomplete="if (!args.validationFailed) {diag_ajout.hide()}"></p:commandButton>
+					</p:layoutUnit>
+				</p:layout>
+			</h:form>
+		</p:dialog>
+
+
+
+
+		<!-- <p:overlayPanel for=":formopajout:btaffiliation" style="width:400px;">
+				<h:form id="form37">
+				<p:tabView id="tabaff" value="#{hirarachyBean.types}" var="type"  cache="false" style="height:90%">
+				<p:ajax event="tabChange" listener="#{userBean.clearlist}" update="affs tabaff"></p:ajax>
+				<p:tab title="#{type}" titleStyleClass="distab">
+				<p:dataTable id="affs" widgetVar="waffs" value="#{userBean.listaffiliation}" rows="5" paginatorAlwaysVisible="false" 
+				paginatorPosition="bottom" var="aff" selection="#{userBean.selectedAffiliation}" rowKey="#{aff.idaff}">
+	<p:ajax event="rowSelect" listener="#{userBean.selectAff}" oncomplete="disabletab()"></p:ajax>
+				<p:ajax event="rowSelectCheckbox" listener="#{userBean.selectAff}" oncomplete="disabletab()" ></p:ajax>
+                <p:ajax event="rowUnselectCheckbox"	 oncomplete="disabletab()"></p:ajax>
+				<p:ajax event="rowUnselect"   oncomplete="disabletab()"></p:ajax>
+	<p:column selectionMode="multiple" style="width:2%;">
+		
+	</p:column>
+					<p:column>
+									<h:outputText value="#{aff.designation}" />
+								</p:column>
+								
+								<p:column>
+									<h:outputText value="#{aff.codeteam}" />
+								</p:column>
+				</p:dataTable>
+			
+				
+				</p:tab>
+				
+				</p:tabView>
+					<p:commandButton value="Ajouter" icon="add"  action="#{userBean.display}" update=":formopajout:affiliation" oncomplete="waffiliation.hide()"></p:commandButton>
+								<p:commandButton value="Fermer" icon="delete" oncomplete="waffiliation.hide()"></p:commandButton>
+				</h:form></p:overlayPanel> -->
+		<p:dialog id="supprimpersonnel" header="Supprimer personnel"
+			showEffect="fade" hideEffect="explode" modal="true"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="2">
+						<h:graphicImage value="/resources/img/removealert.png" width="50"
+							height="50" />
+						<h:outputLabel
+							value="Voulez Vous Supprimer L'operateur  #{userBean.selectedOperateur.login}"
+							style="font-size:15px;" />
+
+						<p:commandButton value="Oui" icon="accept"
+							action="#{userBean.deleteUser}" update=":form:msg :form:users"
+							oncomplete="undisplaymodif():diag_supprim.hide()"></p:commandButton>
+						<p:commandButton value="Non" icon="delete"
+							oncomplete="undisplaymodif():diag_supprim.hide()"></p:commandButton>
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+
+	</h:form>
+
+
+
+</body>
+</html>

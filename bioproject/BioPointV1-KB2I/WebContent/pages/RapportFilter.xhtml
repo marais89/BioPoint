@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+
+	<h:form id="form">
+
+		<pe:blockUI widgetVar="loadmvt"
+			css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+			cssOverlay="{backgroundColor: 'gray'}" centerY="false">
+			<h:panelGrid columns="2">
+				<h:graphicImage library="img" name="ajax_loading.gif"
+					style="margin-right: 12px; vertical-align: middle;width:30px;height:30px " />
+				<h:outputText
+					value="Patienter SVP, Création du document en cours..."
+					style="white-space: nowrap;width: 50px" />
+
+			</h:panelGrid>
+		</pe:blockUI>
+		
+		
+		<p:toolbar style="margin-bottom: 7px;height:35px !important">
+<p:toolbarGroup align="left">
+				<p:commandButton id="avnc" value="Mode avancé"
+					action="#{rapportBean.permut3()}"
+					rendered="#{!rapportBean.flagAvance and !rapportBean.bolAcc}"
+					update=":form:generalPanel :form:avnc :form:smpl :form:charge :form" title="Mode" />
+				<p:commandButton id="smpl" value="Mode simple"
+					action="#{rapportBean.permut3()}"
+					rendered="#{rapportBean.flagAvance and !rapportBean.bolAcc}"
+					update=":form:generalPanel :form :form:avnc :form:smpl :form:charge " title="Mode" />
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right">
+				<p:commandLink id="charge" style="margin-right:30px;"
+					rendered="#{rapportBean.bolSElect and rapportBean.listeRapportpre.size()!=0}">
+					<p:graphicImage value="/resources/img_rapport/down.png"
+						title="Charger un rapport" width="40px" height="30px" />
+				</p:commandLink>
+				
+			</p:toolbarGroup>			
+		</p:toolbar>
+		
+		<p:overlayPanel id="chartcharge" for="charge" hideEffect="fade"
+					style="width:150px" widgetVar="charge" showCloseIcon="true">
+					<p:outputPanel autoUpdate="true">
+						<p:dataTable id="datatable" value="#{rapportBean.listeRapportpre}"
+							var="rap" selection="#{rapportBean.rapport}"
+							selectionMode="single" converter="rapportConverter"
+							rowKey="#{rap}">
+							<p:ajax event="rowSelect"
+								listener="#{rapportBean.rechargefiltre()}"
+								ignoreAutoUpdate="true" partialSubmit="true"
+								oncomplete="charge.hide()"></p:ajax>
+							<p:column
+								headerText="Les rapports de #{rapportBean.groupSelected}">
+								<p:graphicImage value="/resources/img_rapport/tag.png"
+									width="30px" height="20px" />
+								<h:outputText value="#{rap.nomRapport}" />
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+				</p:overlayPanel>
+
+		<p:growl id="messaget"></p:growl>
+		<!-- ***************************  DIALOGUE GROUPE RAPPORT *********************************-->
+		<p:outputLabel  id="codex" style=" display: none" value="#{rapportBean.code}" title="#{rapportBean.code}"  />
+		<p:layout id="layout" fullPage="false"
+			style="width:100%; height:780px;text-align:left;overflow:visible !important;">
+			
+			<p:layoutUnit id="pane1" position="center" closable="false"
+				style="width:90%; height:99%">
+
+				<p:dataGrid id="dataG" value="#{rapportBean.listeRapportAff}"
+					rowIndexVar="indice"  var="rap" columns="130" styleClass="pane5"
+					style="width:100%">
+					<h:panelGrid columns="1">
+						<p:commandLink onclick="colorSelect(#{indice})"  
+							  action="#{rapportBean.changeBolAcc1(rap.designation)}"
+							update=":form:groupe :form:data:panelGroup :form:data:selectGroup :form:avnc :form:smpl :form:charge :form" >
+							<p:panel styleClass="pane5" style="background:#F5F5F5;">
+								<h:panelGrid columns="1" styleClass="pane4">
+									<p:graphicImage value="#{rap.image}" height="40px"
+										styleClass="pane4" width="60px"
+										title=" Rapport #{rap.designation}">
+									</p:graphicImage>
+									<p:outputLabel value="#{rap.designation}" styleClass="polic"
+										style="margin-left:0px" />
+								</h:panelGrid>
+							</p:panel>
+						</p:commandLink>
+					</h:panelGrid>
+				</p:dataGrid>
+				
+				<h:panelGrid id="groupe" columns="1" style="width:99%">
+					<p:panel id="generalPanel0" style="width:99%;margin-top:10px"
+						rendered="#{rapportBean.bolAcc}">
+						<p:graphicImage value="/resources/img_rapport/capture.png"
+							height="550px" width="100%" title=" Home " />
+					</p:panel>
+
+					<p:panel id="generalPanel"
+						style="width:100%;margin-top:10px;max-width:1400px !important; "
+						rendered="#{!rapportBean.bolAcc}"
+						header="Groupe #{rapportBean.groupSelected} / Rapport #{rapportBean.rapportSelected}">
+
+						<p:fieldset legend="Période" id="leg1"
+							style="margin-top:10px; margin-left:10px;height:100px;">
+							<center>
+								<h:panelGrid columns="1">
+									<h:panelGrid id="pan1" columns="6">
+										<p:outputLabel value="Du" styleClass="polic" />
+										<p:calendar effect="drop" value="#{rapportBean.datedebut}"
+											id="cp1" placeholder="#{rapportBean.dat1}"
+											style="margin-left:20px" styleClass="calendar_rapport"
+											navigator="true" converterMessage="format date invalide"
+											maxlength="8"
+											title="#{component.valid ? 'Date debut' : tooltipsController.getErrorMessage(component.clientId)}">
+											<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+											<p:ajax event="dateSelect"
+												listener="#{rapportBean.viderStr()}"
+												update=":form:straffiche" />
+										</p:calendar>
+										<p:outputLabel value="Au" style="margin-left:20px"
+											styleClass="polic" />
+										<p:calendar effect="drop" value="#{rapportBean.datefin}"
+											id="cp2" styleClass="calendar_rapport"
+											style="margin-left:20px" placeholder="#{rapportBean.dat2}"
+											converterMessage="format date invalide" maxlength="8"
+											navigator="true"
+											title="#{component.valid ? 'Date fin' : tooltipsController.getErrorMessage(component.clientId)}">
+											<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+											<p:ajax event="dateSelect"
+												listener="#{rapportBean.viderStr()}"
+												update=":form:straffiche" />
+										</p:calendar>
+										<p:commandLink id="choix" style="margin-right:10px">
+											<p:graphicImage value="/resources/icons/choix.png"
+												height="33px" width="35px" title="Date" />
+										</p:commandLink>
+										<p:outputLabel id="straffiche"
+											value="#{rapportBean.strAffiche}" styleClass="polic" />
+										<p:overlayPanel id="charMois" for="choix" hideEffect="fade" style="width:320px !important"
+											widgetVar="charMois" showCloseIcon="true">
+
+											<p:slideMenu style="width:250px; height:150px">
+												<p:submenu label="Jours" icon="ui-icon-refresh">
+													<p:menuitem value="Hier #{rapportBean.listeVal.get(0)}"
+														action="#{rapportBean.affectDate(1,1)}"
+														update=":form:pan1" icon="ui-icon-arrow-1-w" />
+													<p:menuitem
+														value="Aujourd'hui #{rapportBean.listeVal.get(1)}"
+														action="#{rapportBean.affectDate(1,2)}"
+														update=":form:pan1" icon="ui-icon-arrowstop-1-s" />
+
+												</p:submenu>
+												<p:submenu label="Semaine" icon="ui-icon-refresh">
+													<p:menuitem value="Derniére #{rapportBean.listeVal.get(3)}"
+														action="#{rapportBean.affectDate(2,1)}"
+														update=":form:pan1" icon="ui-icon-arrow-1-w" />
+													<p:menuitem value="En cours #{rapportBean.listeVal.get(4)}"
+														action="#{rapportBean.affectDate(2,2)}"
+														update=":form:pan1" icon="ui-icon-arrowstop-1-s" />
+												</p:submenu>
+												<p:submenu label="Mois" icon="ui-icon-refresh">
+													<p:menuitem
+														value="Précedent #{rapportBean.listeVal.get(6)}"
+														action="#{rapportBean.affectDate(3,1)}"
+														update=":form:pan1" icon="ui-icon-arrow-1-w" />
+													<p:menuitem value="En cours #{rapportBean.listeVal.get(7)}"
+														action="#{rapportBean.affectDate(3,2)}"
+														update=":form:pan1" icon="ui-icon-arrowstop-1-s" />
+												</p:submenu>
+												<p:submenu label="Année" icon="ui-icon-refresh">
+													<p:menuitem
+														value="Derniere  #{rapportBean.listeVal.get(9)}"
+														action="#{rapportBean.affectDate(4,1)}"
+														update=":form:pan1" icon="ui-icon-arrow-1-w" />
+													<p:menuitem
+														value="En cours #{rapportBean.listeVal.get(10)}"
+														action="#{rapportBean.affectDate(4,2)}"
+														update=":form:pan1 :form:straffiche"
+														icon="ui-icon-arrowstop-1-s" />
+												</p:submenu>
+											</p:slideMenu>
+										</p:overlayPanel>
+									</h:panelGrid>
+								</h:panelGrid>
+							</center>
+						</p:fieldset>
+						<p:fieldset legend="affiliation / groupe personnes" id="leg2"
+							style="margin-top:10px;margin-left:0px;height:100px;">
+							<center>
+								<h:panelGrid id="panelg1" columns="3">
+
+									<h:panelGrid id="panelgrid1" columns="2">
+										<p:commandLink id="filterBtn" style="margin-left:30px;margin-bottom:5px"
+											rendered="#{rapportBean.flagAff}"
+											action="#{rapportBean.permut2(1)}"
+											update=":form:panelgrid2 :form:tree">
+											<p:graphicImage value="/resources/img_rapport/affil.png"
+												height="60px" width="70px" title="Affiliation" style="margin-bottom:10px !important;"/>
+
+										</p:commandLink>
+										<p:overlayPanel id="chartPanel" for="filterBtn"
+											hideEffect="fade" widgetVar="char1" showCloseIcon="false">
+											<p:tree id="tree" value="#{rapportBean.toor}" var="node"
+												selectionMode="checkbox" orientation="vertical"
+												selection="#{rapportBean.selectedNodes}" animate="true">
+												<p:ajax event="select" listener="#{rapportBean.selectNode}" />
+												<p:ajax event="unselect"
+													listener="#{rapportBean.unSelectNode}" />
+												<p:treeNode expandedIcon="ui-icon-folder-open"
+													collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+													<h:outputText value="#{node}" />
+												</p:treeNode>
+											</p:tree>
+											<center style="margin-top: 20px">
+												<p:commandButton value="Valider" icon="ui-icon-check"
+													action="#{rapportBean.optimListe()}"
+													oncomplete="{char1.hide()}" />
+												<p:commandButton value="Reset" icon="ui-icon-refresh"
+													style="margin-left:5px" oncomplete="{char1.hide()}"
+													action="#{rapportBean.effacerOptim()}" />
+												<p:commandButton value="Annuler" icon="ui-icon-close"
+													style="margin-left:5px" action="#{rapportBean.permut2(3)}"
+													oncomplete="char1.hide()" update=":form:panelg1" />
+											</center>
+										</p:overlayPanel>
+									</h:panelGrid>
+
+									<h:panelGrid id="panelgrid2" columns="2">
+										<p:commandLink id="filterPersonne" style="margin-left:30px"
+											rendered="#{rapportBean.flagPers}"
+											action="#{rapportBean.permut2(2)}" update=":form:panelgrid1">
+											<p:graphicImage
+												value="/resources/img_rapport/business_users_search.png"
+												height="50px" width="60px" title="Groupe de personnes" 
+												style="margin-bottom:20px !important;"/>
+										</p:commandLink>
+
+										<p:overlayPanel id="chartPanel2" for="filterPersonne"
+											hideEffect="fade" showCloseIcon="false" widgetVar="charpan2">
+											<p:panel header="Pesonnels">
+												<h:panelGrid columns="2" cellpadding="10">
+													<p:autoComplete value="#{rapportBean.listePersonnel2}"
+														id="strprtsonnel" style="width:400px !important"
+														completeMethod="#{rapportBean.completePersonnel}"
+														multiple="true" var="pers" 
+														itemLabel="#{pers.nom} #{pers.prenom}" scrollHeight="150"
+														itemValue="#{pers}" converter="personnelConverter">
+													</p:autoComplete>
+												</h:panelGrid>
+
+												<center style="margin-top: 100px">
+													<p:commandButton value="Valider"
+														icon="ui-icon-arrowthickstop-1-s"
+														action="#{rapportBean.collect()}"
+														oncomplete="charpan2.hide()" />
+													<p:commandButton value="Ajouter" icon="ui-icon-plus"
+														action="#{rapportBean.collect2()}"
+														oncomplete="charpan2.hide()" style="margin-left:5px" />
+													<p:commandButton value="Annuler" icon="ui-icon-closethick"
+														action="#{rapportBean.permut2(3)}"
+														onselect="chartPanel2.hide()"
+														update=":form:panelg1 :form:chartPanel2"
+														style="margin-left:5px" />
+												</center>
+											</p:panel>
+										</p:overlayPanel>
+
+									</h:panelGrid>
+									<p:outputLabel id="str1" value="#{rapportBean.heararchiOptim}"
+										styleClass="polic" />
+								</h:panelGrid>
+							</center>
+						</p:fieldset>
+
+						<p:fieldset id="legendAvance" legend="Filtre avancé"
+							rendered="#{rapportBean.flagAvance}"
+							style="margin-top:10px;width:97% !important;">
+							<center>
+								<h:panelGrid id="panel" columns="2">
+									<h:panelGrid id="panel1" columns="3">
+
+										<p:selectOneMenu value="#{rapportBean.champ}"
+											style="width:150px">
+											<f:selectItem itemLabel="Champs" />
+											<f:selectItems value="#{rapportBean.liste1}" />
+											<p:ajax event="change" listener="#{rapportBean.aff()}"
+												ignoreAutoUpdate="true"
+												update=":form:list2 :form:list3 :form:inputTxt :form:filterBtn2 :form:panel" />
+										</p:selectOneMenu>
+
+
+										<p:selectOneMenu id="list2" value="#{rapportBean.condition}"
+											style="width:150px">
+											<f:selectItem itemLabel="Condition" />
+											<f:selectItems value="#{rapportBean.liste21}" />
+											<p:ajax event="change" listener="#{rapportBean.modifAjout()}"
+												ignoreAutoUpdate="true" />
+										</p:selectOneMenu>
+
+										<p:outputPanel autoUpdate="true">
+											<p:selectOneMenu id="list3" value="#{rapportBean.valeur}"
+												rendered="#{rapportBean.bol1}" style="width:150px">
+												<f:selectItem itemLabel="Valeur" />
+												<f:selectItems value="#{rapportBean.liste3}" />
+												<p:ajax event="change"
+													listener="#{rapportBean.modifAjout()}"
+													ignoreAutoUpdate="true" />
+											</p:selectOneMenu>
+
+											<p:calendar value="#{rapportBean.dateFilter}"
+												rendered="#{rapportBean.bol2}" style="width:150px">
+												<p:ajax event="dateSelect"
+													listener="#{rapportBean.modifAjout2()}"
+													ignoreAutoUpdate="true" />
+											</p:calendar>
+											<p:inputText id="inputTxt" value="#{rapportBean.valeur}"
+												rendered="#{rapportBean.bol3}" style="width:150px">
+												<p:ajax event="keyup"
+													listener="#{rapportBean.modifAjout2()}"
+													ignoreAutoUpdate="true" />
+											</p:inputText>
+											<pe:timePicker value="#{rapportBean.houreFilter}"
+												mode="popup" rendered="#{rapportBean.bol4}"
+												style="width:150px" label="Popup time picker">
+												<p:ajax event="close"
+													listener="#{rapportBean.modifAjout2()}"
+													ignoreAutoUpdate="true" />
+											</pe:timePicker>
+										</p:outputPanel>
+
+									</h:panelGrid>
+									<h:panelGrid id="panel2" columns="2">
+										<p:outputPanel autoUpdate="true">
+											<p:commandLink id="filterBtn2" style="margin-left:30px"
+												action="#{rapportBean.ajouterFilter()}"
+												rendered="#{rapportBean.flagAjout}">
+												<p:graphicImage value="/resources/icons/ajoutl.jpeg"
+													height="40px" width="40px" title="Ajouter Filter" />
+											</p:commandLink>
+										</p:outputPanel>
+										<p:commandLink id="filterBtn3" style="margin-left:0px"
+											rendered="#{rapportBean.flagUnion}"
+											action="#{rapportBean.union()}">
+											<p:graphicImage value="/resources/icons/union.jpeg"
+												height="40px" width="40px" title="Union" />
+										</p:commandLink>
+									</h:panelGrid>
+									<p:outputPanel autoUpdate="true">
+										<p:dataTable id="formule" var="formule"
+											value="#{rapportBean.listeFormule}" style="width:470px"
+											rendered="#{rapportBean.flagtable}"
+											emptyMessage="Vous avez effacé tous les regles">
+											<p:column>
+												<h:outputText
+													value=" #{rapportBean.listeFormule.indexOf(formule)+1}"
+													styleClass="polic" />
+											</p:column>
+											<p:column headerText="Regle" width="85%">
+												<h:outputText value="#{formule}" styleClass="polic" />
+											</p:column>
+											<p:column>
+												<p:commandLink action="#{rapportBean.removeregle(formule)}">
+													<p:graphicImage value="/resources/img_rapport/trash.png"
+														height="30px" width="30px" title="Supprimer" />
+												</p:commandLink>
+											</p:column>
+										</p:dataTable>
+									</p:outputPanel>
+								</h:panelGrid>
+							</center>
+						</p:fieldset>
+
+						<p:outputPanel id="dataGlob" autoUpdate="true"
+							style="margin-top:10px; width:99%;"
+							rendered="#{rapportBean.listegroupOrSelectionne.size()!=0}">
+							<p:dataGrid id="data" var="groupe"
+								value="#{rapportBean.listegroupOrSelectionne}"
+								rowIndexVar="index" columns="100" rows="7">
+
+								<p:panel header="#{groupe}" id="panGroup"
+									style="text-align:center;margin-left:5px" styleClass="pan">
+									<center>
+										<h:panelGrid columns="1" style="height:97%" id="panelGroup">
+											<p:selectOneMenu value="#{rapportBean.strGrouOr}"
+												id="selectGroup" style="width:130px"
+												rendered="#{rapportBean.listeBolValeur.get(index)}">
+												<f:selectItem itemLabel="Champs" />
+												<f:selectItems value="#{rapportBean.groupOrAffich}" />
+												<p:ajax event="change" ignoreAutoUpdate="true"
+													listener="#{rapportBean.ajouterGroupOrVal(index,groupe)}"
+													update=":form:data" />
+											</p:selectOneMenu>
+
+											<h:panelGrid columns="6"
+												rendered="#{!rapportBean.listeBolValeur.get(index)}">
+												<p:commandLink id="filterBtn11"
+													action="#{rapportBean.suprim(groupe,index)}">
+													<p:graphicImage value="/resources/icons/rapSuppR.png"
+														height="30px" width="30px" title="Supprimer" />
+												</p:commandLink>
+												<p:commandLink id="filterBtn10"
+													action="#{rapportBean.changeVal(index,0)}"
+													rendered="#{!rapportBean.listeBolValeur.get(index)}">
+													<p:graphicImage value="/resources/icons/rapMod.png"
+														height="30px" width="30px" title="Modifier" />
+												</p:commandLink>
+
+												<p:commandLink id="filterBtn12"
+													action="#{rapportBean.changeVal(index,1)}"
+													rendered="#{rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/rapOrd.png"
+														height="30px" width="30px" title="Ordonner par" />
+												</p:commandLink>
+												<p:commandLink id="filterBtn13"
+													action="#{rapportBean.changeVal(index,1)}"
+													rendered="#{!rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/rapGrou.png"
+														height="30px" width="30px" title="Grouper par" />
+												</p:commandLink>
+												<p:commandLink id="filterBtn14"
+													action="#{rapportBean.changeVal(index,2)}"
+													rendered="#{rapportBean.listeBolSaut.get(index) and !rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/rapSort.png"
+														height="30px" width="30px" title="Saut de page actif" />
+												</p:commandLink>
+												<p:commandLink id="filterBtn141"
+													action="#{rapportBean.changeVal(index,2)}"
+													rendered="#{!rapportBean.listeBolSaut.get(index) and !rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/rapSortG.png"
+														height="30px" width="30px" title="Saut de page désactivé" />
+												</p:commandLink>
+
+												<p:commandLink id="filterBtn15"
+													action="#{rapportBean.changeVal(index,2)}"
+													rendered="#{rapportBean.listeBolSaut.get(index) and rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/up.png"
+														height="30px" width="30px" title="Ordre Descendant" />
+												</p:commandLink>
+												<p:commandLink id="filterBtn151"
+													action="#{rapportBean.changeVal(index,2)}"
+													rendered="#{!rapportBean.listeBolSaut.get(index) and rapportBean.listeBolGroupOr.get(index)}">
+													<p:graphicImage value="/resources/icons/down.png"
+														height="30px" width="30px" title="Ordre Ascendant" />
+												</p:commandLink>
+											</h:panelGrid>
+										</h:panelGrid>
+									</center>
+								</p:panel>
+							</p:dataGrid>
+						</p:outputPanel>
+						<p:separator id="separator4"
+							style="margin-top:10px;margin-bottom:10px" />
+						<center>
+
+							<!-- 
+								<p:commandLink id="home" style="margin-right:30px"
+									action="#{rapportBean.changeBolAcc2()}" oncomplete="initColorSelect()"
+									update=":form:generalPanel :form:cp1 :form:cp2 :form:legendAvance :formheader">
+									<p:graphicImage value="/resources/img_rapport/undo1.png"
+										height="33px" width="35px" title="Accueil" />
+										<p:ajax event="click" update=":form :form:groupe :form:cp1" resetValues="true" />
+								</p:commandLink>
+								<p:commandLink id="genere" style="margin-right:30px"  action="#{rapportBean.genere(0)}"
+								update=":form:generalPanel :form:cp1 :form:cp2 :form:legendAvance :formheader" >
+									<p:graphicImage value="/resources/img_rapport/fax1.png"
+										height="33px" width="35px" title="Générer le rapport" />
+								</p:commandLink>
+								<h:commandLink id="print" style="margin-right:30px" 
+						 	
+						 	action="#{rapportBean.genere(1)}"
+						 	onclick="test()" 	> 
+
+									<p:graphicImage value="/resources/img_rapport/print.png"
+										height="33px" width="35px" title="Exporter le rapport" />
+								</h:commandLink>
+								
+								<p:commandLink id="save" style="margin-right:30px"
+									oncomplete="diag_enregistre.show()">
+									<p:graphicImage value="/resources/img_rapport/save1.png"
+										height="33px" width="35px" title="Enregistrer le rapport" />
+								</p:commandLink>   -->
+
+							<p:commandButton icon="ui-icon-home"
+								action="#{rapportBean.changeBolAcc2()}" value="Acceil"
+								oncomplete="initColorSelect()"
+								update=":form:generalPanel :form:cp1 :form:cp2 :form:legendAvance :form:avnc :form:smpl :form:charge :form">
+								<p:ajax event="click" update=" :form:avnc :form:smpl :form:charge :form :form:groupe :form:cp1"
+									resetValues="true" />
+							</p:commandButton>
+
+							<p:commandButton icon="ui-icon-print"
+								action="#{rapportBean.genere(1)}" style="margin-left:5px"
+								onstart="PF('loadmvt').block()"
+								oncomplete="test('#{rapportBean.currentUser.getLogin()}');PF('loadmvt').unblock()"
+								value="Visualiser / Imprimer" />
+
+							<p:commandButton icon="ui-icon-disk"
+								oncomplete="diag_enregistre.show()" style="margin-left:5px"
+								value="Sauvgarder" />
+						</center>
+
+					</p:panel>
+				</h:panelGrid>
+
+			</p:layoutUnit>
+			<p:layoutUnit id="pane2" position="west" closable="true"
+				style="width:200px !important">
+				<p:dataTable value="#{rapportBean.listeGroupRapport}" var="grap"
+					selection="#{rapportBean.groupSelected}" selectionMode="single"
+					rowKey="#{grap}">
+					<p:ajax event="rowSelect"
+						listener="#{rapportBean.chageindice(rapportBean.listeGroupRapport.indexOf(rapportBean.groupSelected))}"
+						ignoreAutoUpdate="true" partialSubmit="true"
+						update=":form:dataG :form:legendAvance"></p:ajax>
+					<p:column style="height:30px" headerText="Groupe">
+						<h:outputText value="#{grap}" styleClass="polic" />
+					</p:column>
+				</p:dataTable>
+			</p:layoutUnit>
+		</p:layout>
+
+		<!-- ************************** *** *********************************** -->
+
+	</h:form>
+
+
+
+	<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+	<p:dialog id="enregister" header="Enregister le rapport" modal="true"
+		resizable="false" appendTo="@(body)" widgetVar="diag_enregistre">
+		<h:form id="formeng">
+			<p:panel>
+
+				<h:panelGrid columns="2">
+					<h:outputText value="Designation rapport* :" />
+					<p:inputText id="designation" style="margin-left:20px"
+						value="#{rapportBean.designationRapport}" />
+				</h:panelGrid>
+
+				<center style="margin-top: 20px">
+					<p:commandButton value="Enregistrer" style="width:40%"
+						action="#{rapportBean.sauvgardeDonnee()}"
+						update=":form:messaget :form:groupe :form:data:panelGroup :form:data:selectGroup"></p:commandButton>
+					<p:commandButton value="Annuler" style="width:40%"
+						oncomplete="diag_enregistre.hide()"
+						action="#{rapportBean.parinit()}"></p:commandButton>
+				</center>
+
+			</p:panel>
+		</h:form>
+	</p:dialog>
+
+</body>
+</html>
+

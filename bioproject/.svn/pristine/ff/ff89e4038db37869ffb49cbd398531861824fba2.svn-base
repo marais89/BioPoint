@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+	<h:form id="form">  
+	
+	<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Etat de pointage" action="/pages/historiqueMvt.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+	</p:toolbarGroup>
+	<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+	</p:toolbar>
+	
+  <p:growl id="msg"></p:growl>
+ 	<pe:timeline id="timeline" value="#{histMvtBean.model}" locale="#{contextBean.locale}"
+				 eventMargin="5" eventMarginAxis="5"  style="margin-top:20px;"
+					groupsChangeable="false" timeZone="#{histMvtBean.timeZone}"
+					start="#{histMvtBean.start}"  editable="false" selectable="false"
+					end="#{histMvtBean.end}" showNavigation="false"
+					showCurrentTime="true" snapEvents="true"
+					showButtonNew="false" widgetVar="timelineh" axisOnTop="true"
+					themable="false" responsive="true" moveable="false">
+					
+					</pe:timeline>
+</h:form> 
+ 
+   </body>
+   </html>

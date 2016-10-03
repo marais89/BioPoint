@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+		
+	
+		<h:form id="form">
+		<p:growl id="messages"></p:growl>
+		<h:inputHidden value="#{roleBean.sizelist}" id="listsize" />
+		
+		<p:toolbar style="margin-bottom: 7px">
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Role" action="/pages/role.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" icon="add"
+			action="#{roleBean.switchcreate()}" style="margin-left:20px"
+			oncomplete="undisplaymodif();diag_ajout.show()"
+			update=":form2 :addpage"></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" update=":form2 :addpage"
+			action="#{roleBean.switchUpdate()}" oncomplete="diag_ajout.show()"
+			icon="update" style="display:none"></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete"
+			oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+		</p:toolbarGroup>
+		
+		<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+		</p:toolbar>
+		
+
+			<p:dataTable id="roles" var="role" value="#{roleBean.listRole}"
+				widgetVar="diag_personel"
+				emptyMessage=" ____ la liste des roles est vide "
+				filteredValue="#{roleBean.filtredRoles}" paginator="true" rows="24"
+				selection="#{roleBean.selectedRoles}" rowKey="#{role.idrol}"
+				paginatorAlwaysVisible="fase" paginatorPosition="bottom"
+				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+				<f:facet name="header">
+
+				</f:facet>
+				<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+
+				<p:ajax event="rowSelect" listener="#{roleBean.affect}"
+					update=":form:listsize" oncomplete="getsize()" ></p:ajax>
+
+				<p:ajax event="rowSelectCheckbox" listener="#{roleBean.affect}"
+					update=":form:listsize" oncomplete="getsize()"></p:ajax>
+
+
+				<p:ajax event="rowUnselectCheckbox" update=":form:listsize "
+					oncomplete="unsize()"></p:ajax>
+				<p:ajax event="rowUnselect" update=":form:listsize"
+					oncomplete="unsize()"></p:ajax>
+				<p:column id="col1" style="width:2%" selectionMode="multiple" />
+
+
+				<p:column id="roleName" filterBy="roleName" headerText="Nom Role"
+					sortBy="roleName" filterMatchMode="contains">
+					<h:outputText value="#{role.roleName}"></h:outputText>
+				</p:column>
+
+				<p:column id="type" filterBy="type" headerText="Type" sortBy="type"
+					filterMatchMode="contains">
+					<h:outputText value="#{msg[role.type]}"></h:outputText>
+				</p:column>
+				<p:column id="url" filterBy="url" headerText="URL" sortBy="url"
+					filterMatchMode="contains">
+					<h:outputText value="#{role.url}"></h:outputText>
+				</p:column>
+
+			</p:dataTable>
+
+			<!-- /*/*/***/*/**/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ -->
+			<!-- /*/*/***/*/**/*/**/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/ -->
+
+
+		</h:form>
+		<pe:tooltip global="true" position="left center"
+			targetPosition="right center" forSelector=".ui-state-error" />
+
+		<p:dialog id="addpage" header="#{roleBean.msg}" appendTo="@(body)" widgetVar="diag_ajout"
+			modal="true" width="650px" height="600px;" position="center">
+			<h:form id="form2">
+				<h:panelGrid columns="2" cellspacing="7px" cellpadding="7px">
+					<p:outputLabel value="Nom du Role :"></p:outputLabel>
+					<p:inputText value="#{roleBean.role.nom}" required="true"
+						requiredMessage="Role est vide"
+						title="#{component.valid ? 'Entrer role' : tooltipsController.getErrorMessage(component.clientId)}"
+						maxlength="12"></p:inputText>
+					<p:outputLabel value="Nom :"></p:outputLabel>
+					<p:inputText value="#{roleBean.role.roleName}" required="true"
+						requiredMessage="Nom du role est vide"
+						title="#{component.valid ? 'Entrer nom du role' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+					<p:outputLabel value="Categorie :"></p:outputLabel>
+					<p:selectOneMenu value="#{roleBean.role.type}">
+						<f:selectItem itemLabel="Fichier"
+							itemValue="role.file" />
+						<f:selectItem itemLabel="Planification"
+							itemValue="role.plan" />
+						<f:selectItem itemLabel="Terminal" itemValue="role.ter" />
+						<f:selectItem itemLabel="Utilitaire"
+							itemValue="role.util" />
+						<f:selectItem itemLabel="Superviseur"
+							itemValue="role.super" />
+						<f:selectItem itemLabel="Edition"
+							itemValue="role.edit" />
+						<f:selectItem itemLabel="Reporting"
+							itemValue="role.report" />
+					    <f:selectItem itemLabel="BI" itemValue="role.bi" />
+
+					</p:selectOneMenu>
+					<p:outputLabel value="Page modifiable"></p:outputLabel>
+					<p:selectBooleanButton onLabel="Oui" offLabel="Non"
+						value="#{roleBean.role.editable}" />
+					<p:outputLabel value="Position :"></p:outputLabel>
+					<p:selectOneMenu value="#{roleBean.role.position}">
+						<f:selectItem itemLabel="Left" itemValue="L" />
+						<f:selectItem itemLabel="Hidden" itemValue="H" />
+					</p:selectOneMenu>
+					<p:outputLabel value="Page Url :"></p:outputLabel>
+					<p:inputText value="#{roleBean.role.url}" required="true"
+						requiredMessage="Url de page est vide"
+						title="#{component.valid ? 'Entrer lien du page' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+
+
+
+				</h:panelGrid>
+
+				<p:commandButton value="Valider" action="#{roleBean.insertRole}"
+					update=":form:roles :form:messages" icon="accept"
+					oncomplete="if (!args.validationFailed) {diag_ajout.hide();undisplaymodif();}"></p:commandButton>
+				<p:commandButton icon="cancel" value="Annuler"
+					oncomplete="diag_ajout.hide()"></p:commandButton>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog id="supprimcategorie" header="Supprimer catégorie"
+			 modal="true" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim">
+			<h:form id="formsupprim">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<center style="margin-top: 10px">
+
+							<p:graphicImage value="/resources/icons/alert.gif" width="20"
+								height="20" style="margin-top:10px"></p:graphicImage>
+							<p:outputLabel style="color:red; margin-left:10px"
+								value="Voulez vous supprimer l(es) role(s) suivant(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="suprole" style="margin-top:30px"
+							value="#{roleBean.selectedRoles}" var="role">
+
+							<p:column id="role" headerText="Nom du role">
+								<p:outputLabel value="#{role.roleName}"></p:outputLabel>
+							</p:column>
+
+							<p:column id="URL" headerText="URL">
+								<p:outputLabel value="#{role.url}"></p:outputLabel>
+							</p:column>
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{roleBean.removerole(role)}" update="suprole"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px; width:20%"
+								action="#{roleBean.deleteRole()}" icon="accept"
+								update=":form:roles :form:messages"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Non" icon="cancel"
+								oncomplete="diag_supprim.hide()"
+								style="margin-left:10px; width:20% "></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+</body>
+</html>

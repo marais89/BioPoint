@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+	
+		
+
+		<h:form id="form">
+		
+			<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Export des données" action="/pages/export.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>		
+	</p:toolbarGroup>
+	<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="#{contextBean.changeEmport()}" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+	</p:toolbar>
+		
+			<p:growl id="msg"></p:growl>
+
+
+			<pe:layout fullPage="false" style="width:1300px; height:720px;">
+				<pe:layoutPane position="west" minSize="200">
+				<p:dataTable value="#{exportBean.exporters}" var="export" id="exporters" selection="#{exportBean.selectedExporter}" selectionMode="single"
+				rowKey="#{export.idexporter}">
+				<f:facet name="header">
+				</f:facet>
+				<p:ajax event="rowSelect" listener="#{exportBean.selectExport}"
+					update=":form:exportdata :form:options :form:pointages"></p:ajax>
+				
+				<p:column  style="height:32px;text-transform: capitalize;">
+		<h:outputText value="#{export.name}"></h:outputText>
+				</p:column>
+				
+				</p:dataTable>
+				</pe:layoutPane>
+				<pe:layoutPane position="north">
+					<h:panelGrid id="exportdata" columns="8" cellpadding="5">
+						<p:outputLabel value="Nom du l'export :"></p:outputLabel>
+						<p:inputText value="#{exportBean.name}"></p:inputText>
+						<p:outputLabel value="Date Debut :"></p:outputLabel>
+						<p:calendar value="#{exportBean.debut}" pattern="dd/MM/yyyy" locale="#{contextBean.locale}">
+
+						</p:calendar>
+						<p:outputLabel value="Date Fin :"></p:outputLabel>
+
+						<p:calendar value="#{exportBean.fin}" pattern="dd/MM/yyyy" locale="#{contextBean.locale}"></p:calendar>
+						<p:outputLabel value="Affiliation :"></p:outputLabel>
+						<p:outputPanel id="disp">
+
+							<p:inputText id="affiliation" value="#{exportBean.node}"
+								placeholder="Cliquer Ici..." readonly="true"></p:inputText>
+						</p:outputPanel>
+						<p:panel header="Type d'export">
+							<h:commandLink>
+								<p:graphicImage value="/resources/img/excel.png" />
+								<p:dataExporter type="xls" target="pointages"
+									fileName="xls_pointage_generated" encoding="iso-8859-1" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="/resources/img/pdf.png" />
+								<p:dataExporter type="pdf" target="pointages"
+									fileName="pdf_pointage_generated" encoding="iso-8859-1" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="/resources/img/csv.png" />
+								<p:dataExporter type="csv" target="pointages"
+									fileName="csv_pointage_generated" encoding="iso-8859-1" />
+							</h:commandLink>
+
+							<h:commandLink>
+								<p:graphicImage value="/resources/img/xml.png" />
+								<p:dataExporter type="xml" target="pointages"
+									fileName="xml_pointage_generated" encoding="utf-8" />
+							</h:commandLink>
+						</p:panel>
+						<p:commandButton value="Apperçu" action="#{exportBean.affiche}"
+							update="pointages"></p:commandButton>
+					
+
+						<p:commandButton value="Enregistrer" action="#{exportBean.saveExporter}"
+							update="msg exporters"></p:commandButton>
+
+					</h:panelGrid>
+					<p:overlayPanel for=":form:affiliation" showEvent="mouseover"
+						showCloseIcon="true" dismissable="true" appendToBody="true">
+						<h:form>
+							<p:tree id="aff" value="#{affiliationBean.toorChild}" var="node"
+								selectionMode="single" orientation="vertical" cache="true"
+								selection="#{exportBean.selectedNode}" animate="true">
+								<p:ajax event="select" listener="#{exportBean.select}"
+									update=":form:affiliation :form:disp" />
+								<p:ajax event="unselect" update=":form:affiliation :form:disp" />
+								<p:treeNode expandedIcon="ui-icon-folder-open"
+									collapsedIcon="ui-icon-folder-collapsed" expanded="true">
+									<h:outputText value="#{node}" />
+								</p:treeNode>
+							</p:tree>
+						</h:form>
+					</p:overlayPanel>
+				</pe:layoutPane>
+				<pe:layoutPane position="center" minWidth="1100px" closable="true">
+					<p:dataTable value="#{exportBean.generatedlist}" id="pointages"
+						var="pointage" rowIndexVar="index" paginator="true" rows="10"
+						paginatorPosition="bottom" paginatorAlwaysVisible="false"
+						emptyMessage="">
+						<p:column rendered="#{exportBean.ispicked('Matricule')}">
+				        <f:facet name="header">Matricule</f:facet>
+							<p:outputLabel
+								value="#{exportBean.formatChar('Matricule',pointage.personnel.matricule)}" />
+
+						</p:column>
+						<p:column rendered="#{exportBean.ispicked('Nom')}">
+			 <f:facet name="header">Nom</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatChar('Nom',pointage.personnel.nom)}" />
+						</p:column>
+
+						<p:column headerText="Prenom"
+							rendered="#{exportBean.ispicked('Prenom')}">
+								 <f:facet name="header">Prenom</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatChar('Prenom',pointage.personnel.prenom)}" />
+						</p:column>
+						<p:column headerText="Date"
+							rendered="#{exportBean.ispicked('Jour')}">
+													        <f:facet name="header">Date</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Jour',pointage.id.jour)}" />
+						</p:column>
+						<p:column headerText="Entree1"
+							rendered="#{exportBean.ispicked('Entrée')}">
+							 <f:facet name="header">Entrée 1</f:facet>
+
+							<p:outputLabel value="#{exportBean.formatDate('Entrée',pointage.e1)}" />
+						</p:column>
+						<p:column headerText="EntreePlanifie"
+							rendered="#{exportBean.ispicked('Entrée Planifié')}">
+							 <f:facet name="header">Entrée Planifié</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Entrée Planifié',pointage.sequenceDetail.e1)}" />
+						</p:column>
+						<p:column headerText="Sortie "
+							rendered="#{exportBean.ispicked('Sortie')}">
+							 <f:facet name="header">Sortie</f:facet>
+
+							<p:outputLabel value="#{exportBean.formatDate('Sortie',pointage.s2)}" />
+						</p:column>
+						<p:column headerText="SortiePlanifie"
+							rendered="#{exportBean.ispicked('Sortie Planifié')}">
+							 <f:facet name="header">Sortie  Planifié</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Sortie Planifié',pointage.sequenceDetail.s2)}" />
+						</p:column>
+						<p:column headerText="Pause"
+							rendered="#{exportBean.ispicked('Pause')}">
+							 <f:facet name="header">Pause</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Pause',pointage.sequenceDetail.pause)}" />
+						</p:column>
+						<p:column headerText="Presence"
+							rendered="#{exportBean.ispicked('Présence')}">
+							 <f:facet name="header">Présence</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Présence',pointage.presenceHrMn)}" />
+						</p:column>
+						<p:column headerText="Retard1"
+							rendered="#{exportBean.ispicked('Retard1')}">
+							 <f:facet name="header">Retard 1</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Retard1',pointage.retard1)}" />
+						</p:column>
+						<p:column headerText="Retard2"
+							rendered="#{exportBean.ispicked('Retard2')}">
+							 <f:facet name="header">Retard 2</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Retard2',pointage.retard2)}" />
+						</p:column>
+						<p:column headerText="RetardTotal"
+							rendered="#{exportBean.ispicked('Retard Total')}">
+							 <f:facet name="header">Retard Total</f:facet>
+
+							<p:outputLabel
+								value="#{exportBean.formatDate('Retard Total',pointage.retardHrMn)}" />
+						</p:column>
+						<p:column headerText="Ferie"
+							rendered="#{exportBean.ispicked('Ferié')}">
+							 <f:facet name="header">Ferié</f:facet>
+
+							<p:outputLabel value="#{pointage.ferie?'Oui':'Non'}" />
+						</p:column>
+						<p:column headerText="Absent"
+							rendered="#{exportBean.ispicked('Absent')}">
+								 <f:facet name="header">Absent</f:facet>
+
+							<p:outputLabel value="#{pointage.absent?'Oui':'Non'}" />
+						</p:column>
+						<p:column headerText="Conge"
+							rendered="#{exportBean.ispicked('Congé')}">
+								 <f:facet name="header">Congé</f:facet>
+
+							<p:outputLabel value="#{pointage.conge?'Oui':'Non'}" />
+						</p:column>
+					</p:dataTable>
+					<p:dataGrid id="options" rowIndexVar="index"
+						value="#{exportBean.listExport}" var="option" columns="4">
+						<p:panel
+							style="width:200px !important;margin-right:-40px !important;">
+							<f:facet name="header">
+								<h:panelGrid columns="2"
+									style="float:right;margin-top:-8px !important;margin-right:-8px;">
+									<p:commandButton  rendered="#{exportBean.listExport.size()>1}"
+										action="#{exportBean.remove(option)}" update="options"
+										icon="ui-icon-minus" style="width:25px;height:25px;"></p:commandButton>
+									<p:commandButton id="addbt"
+										rendered="#{index==exportBean.listExport.size()-1}"
+										icon="ui-icon-plus" action="#{exportBean.addoption}"
+										update="options"
+										style="width:25px;height:25px;vertical-align:middle;">
+
+									</p:commandButton>
+								</h:panelGrid>
+							</f:facet>
+
+							<p:outputPanel id="display">
+								<h:panelGrid columns="1" cellspacing="2">
+   <h:outputLabel value="#{option.selectedfield}"
+										rendered="#{!option.display}">
+										<p:ajax event="click" update="display"
+											listener="#{option.switchDisplay}" />
+									</h:outputLabel>
+									<p:selectOneMenu value="#{option.selectedfield}"
+										style="width:180px;margin:0px -8px;"
+										rendered="#{option.display}">
+										<f:selectItem itemLabel="Selectionner un element"
+											itemValue="none" />
+										<p:ajax event="change" process="@this" update="display"
+											listener="#{option.switchDisplay}"></p:ajax>
+										<f:selectItems value="#{option.listfield}" />
+									</p:selectOneMenu>
+									<p:selectOneMenu value="#{option.selectedFormat}"
+										rendered="#{!option.selectedfield.equals('none') and option.display2}"
+										style="width:180px;margin:0px -8px;">
+										<p:ajax event="change" process="@this" update="display"
+											listener="#{option.switchDisplay2}"></p:ajax>
+										<f:selectItem itemLabel="Format par defaut" itemValue="none" />
+										<f:selectItems value="#{option.format}" var="format"
+											itemLabel="#{format}" itemValue="#{format}" />
+
+									</p:selectOneMenu>
+    <h:outputLabel value="Format : #{option.selectedFormat}"
+										rendered="#{!option.display2}">
+										<p:ajax event="click" update="display"
+											listener="#{option.switchDisplay2}" />
+									</h:outputLabel>
+
+								</h:panelGrid>
+							</p:outputPanel>
+						</p:panel>
+
+
+
+					</p:dataGrid>
+				</pe:layoutPane>
+
+			</pe:layout>
+		</h:form>
+	</body>
+	</html>

@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+		
+
+		<h:form id="formmvt">
+		
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Modification des pointages" action="/pages/mvt.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+			</p:toolbar>
+		
+			<p:growl id="msg" ></p:growl>
+		
+			<h:panelGroup id="layoutsContainer">
+				<center>
+
+					<h:panelGrid id="layoutsGrid" columns="1" columnClasses="layoutdiv"
+						cellpadding="0" cellspacing="0">
+						<p:layout fullPage="false"
+							style="width:1400px; height:720px;">
+
+							<p:layoutUnit  position="center" minWidth="600px" closable="true">
+								<p:dataTable id="mvts" var="mvt" value="#{mvtBean.listmvt}"
+									selection="#{mvtBean.selectedMvt}" editable="true" rows="20"
+									paginator="true" paginatorAlwaysVisible="false"
+									paginatorPosition="bottom"
+									emptyMessage="" selectionMode="single"
+									rowKey="#{mvt.id}"
+									rowStyleClass="#{mvtBean.tmpEditlist.contains(mvt)?'edit':'null'}">
+						
+									<f:facet name="header">
+										<p:splitButton value="Pointages" action="#{mvtBean.loadDaymvts}"  icon="ui-icon-circle-arrow-e"
+											type="button" update="mvts">
+											<p:menuitem value="Aujourd'huit"
+												action="#{mvtBean.loadDaymvts}" update="mvts"
+												icon="ui-icon-arrowrefresh-1-w" />
+											<p:menuitem value="Par Date" action="#{mvtBean.activateDatefield}" icon="ui-icon-shuffle" />
+											<p:menuitem value="Par Intervale" action="#{mvtBean.activateInDatefield}" icon="ui-icon-transfer-e-w" />
+
+											<p:menuitem value="Tous" action="#{mvtBean.loadmvts}"
+												update="mvts" icon="ui-icon-flag" />
+										</p:splitButton>
+
+										<p:splitButton icon="ui-icon-circle-minus" value="Retirer"
+											action="#{mvtBean.removeMvt}" update="mvts">
+										<p:menuitem icon="ui-icon-circle-minus"
+											value="Retirer tout" action="#{mvtBean.removeAllMvts}"
+											update="mvts" /></p:splitButton>
+										
+										<p:commandButton icon="ui-icon-disk" value="Enregistrer"
+										action="#{mvtBean.updateMvts}"	update="mvts :formmvt:msg" />
+										<p:separator id="separator" />
+										<p:outputPanel id="display" autoUpdate="true">
+										<p:outputLabel rendered="#{mvtBean.flagd}" value="Date :"></p:outputLabel>
+										<p:spacer rendered="#{mvtBean.flagd}" width="10px"></p:spacer>
+										<p:calendar value="#{mvtBean.startDate}" rendered="#{mvtBean.flagd}" locale="#{contextBean.locale}" effect="blind" style="width:100px !important" 
+										pattern="#{contextBean.listparam.get('dateformat')}">
+										 <p:ajax event="dateSelect" listener="#{mvtBean.loadmvtsbyDate}" process="@this" update="mvts" />  
+										
+										</p:calendar>
+										<p:spacer rendered="#{mvtBean.flagf}" width="30px"></p:spacer>
+										<p:outputLabel rendered="#{mvtBean.flagf}" value="Date Fin:"></p:outputLabel>
+										<p:spacer rendered="#{mvtBean.flagf}" width="10px"></p:spacer>
+										<p:calendar  value="#{mvtBean.endDate}" rendered="#{mvtBean.flagf}" effect="blind" style="width:100px !important" locale="#{contextBean.locale}"
+										  pattern="#{contextBean.listparam.get('dateformat')}">
+										        <p:ajax event="dateSelect" listener="#{mvtBean.loadmvtsbyDate}" update="mvts" />  
+										</p:calendar>
+									</p:outputPanel>
+									</f:facet>
+									<p:ajax event="rowEdit" listener="#{mvtBean.onEdit}"
+										update=":formmvt:msg" />
+									<p:column headerText="Personnel" rendered="#{mvtBean.listmvt.size()>0}">
+										<h:outputText
+											value="#{mvt.personnel.civilite} #{mvt.personnel.prenom} #{mvt.personnel.nom}"></h:outputText>
+									</p:column>
+
+									<p:column headerText="Date" rendered="#{mvtBean.listmvt.size()>0}">
+										<p:cellEditor>
+
+											<f:facet name="output">
+												<h:outputFormat value="#{mvt.jour}"
+													converter="javax.faces.DateTime" />
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="jour" value="#{mvt.jour}"
+													pattern="#{contextBean.listparam.get('dateformat')}" navigator="true" display="inline"
+													effect="drop" locale="#{contextBean.locale}">
+													<f:convertDateTime pattern="#{contextBean.listparam.get('dateformat')}"
+														for="jour" />
+												</p:calendar>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column headerText="Heure" rendered="#{mvtBean.listmvt.size()>0}">
+										<p:cellEditor>
+
+											<f:facet name="output">
+												<h:outputText value="#{mvtBean.convertDate(mvt.heure)}"></h:outputText>
+											</f:facet>
+											<f:facet name="input">
+												<pe:timePicker id="heure" value="#{mvt.heure}" locale="#{contextBean.locale}"
+													mode="popup" widgetVar="popupBtnTimeWidget"
+													label="Popup time picker with button" />
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+<p:column headerText="Etat" rendered="#{mvtBean.listmvt.size()>0}">
+										<p:cellEditor>
+
+											<f:facet name="output">
+										<h:graphicImage value="#{mvt.etatr=='E'?'/resources/img/in.png':'/resources/img/out.png'}" width="30" height="32"/>
+											</f:facet>
+											
+											<f:facet name="input">
+											<p:outputPanel id="disp">
+											<center>
+											<h:graphicImage id="in" value="/resources/img/in.png"  width="30" height="32" rendered="#{mvtBean.way}">
+											<p:ajax event="click" update="disp" oncomplete="#{mvt.setEtatr('E')}" listener="#{mvtBean.switchway}"></p:ajax>
+											</h:graphicImage>
+											<h:graphicImage id="out" value="/resources/img/out.png" width="30" height="32" rendered="#{!mvtBean.way}">
+																						<p:ajax event="click" update="disp"  oncomplete="#{mvt.setEtatr('S')}" listener="#{mvtBean.switchway}"></p:ajax>
+											
+											</h:graphicImage>
+											</center>
+											</p:outputPanel>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+									<p:column style="width:6%" rendered="#{mvtBean.listmvt.size()>0}">
+										<p:rowEditor />
+									</p:column>
+								</p:dataTable>
+
+
+							</p:layoutUnit>
+							<p:layoutUnit position="west" minSize="600">
+								<p:dataTable id="selectedpersonnel" var="personnel"
+									value="#{mvtBean.listPersonnel}" paginatorPosition="bottom"
+									selection="#{mvtBean.storedPersonnel}"
+									emptyMessage=""
+									rowKey="#{personnel.idper}" rows="20" paginator="true"
+									paginatorAlwaysVisible="false">
+									<f:facet name="header">
+										<p:commandButton icon="ui-icon-circle-plus"
+											oncomplete="diag_ajoutpersonnel.show()" value="Personnel(s)"></p:commandButton>
+										<p:commandButton icon="ui-icon-circle-minus" value="Retirer"
+											action="#{mvtBean.removepersonnel}"
+											update="selectedpersonnel" />
+										<p:splitButton icon="ui-icon-circle-plus" value="Pointage" action="#{mvtBean.addPointage}" update=":formmvt:mvts">
+										<p:menuitem icon="ui-icon-circle-plus" value="Pointage Automatique" oncomplete="diag_ajout.show()" update=":formmvt:mvts"></p:menuitem>
+										</p:splitButton>
+										<p:separator id="separator" />
+
+									</f:facet>
+									
+									<p:column selectionMode="multiple" style="width:2%" rendered="#{mvtBean.storedPersonnel.size()!=0}"></p:column> 
+									<p:column id="matri" headerText="Matricule"  rendered="#{mvtBean.storedPersonnel.size()!=0}">
+										<h:outputText value="#{personnel.matricule}"></h:outputText>
+									</p:column>
+
+									<p:column id="nom" headerText="Nom Prenom"  rendered="#{mvtBean.storedPersonnel.size()!=0}">
+										<h:outputText
+											value="#{personnel.civilite} #{personnel.nom} #{personnel.prenom}"></h:outputText>
+									</p:column>
+								</p:dataTable>
+
+
+
+							</p:layoutUnit>
+							</p:layout>
+
+					</h:panelGrid>
+				</center>
+			</h:panelGroup>
+		</h:form>
+		<p:dialog id="personnelAdd" header="Ajout des personnel(s)"	 appendTo="@(body)"
+			width="900" widgetVar="diag_ajoutpersonnel" modal="true">
+			<h:form id="formselect" prependId="false">
+				<p:dataTable id="personnels" var="personnel"
+					value="#{personnelBean.listpersonnel}" widgetVar="diag_personel"
+					emptyMessage=" "
+					filteredValue="#{personnelBean.filtredlistPersonnel}"
+					paginator="true" rows="20"
+					selection="#{mvtBean.tmpselectedPersonnels}"
+					rowKey="#{personnel.idper}" paginatorAlwaysVisible="false"
+					paginatorPosition="bottom"
+					currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+					<f:facet name="header">
+						<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+							onkeyup="diag_personel.filter()"
+							style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+						</p:inputText>
+					</f:facet>
+
+
+					<p:column id="col1" style="width:2%" selectionMode="multiple" />
+
+
+					<p:column id="matricule" filterBy="matricule"
+						headerText="Matricule" sortBy="matricule"
+						filterMatchMode="contains">
+						<h:outputText value="#{personnel.matricule}"></h:outputText>
+					</p:column>
+
+					<p:column id="nom" filterBy="nom" headerText="Nom Prenom"
+						sortBy="nom" filterMatchMode="contains">
+						<h:outputText
+							value="#{personnel.civilite} #{personnel.nom} #{personnel.prenom}"></h:outputText>
+					</p:column>
+
+					<p:column id="tel2" filterBy="telFixe" sortBy="telFixe"
+						headerText="Télphone Portable" filterMatchMode="contains">
+						<h:outputText value="#{personnel.telGsm}"></h:outputText>
+					</p:column>
+					<p:column id="ville" filterBy="ville" headerText="Ville"
+						sortBy="Ville" filterMatchMode="contains">
+						<h:outputText value="#{personnel.ville}"></h:outputText>
+					</p:column>
+
+
+				</p:dataTable>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Ajouter" action="#{mvtBean.addpersonnel}"
+						update=":formmvt:selectedpersonnel"
+						oncomplete="diag_ajoutpersonnel.hide()"></p:commandButton>
+				</h:panelGrid>
+			</h:form>
+
+		</p:dialog>
+		<p:dialog id="personneldiag" header="Ajout d'un mouvement"	 appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true"  height="600px;">
+			<h:form id="formajoutt" prependId="false">
+				<p:fieldset legend="Période/Journée">
+				<h:panelGrid columns="6">
+				<p:outputLabel value="Du :"></p:outputLabel>
+				<p:calendar id="start" value="#{mvtBean.startDate}" showOn="false"  required="true" pattern="yyyy-MM-dd" locale="#{contextBean.locale}">
+				<f:convertDateTime pattern="yyyy-MM-dd" type="date"/>
+				</p:calendar>
+				<p:message for="start"></p:message>
+				<p:spacer width="80px"></p:spacer><p:outputLabel value="Au :"></p:outputLabel>
+				<p:calendar id="End" value="#{mvtBean.endDate}" required="true" pattern="yyyy-MM-dd" locale="#{contextBean.locale}">
+				<f:convertDateTime pattern="yyyy-MM-dd" type="date"/>
+				</p:calendar>
+				<p:message for="End"></p:message>
+				</h:panelGrid>
+				</p:fieldset>
+				
+				<p:fieldset legend="Pointages">
+				<h:panelGrid columns="4">
+				<h:graphicImage value="/resources/img/one.png" height="80px" width="90"/>
+				<p:fieldset  legend="Séance 1">
+				<p:outputPanel id="display1">
+				<h:panelGrid columns="2">
+				<p:selectBooleanCheckbox value="#{mvtBean.be1}" itemLabel="Entrer 1 :">
+				<p:ajax update="display1"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<p:spinner rendered="#{mvtBean.be1}" value="#{mvtBean.e1}"></p:spinner>
+				</h:panelGrid></p:outputPanel>
+				<p:outputPanel id="display7" >
+				<h:panelGrid columns="2">
+				<p:selectBooleanCheckbox value="#{mvtBean.bs1}" itemLabel="Sortie 1 :">
+								<p:ajax update="display7"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<p:spinner rendered="#{mvtBean.bs1}" value="#{mvtBean.s1}"></p:spinner>
+				</h:panelGrid></p:outputPanel>
+				</p:fieldset>
+				<h:graphicImage value="/resources/img/tow.png" height="80px" width="90"/>
+				<p:fieldset  legend="Séance 2">
+								<p:outputPanel id="display2" >
+				<h:panelGrid columns="2">
+				<p:selectBooleanCheckbox value="#{mvtBean.be2}" itemLabel="Entrer 2 :">
+												<p:ajax update="display2"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<p:spinner rendered="#{mvtBean.be2}" value="#{mvtBean.e2}"></p:spinner>
+				</h:panelGrid></p:outputPanel>	<p:outputPanel id="display3" >
+				<h:panelGrid columns="2">
+				<p:selectBooleanCheckbox value="#{mvtBean.bs2}" itemLabel="Sortie 2 :">
+												<p:ajax update="display3"></p:ajax>
+				
+				</p:selectBooleanCheckbox>
+				<p:spinner rendered="#{mvtBean.bs2}" value="#{mvtBean.s2}"></p:spinner>
+				</h:panelGrid></p:outputPanel>
+				</p:fieldset>
+				</h:panelGrid>
+				</p:fieldset>
+				<p:commandButton value="Valider" action="#{mvtBean.insertMvt}" update=":formmvt:msg"
+				
+					oncomplete="if (!args.validationFailed) {diag_ajout.hide()}"></p:commandButton>
+				<p:commandButton value="Annuler" oncomplete="diag_ajout.hide()"></p:commandButton>
+			</h:form>
+		</p:dialog>
+	</body>
+	</html>

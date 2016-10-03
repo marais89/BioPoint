@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+	
+	<h:body  onload="#{horaireBean.changeformsortie()}" >
+		<h:form id="form" style="background-color: rgb(255, 255, 255) !important;" >
+		
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+ <p:commandLink value="Gestion des Horaires   " action="/pages/Horaire.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+		<p:commandButton id="enregistrer" value="Enregistrer"  onstart="PF('blockUIWidget').block()" oncomplete="PF('blockUIWidget').unblock()" action="#{horaireBean.modifierhoriare()}" onclick="init()" ></p:commandButton>
+		<p:commandButton id="annuler" value="Annuler" action="#{horaireBean.annuler()}" style="margin-left:5px" update=":form" ></p:commandButton>
+		</p:toolbarGroup></p:toolbar>
+		
+			<p:growl id="messaget"></p:growl>
+			<h:inputHidden value="#{horaireBean.sizeliste}" id="listsize" />
+
+			<script type="text/javascript"> 
+
+			function init(){				
+				var annuler = document.getElementById('form:annuler');
+					var enregistrer = document.getElementById('form:enregistrer');
+					
+					annuler.style.display='none';
+					enregistrer.style.display='none';
+				};
+				window.onload = init();
+			
+
+			$(function() {
+				
+			  var content= $('tr').children().children().children();
+			        content.hover(function() {
+			    	var col2= $(this).parent().parent().parent();
+			    	var index2 = col2.index($(this).parent().parent());
+			    	
+			    	$(col2).children(":first").css('background-color', 'yellow')
+			    	 $('tr:first-child :nth-child(' + (index2+1) + ')').css('background-color', 'red')
+			       
+			    });
+			});
+
+
+			$(function() {
+				
+			$('tr').children().children().children().mouseout(function() {
+				var col1= $(this).parent().parent().parent();
+				var fils1= col1.children();
+				var index1= fils1.index($(this));
+				var preligne1=  $('tr:first-child');
+			    $(col1).children(":first").css('background-color', 'white')
+			});
+			});
+
+
+
+
+
+
+
+
+</script> 
+
+<pe:blockUI widgetVar="blockUIWidget" css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"  
+            cssOverlay="{backgroundColor: 'gray'}"  
+            timeout="2000"  
+            centerY="false">  
+    <h:panelGrid columns="2">  
+        <h:graphicImage library="img" name="ajax_loading.gif"  
+                        style="margin-right: 12px; vertical-align: middle;width:40px;height:40px "/>  
+        <h:outputText value="Enregistrement des données en cours, Patienter SVP..." style="white-space: nowrap;"/>  
+    </h:panelGrid>  
+</pe:blockUI>     
+<center>
+<!--$(function() {
+    $('tr:first-child').css('background-color', 'green');});
+ -->
+ <p:scrollPanel mode="native"  styleClass="white" style="width:90%" >
+			<p:panelGrid  columns="#{horaireBean.listCalendrier.size()+1}"
+				styleClass="horaire1"  >
+
+				<p:outputLabel >
+					<center>
+						<h4>Catégorie/Calendrier</h4>
+					</center>
+				</p:outputLabel>
+
+				<c:forEach var="cal" begin="1"
+					end="#{horaireBean.listCalendrier.size()}">
+
+					<p:outputLabel 
+						value="#{horaireBean.listCalendrier.get(cal-1).designation}"  style="color: blue; font:16px Comic Sans MS,cursive;" />
+				</c:forEach>
+
+				<c:forEach var="j" begin="1"
+					end="#{horaireBean.listCategorie.size()}">
+					<p:outputLabel
+						value="#{horaireBean.listCategorie.get(j-1).desigCat}" style="color: blue; font:16px Comic Sans MS,cursive;" />
+					<c:forEach var="i" begin="1"
+						end="#{horaireBean.listCalendrier.size()}">					
+			 <p:inplace  label="#{horaireBean.listehoraire[j-1][i-1].desigSeq}" effectSpeed="fast" event="click"  >
+						<p:selectOneMenu  value="#{horaireBean.sequence2}" styleClass="horaire2" converter="sequenceConverter" >
+						<f:selectItem  itemLabel="#{horaireBean.listehoraire[j-1][i-1].desigSeq}" />
+						<f:selectItems value="#{sequencebean.listeSequencesemaine}" var="seq" itemLabel="#{seq.desigSeq}" itemValue="#{seq}"  />
+						<p:ajax  event="change" listener="#{horaireBean.attribuer(j-1,i-1)}" ignoreAutoUpdate="true" update=":form:enregistrer :form:annuler"  />
+						</p:selectOneMenu>
+				</p:inplace>		
+						
+					</c:forEach>
+				</c:forEach>
+			</p:panelGrid>
+			</p:scrollPanel>
+			
+</center>
+		</h:form>
+</h:body>
+		<!-- /*/*/**/*/*/**/*/**/*/ DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+
+</body></html>

@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+
+		<h:form id="form7" enctype="multipart/form-data">
+		<p:toolbar style="margin-bottom: 7px" >
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Affiliation" action="/pages/aff.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter"
+			oncomplete="undisplaymodif();diag_ajout.show()"
+			 icon="add"></p:commandButton>
+		<p:commandButton id="modif" value="Modifier"
+			oncomplete="diag_modif.show()" style="display:none"
+			></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer"
+			oncomplete="diag_supprim.show()" style="display:none"
+			></p:commandButton>
+		<p:commandButton action="#{hirarachyBean.showAppercu}" icon="ui-icon-anchor" style="margin-left:10px;"
+								update=":form7:display1 :formtree:display2 :formtree:apercue"
+								 value="Aperçu des affiliations"></p:commandButton>	
+								 
+								 </p:toolbarGroup>
+								 </p:toolbar>
+		
+			<p:growl id="msg"></p:growl>
+			<p:layout fullPage="false"	style="width:1100px; height:800px;text-align:left">
+				<p:layoutUnit id="pane1" position="center" minWidth="700px" style="width:100%" closable="true">
+					<p:outputPanel id="display1" autoUpdate="true">
+						<p:dataTable id="societes" value="#{hirarachyBean.listsociete}"						
+							var="societe" selection="#{hirarachyBean.selectedAffiliation}"
+							selectionMode="single" rowKey="#{societe.idaff}">
+							<f:facet name="header">
+								<p:outputLabel value="Société"></p:outputLabel>
+							</f:facet>
+							<p:column style="width:2%" headerText="Action">
+								<p:commandButton icon="delete"
+									action="#{hirarachyBean.storeAffiliation(societe)}"
+									style="width:20px;height:20px;" update=":form7:form2"
+									oncomplete="diag_supprim.show()"></p:commandButton>
+								<p:commandButton icon="update"
+									action="#{hirarachyBean.storeAffiliation(societe)}"
+									style="width:20px;height:20px;" update=":form7:form2"
+									oncomplete="diag_modif.show()"></p:commandButton>
+							</p:column>
+							<p:column headerText="Designation">
+								<h:outputText value="#{societe.designation}"></h:outputText>
+							</p:column>
+							<p:column headerText="Adresse">
+								<h:outputText value="#{societe.societe.adresse}"></h:outputText>
+							</p:column>
+							<p:column headerText="Pays">
+								<h:outputText value="#{societe.societe.pays}"></h:outputText>
+							</p:column>
+							<p:column headerText="Ville">
+								<h:outputText value="#{societe.societe.ville}"></h:outputText>
+							</p:column>
+							<p:column headerText="Code Postal">
+								<h:outputText value="#{societe.societe.cp}"></h:outputText>
+							</p:column>
+							<p:column headerText="E-mail">
+								<h:outputText value="#{societe.societe.mail}"></h:outputText>
+							</p:column>
+							<p:column headerText="Tel Fixe">
+								<h:outputText value="#{societe.societe.numTel}"></h:outputText>
+
+							</p:column>
+							<p:column headerText="Fax">
+								<h:outputText value="#{societe.societe.numTel}"></h:outputText>
+							</p:column>
+
+						</p:dataTable>
+						<p:dataTable id="niveau1" value="#{hirarachyBean.listsociete}"
+							var="a"
+							rendered="#{!hirarachyBean.showSecondTable and !hirarachyBean.showTree}"
+							selection="#{hirarachyBean.selectedAffiliation}"
+							selectionMode="single" rowKey="#{a.idaff}">
+							<p:columnGroup type="header">
+								<p:row>
+									<p:column colspan="4" rowspan="1"
+										headerText="#{hirarachyBean.currentType}" />
+
+								</p:row>
+
+								<p:row>
+									<p:column colspan="1" headerText="Action"
+										rendered="#{profileBean.loadRights(view.viewId)}" />
+
+									<p:column colspan="1" headerText="Désignation" />
+
+									<p:column headerText="Déscription" />
+									<p:column headerText="Code" />
+								</p:row>
+							</p:columnGroup>
+							<p:subTable var="b" value="#{hirarachyBean.loadchildrens(a)}">
+								<f:facet name="header">
+									<p:outputPanel autoUpdate="true" style="display:inline;">
+										<h:outputText value=" #{a.description} #{a.designation}" />
+
+									</p:outputPanel>
+								</f:facet>
+								<p:column style="width:2%"
+									rendered="#{profileBean.loadRights(view.viewId)}">
+
+									<p:commandButton icon="delete"
+										action="#{hirarachyBean.storeAffiliation(b)}"
+										style="width:20px;height:20px;" update=":form7:form2"
+										oncomplete="diag_supprim.show()">
+
+									</p:commandButton>
+									<p:commandButton icon="update"
+										action="#{hirarachyBean.storeAffiliation(b)}"
+										style="width:20px;height:20px;" update=":form7:form2"
+										oncomplete="diag_modif.show()">
+
+									</p:commandButton>
+								</p:column>
+								<p:column>
+									<h:outputText value="#{b.designation}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{b.description}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{b.codeteam}" />
+								</p:column>
+							</p:subTable>
+
+						</p:dataTable>
+					</p:outputPanel>
+					
+
+				</p:layoutUnit>
+
+				<p:layoutUnit position="west" minSize="150">
+
+					<p:dataTable value="#{hirarachyBean.types}" var="type"
+						selection="#{hirarachyBean.currentType}" selectionMode="single"
+						rowKey="#{type}">
+						<p:ajax event="rowSelect"
+							listener="#{hirarachyBean.loadAffiliation}"
+							update=":form7:societes :form7:display1"></p:ajax>
+						<p:column headerText="Affiliations" style="height:40px;">
+							<h:outputText value="#{type}" />
+						</p:column>
+						<f:facet name="footer">
+							
+						</f:facet>
+					</p:dataTable>
+
+				</p:layoutUnit>
+				</p:layout>	
+		
+		<p:dialog id="diagaff0" showEffect="fade" hideEffect="explode"
+			header="Ajout d'une affiliation" appendTo="@(body)"
+			widgetVar="diag_ajout" modal="true" width="650px" position="center">
+			<h:form id="form2">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="2" cellpadding="8">
+						<p:outputLabel value="Designation :"></p:outputLabel>
+						<p:inputText value="#{hirarachyBean.affiliation.designation}"
+							required="true" requiredMessage="Désignation est vide"
+							title="#{component.valid ? 'Entrer Désigniation' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="20">
+						</p:inputText>
+						<p:outputLabel value="Code :"></p:outputLabel>
+						<p:inputText value="#{hirarachyBean.affiliation.codeteam}"
+							title="#{component.valid ? 'Entrer code ' : tooltipsController.getErrorMessage(component.clientId)}"
+							required="true" requiredMessage="Désignation est vide"
+							maxlength="20"></p:inputText>
+						<p:outputLabel value="Sous :"
+							rendered="#{!hirarachyBean.showSecondTable}"></p:outputLabel>
+						<p:selectOneMenu id="parents"
+							value="#{hirarachyBean.affiliation.affiliation}"
+							converter="affiliationConverter" style="width:150px;"
+							filter="true" filterMatchMode="contains"
+							rendered="#{!hirarachyBean.showSecondTable}">
+							<f:selectItems value="#{hirarachyBean.listsociete}" var="aff"
+								itemLabel="#{aff.designation}" itemValue="#{aff}"></f:selectItems>
+						</p:selectOneMenu></h:panelGrid>
+					<h:panelGrid id="societepanel" columns="2" cellpadding="8"
+						rendered="#{hirarachyBean.showSecondTable}">
+						<p:outputLabel value="Email :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.mail}" required="true"
+							requiredMessage="E-mail est vide"
+							title="#{component.valid ? 'Entrer une Courrier électronique' : tooltipsController.getErrorMessage(component.clientId)}"
+							validatorMessage="Email invalide" maxlength="28">
+							<f:validateRegex
+								pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+						</p:inputText>
+						<p:outputLabel value="Fax :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.numFax}"
+							required="true" requiredMessage="Numéro fax est vide"
+							title="#{component.valid ? 'Entrer Fax' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="8" validatorMessage="Numéro fax invalide">
+							<f:validateRegex pattern="[0-9]*" />
+						</p:inputText>
+						<p:outputLabel value="Télephone :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.numTel}"
+							required="true" requiredMessage="Numéro télephone est vide"
+							title="#{component.valid ? 'Entrer numero Télephone' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="8" validatorMessage="Numéro télephone invalide">
+							<f:validateRegex pattern="[0-9]*" />
+						</p:inputText>
+						<p:outputLabel value="Adresse :">
+						</p:outputLabel>
+						<p:inputTextarea value="#{hirarachyBean.societe.adresse}"
+							required="true" requiredMessage="Adresse est vide"
+							style="width:200px;height:50px;" maxlength="50"
+							title="#{component.valid ? 'Entrer Adresse' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputTextarea>
+						<p:outputLabel value="Logo :"></p:outputLabel>
+						<p:fileUpload
+							fileUploadListener="#{hirarachyBean.handleFileUpload}"
+							label="Ajouter" uploadLabel="Charger" cancelLabel="Annuler"
+							mode="advanced" multiple="true" sizeLimit="10000000"
+							allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+						<p:outputLabel value="Pays :">
+						</p:outputLabel>
+						<p:selectOneMenu value="#{hirarachyBean.societe.pays}"
+							style="width:180px;">
+							<f:selectItem itemLabel="France" itemValue="France" />
+							<f:selectItem itemLabel="Afghanistan" itemValue="Afghanistan" />
+							<f:selectItem itemLabel="Afrique_Centrale"
+								itemValue="Afrique_Centrale" />
+							<f:selectItem itemLabel="Afrique_du_sud"
+								itemValue="Afrique_du_Sud" />
+							<f:selectItem itemLabel="Albanie" itemValue="Albanie" />
+							<f:selectItem itemLabel="Algerie" itemValue="Algerie" />
+							<f:selectItem itemLabel="Allemagne" itemValue="Allemagne" />
+							<f:selectItem itemLabel="Andorre" itemValue="Andorre" />
+							<f:selectItem itemLabel="Angola" itemValue="Angola" />
+							<f:selectItem itemLabel="Anguilla" itemValue="Anguilla" />
+							<f:selectItem itemLabel="Arabie_Saoudite"
+								itemValue="Arabie_Saoudite" />
+							<f:selectItem itemLabel="Argentine" itemValue="Argentine" />
+							<f:selectItem itemLabel="Armenie" itemValue="Armenie" />
+							<f:selectItem itemLabel="Australie" itemValue="Australie" />
+							<f:selectItem itemLabel="Autriche" itemValue="Autriche" />
+							<f:selectItem itemLabel="Azerbaidjan" itemValue="Azerbaidjan" />
+							<f:selectItem itemLabel="Bahamas" itemValue="Bahamas" />
+							<f:selectItem itemLabel="Bangladesh" itemValue="Bangladesh" />
+							<f:selectItem itemLabel="Barbade" itemValue="Barbade" />
+							<f:selectItem itemLabel="Bahrein" itemValue="Bahrein" />
+							<f:selectItem itemLabel="Belgique" itemValue="Belgique" />
+							<f:selectItem itemLabel="Belize" itemValue="Belize" />
+							<f:selectItem itemLabel="Benin" itemValue="Benin" />
+							<f:selectItem itemLabel="Bermudes" itemValue="Bermudes" />
+							<f:selectItem itemLabel="Bielorussie" itemValue="Bielorussie" />
+							<f:selectItem itemLabel="Bolivie" itemValue="Bolivie" />
+							<f:selectItem itemLabel="Botswana" itemValue="Botswana" />
+							<f:selectItem itemLabel="Bhoutan" itemValue="Bhoutan" />
+							<f:selectItem itemLabel="Boznie_Herzegovine"
+								itemValue="Boznie_Herzegovine" />
+							<f:selectItem itemLabel="Bresil" itemValue="Bresil" />
+							<f:selectItem itemLabel="Brunei" itemValue="Brunei" />
+							<f:selectItem itemLabel="Bulgarie" itemValue="Bulgarie" />
+							<f:selectItem itemLabel="Burkina_Faso" itemValue="Burkina_Faso" />
+							<f:selectItem itemLabel="Burundi" itemValue="Burundi" />
+							<f:selectItem itemLabel="Caiman" itemValue="Caiman" />
+							<f:selectItem itemLabel="Cambodge" itemValue="Cambodge" />
+							<f:selectItem itemLabel="Cameroun" itemValue="Cameroun" />
+							<f:selectItem itemLabel="Canada" itemValue="Canada" />
+							<f:selectItem itemLabel="Canaries" itemValue="Canaries" />
+							<f:selectItem itemLabel="Cap_vert" itemValue="Cap_Vert" />
+							<f:selectItem itemLabel="Chili" itemValue="Chili" />
+							<f:selectItem itemLabel="Chine" itemValue="Chine" />
+							<f:selectItem itemLabel="Chypre" itemValue="Chypre" />
+							<f:selectItem itemLabel="Colombie" itemValue="Colombie" />
+							<f:selectItem itemLabel="Comores" itemValue="Colombie" />
+							<f:selectItem itemLabel="Congo" itemValue="Congo" />
+							<f:selectItem itemLabel="Congo_democratique"
+								itemValue="Congo_democratique" />
+							<f:selectItem itemLabel="Cook" itemValue="Cook" />
+							<f:selectItem itemLabel="Coree_du_Nord" itemValue="Coree_du_Nord" />
+							<f:selectItem itemLabel="Coree_du_Sud" itemValue="Coree_du_Sud" />
+							<f:selectItem itemLabel="Costa_Rica" itemValue="Costa_Rica" />
+							<f:selectItem itemLabel="Cote_d_Ivoire" itemValue="Côte_d_Ivoire" />
+							<f:selectItem itemLabel="Croatie" itemValue="Croatie" />
+							<f:selectItem itemLabel="Cuba" itemValue="Cuba" />
+							<f:selectItem itemLabel="Danemark" itemValue="Danemark" />
+							<f:selectItem itemLabel="Djibouti" itemValue="Djibouti" />
+							<f:selectItem itemLabel="Dominique" itemValue="Dominique" />
+							<f:selectItem itemLabel="Egypte" itemValue="Egypte" />
+							<f:selectItem itemLabel="Emirats" itemValue="Emirats_Arabes_Unis" />
+							<f:selectItem itemLabel="Equateur" itemValue="Equateur" />
+							<f:selectItem itemLabel="Erythree" itemValue="Erythree" />
+							<f:selectItem itemLabel="Espagne" itemValue="Espagne" />
+							<f:selectItem itemLabel="Estonie" itemValue="Estonie" />
+							<f:selectItem itemLabel="Etats_Unis" itemValue="Etats_Unis" />
+							<f:selectItem itemLabel="Ethiopie" itemValue="Ethiopie" />
+							<f:selectItem itemLabel="Falkland" itemValue="Falkland" />
+							<f:selectItem itemLabel="Feroe" itemValue="Feroe" />
+							<f:selectItem itemLabel="Fidji" itemValue="Fidji" />
+							<f:selectItem itemLabel="Finlande" itemValue="Finlande" />
+							<f:selectItem itemLabel="France" itemValue="France" />
+							<f:selectItem itemLabel="Gabon" itemValue="Gabon" />
+							<f:selectItem itemLabel="Gambie" itemValue="Gambie" />
+							<f:selectItem itemLabel="Georgie" itemValue="Georgie" />
+							<f:selectItem itemLabel="Ghana" itemValue="Ghana" />
+							<f:selectItem itemLabel="Gibraltar" itemValue="Gibraltar" />
+							<f:selectItem itemLabel="Grece" itemValue="Grece" />
+							<f:selectItem itemLabel="Grenade" itemValue="Grenade" />
+							<f:selectItem itemLabel="Groenland" itemValue="Groenland" />
+							<f:selectItem itemLabel="Guadeloupe" itemValue="Guadeloupe" />
+							<f:selectItem itemLabel="Guam" itemValue="Guam" />
+							<f:selectItem itemLabel="Guernesey" itemValue="Guernesey" />
+							<f:selectItem itemLabel="Guinee" itemValue="Guinee" />
+							<f:selectItem itemLabel="Guyana" itemValue="Guyana" />
+							<f:selectItem itemLabel="Haiti" itemValue="Haiti" />
+							<f:selectItem itemLabel="Hawaii" itemValue="Hawaii" />
+							<f:selectItem itemLabel="Honduras" itemValue="Honduras" />
+							<f:selectItem itemLabel="Hong_Kong" itemValue="Hong_Kong" />
+							<f:selectItem itemLabel="Hongrie" itemValue="Hongrie" />
+							<f:selectItem itemLabel="Inde" itemValue="Inde" />
+							<f:selectItem itemLabel="Indonesie" itemValue="Indonesie" />
+							<f:selectItem itemLabel="Iraq" itemValue="Iraq" />
+							<f:selectItem itemLabel="Irlande" itemValue="Irlande" />
+							<f:selectItem itemLabel="Islande" itemValue="Islande" />
+							<f:selectItem itemLabel="Italie" itemValue="italie" />
+							<f:selectItem itemLabel="Jamaique" itemValue="Jamaique" />
+							<f:selectItem itemLabel="Jan Mayen" itemValue="Jan Mayen" />
+							<f:selectItem itemLabel="Japon" itemValue="Japon" />
+							<f:selectItem itemLabel="Micronesie" itemValue="Micronesie" />
+							<f:selectItem itemLabel="Midway" itemValue="Midway" />
+							<f:selectItem itemLabel="Moldavie" itemValue="Moldavie" />
+							<f:selectItem itemLabel="Monaco" itemValue="Monaco" />
+							<f:selectItem itemLabel="Mongolie" itemValue="Mongolie" />
+							<f:selectItem itemLabel="Montserrat" itemValue="Montserrat" />
+							<f:selectItem itemLabel="Mozambique" itemValue="Mozambique" />
+							<f:selectItem itemLabel="Namibie" itemValue="Namibie" />
+							<f:selectItem itemLabel="Nauru" itemValue="Nauru" />
+							<f:selectItem itemLabel="Nepal" itemValue="Nepal" />
+							<f:selectItem itemLabel="Nicaragua" itemValue="Nicaragua" />
+							<f:selectItem itemLabel="Niger" itemValue="Niger" />
+							<f:selectItem itemLabel="Nigeria" itemValue="Nigeria" />
+							<f:selectItem itemLabel="Niue" itemValue="Niue" />
+							<f:selectItem itemLabel="Norfolk" itemValue="Norfolk" />
+							<f:selectItem itemLabel="Norvege" itemValue="Norvege" />
+							<f:selectItem itemLabel="Oman" itemValue="Oman" />
+							<f:selectItem itemLabel="Ouganda" itemValue="Ouganda" />
+							<f:selectItem itemLabel="Ouzbekistan" itemValue="Ouzbekistan" />
+							<f:selectItem itemLabel="Pakistan" itemValue="Pakistan" />
+							<f:selectItem itemLabel="Palau" itemValue="Palau" />
+							<f:selectItem itemLabel="Palestine" itemValue="Palestine" />
+							<f:selectItem itemLabel="Panama" itemValue="Panama" />
+							<f:selectItem itemLabel="Paraguay" itemValue="Paraguay" />
+							<f:selectItem itemLabel="Pays_Bas" itemValue="Pays_Bas" />
+							<f:selectItem itemLabel="Perou" itemValue="Perou" />
+							<f:selectItem itemLabel="Philippines" itemValue="Philippines" />
+							<f:selectItem itemLabel="Pologne" itemValue="Pologne" />
+							<f:selectItem itemLabel="Polynesie" itemValue="Polynesie" />
+							<f:selectItem itemLabel="Porto_Rico" itemValue="Porto_Rico" />
+							<f:selectItem itemLabel="Portugal" itemValue="Portugal" />
+							<f:selectItem itemLabel="Qatar" itemValue="Qatar" />
+							<f:selectItem itemLabel="Reunion" itemValue="Reunion" />
+							<f:selectItem itemLabel="Roumanie" itemValue="Roumanie" />
+							<f:selectItem itemLabel="Royaume_Uni" itemValue="Royaume_Uni" />
+							<f:selectItem itemLabel="Russie" itemValue="Russie" />
+							<f:selectItem itemLabel="Rwanda" itemValue="Rwanda" />
+							<f:selectItem itemLabel="Sahara Occidental"
+								itemValue="Sahara Occidental" />
+							<f:selectItem itemLabel="Sainte_Lucie" itemValue="Sainte_Lucie" />
+							<f:selectItem itemLabel="Saint_Marin" itemValue="Saint_Marin" />
+							<f:selectItem itemLabel="Salomon" itemValue="Salomon" />
+							<f:selectItem itemLabel="Salvador" itemValue="Salvador" />
+							<f:selectItem itemLabel="Samoa_Americaine"
+								itemValue="Samoa_Americaine" />
+							<f:selectItem itemLabel="Sao_Tome_et_Principe"
+								itemValue="Sao_Tome_et_Principe" />
+							<f:selectItem itemLabel="Senegal" itemValue="Senegal" />
+							<f:selectItem itemLabel="Seychelles" itemValue="Seychelles" />
+							<f:selectItem itemLabel="Sierra Leone" itemValue="Sierra Leone" />
+							<f:selectItem itemLabel="Singapour" itemValue="Singapour" />
+							<f:selectItem itemLabel="Slovaquie" itemValue="Slovaquie" />
+							<f:selectItem itemLabel="Somalie" itemValue="Somalie" />
+							<f:selectItem itemLabel="Soudan" itemValue="Soudan" />
+							<f:selectItem itemLabel="Sri_Lanka" itemValue="Sri_Lanka" />
+							<f:selectItem itemLabel="Suede" itemValue="Suede" />
+							<f:selectItem itemLabel="Suisse" itemValue="Suisse" />
+							<f:selectItem itemLabel="Surinam" itemValue="Surinam" />
+							<f:selectItem itemLabel="Swaziland" itemValue="Swaziland" />
+							<f:selectItem itemLabel="Syrie" itemValue="Syrie" />
+							<f:selectItem itemLabel="Tadjikistan" itemValue="Tadjikistan" />
+							<f:selectItem itemLabel="Taiwan" itemValue="Taiwan" />
+							<f:selectItem itemLabel="Tonga" itemValue="Tonga" />
+							<f:selectItem itemLabel="Tanzanie" itemValue="Tanzanie" />
+							<f:selectItem itemLabel="Tchad" itemValue="Tchad" />
+							<f:selectItem itemLabel="Thailande" itemValue="Thailande" />
+							<f:selectItem itemLabel="Tibet" itemValue="Tibet" />
+							<f:selectItem itemLabel="Timor_Oriental"
+								itemValue="Timor_Oriental" />
+							<f:selectItem itemLabel="Togo" itemValue="Togo" />
+							<f:selectItem itemLabel="Trinite_et_Tobago"
+								itemValue="Trinite_et_Tobago" />
+							<f:selectItem itemLabel="Tristan da cunha"
+								itemValue="Tristan de cuncha" />
+							<f:selectItem itemLabel="Tunisie" itemValue="Tunisie" />
+							<f:selectItem itemLabel="Turkmenistan" itemValue="Turmenistan" />
+							<f:selectItem itemLabel="Turquie" itemValue="Turquie" />
+							<f:selectItem itemLabel="Ukraine" itemValue="Ukraine" />
+							<f:selectItem itemLabel="Uruguay" itemValue="Uruguay" />
+							<f:selectItem itemLabel="Vanuatu" itemValue="Vanuatu" />
+							<f:selectItem itemLabel="Vatican" itemValue="Vatican" />
+							<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+							<f:selectItem itemLabel="Vietnam" itemValue="Vietnam" />
+							<f:selectItem itemLabel="Wake" itemValue="Wake" />
+							<f:selectItem itemLabel="Wallis et Futuma"
+								itemValue="Wallis et Futuma" />
+							<f:selectItem itemLabel="Yemen" itemValue="Yemen" />
+							<f:selectItem itemLabel="Yougoslavie" itemValue="Yougoslavie" />
+							<f:selectItem itemLabel="Zambie" itemValue="Zambie" />
+							<f:selectItem itemLabel="Zimbabwe" itemValue="Zimbabwe" />
+
+
+						</p:selectOneMenu>
+						<p:outputLabel value="Ville :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.ville}"
+							required="true" requiredMessage="Ville est vide" maxlength="10"
+							title="#{component.valid ? 'Entrer ville' : tooltipsController.getErrorMessage(component.clientId)}"
+							validatorMessage="Prénom invalid">
+										
+										                <f:validateRegex pattern="^[a-zA-Z]+$" />
+						</p:inputText>
+						<p:outputLabel value="Code Postal :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.cp}" maxlength="5"
+							title="#{component.valid ? 'Saisir la code postale' : tooltipsController.getErrorMessage(component.clientId)}"
+							validatorMessage="Code Postale invalid"
+							converterMessage="Code Postale Invalid"></p:inputText>
+						<p:outputLabel value="Site Web :">
+						</p:outputLabel>
+						<p:inputText value="#{hirarachyBean.societe.siteWeb}"
+							placeholder="http://"></p:inputText>
+					</h:panelGrid>
+
+					<p:commandButton value="Valider" icon="accept"
+						action="#{hirarachyBean.insertAffiliation}"
+						update=":form7:niveau1 :form7:societes"
+						oncomplete="if (!args.validationFailed) {diag_ajout.hide()}">
+					</p:commandButton>
+					<p:commandButton value="Annuler" icon="cancel"
+						oncomplete="diag_ajout.hide()"></p:commandButton>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>		
+				
+		</h:form>
+		
+			<p:dialog id="diagTree" showEffect="fade" hideEffect="explode"
+			header="schema des affiliations" appendTo="@(body)"
+			widgetVar="diag_tree" modal="true"  position="center">
+			<h:form id="formtree">
+			<p:outputPanel id="display2" autoUpdate="true">
+						<p:tree id="apercue" value="#{hirarachyBean.rootDisplay}"
+							var="node" orientation="horizontal" animate="true"
+							rendered="#{hirarachyBean.showTree}">
+							<p:treeNode expandedIcon="ui-icon-folder-open"
+								collapsedIcon="ui-icon-folder-collapsed">
+								<h:outputText value="#{node}" />
+							</p:treeNode>
+						</p:tree>
+		</p:outputPanel>		
+		</h:form>
+		</p:dialog>
+		
+			<p:dialog id="modifaffiliation" header="Modifier" showEffect="fade"
+			hideEffect="explode" modal="true" appendTo="@(body)"
+			widgetVar="diag_modif" width="600">
+			<h:form id="formmodif">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="2" cellpadding="8">
+
+						<p:outputLabel value="Designation :"></p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.designation}"
+							required="true" requiredMessage="Désignation est vide"
+							title="#{component.valid ? 'Entrer Désigniation' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="20"></p:inputText>
+						<p:outputLabel value="Code :"></p:outputLabel>
+						<p:inputText value="#{hirarachyBean.selectedAffiliation.codeteam}"
+							title="#{component.valid ? 'Entrer code ' : tooltipsController.getErrorMessage(component.clientId)}"
+							required="true" requiredMessage="Désignation est vide"
+							maxlength="20"></p:inputText>
+						<p:outputLabel value="Sous :"
+							rendered="#{!hirarachyBean.showSecondTable}"></p:outputLabel>
+						<p:selectOneMenu id="parents"
+							value="#{hirarachyBean.selectedAffiliation.affiliation}"
+							converter="affiliationConverter" style="width:150px;"
+							filter="true" filterMatchMode="contains"
+							rendered="#{!hirarachyBean.showSecondTable}">
+							<f:selectItems value="#{hirarachyBean.listsociete}" var="aff"
+								itemLabel="#{aff.designation}" itemValue="#{aff}"></f:selectItems>
+
+						</p:selectOneMenu>
+
+
+					</h:panelGrid>
+					<h:panelGrid id="societepanel" columns="2"
+						rendered="#{hirarachyBean.showSecondTable}" cellpadding="8">
+						<p:outputLabel value="Email :">
+
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.mail}"
+							required="true" requiredMessage="E-mail est vide"
+							title="#{component.valid ? 'Entrer une Courrier électronique' : tooltipsController.getErrorMessage(component.clientId)}"
+							validatorMessage="Email invalide" maxlength="28">
+							<f:validateRegex
+								pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+						</p:inputText>
+
+						<p:outputLabel value="Fax :">
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.numFax}"
+							required="true" requiredMessage="Numéro fax est vide"
+							title="#{component.valid ? 'Entrer Fax' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="8" validatorMessage="Numéro fax invalide">
+							<f:validateRegex pattern="[0-9]*" />
+						</p:inputText>
+
+						<p:outputLabel value="Télephone :">
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.numTel}"
+							required="true" requiredMessage="Numéro télephone est vide"
+							title="#{component.valid ? 'Entrer numero Télephone' : tooltipsController.getErrorMessage(component.clientId)}"
+							maxlength="8" validatorMessage="Numéro télephone invalide">
+							<f:validateRegex pattern="[0-9]*" />
+						</p:inputText>
+
+						<p:outputLabel value="Adresse :">
+						</p:outputLabel>
+						<p:inputTextarea
+							value="#{hirarachyBean.selectedAffiliation.societe.adresse}"
+							style="width:200px;height:50px;" required="true"
+							requiredMessage="Adresse est vide" maxlength="50"
+							title="#{component.valid ? 'Entrer Adresse' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputTextarea>
+						<p:outputLabel value="Logo :"></p:outputLabel>
+						<p:fileUpload
+							fileUploadListener="#{hirarachyBean.handleFileUploadUpdate}"
+							label="Ajouter" uploadLabel="Charger" cancelLabel="Annuler"
+							mode="advanced" multiple="true" sizeLimit="10000000"
+							allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+
+						<p:outputLabel value="Pays :">
+						</p:outputLabel>
+						<p:selectOneMenu
+							value="#{hirarachyBean.selectedAffiliation.societe.pays}"
+							style="width:180px;">
+							<f:selectItem itemLabel="France" itemValue="France" />
+							<f:selectItem itemLabel="Afghanistan" itemValue="Afghanistan" />
+							<f:selectItem itemLabel="Afrique_Centrale"
+								itemValue="Afrique_Centrale" />
+							<f:selectItem itemLabel="Afrique_du_sud"
+								itemValue="Afrique_du_Sud" />
+							<f:selectItem itemLabel="Albanie" itemValue="Albanie" />
+							<f:selectItem itemLabel="Algerie" itemValue="Algerie" />
+							<f:selectItem itemLabel="Allemagne" itemValue="Allemagne" />
+							<f:selectItem itemLabel="Andorre" itemValue="Andorre" />
+							<f:selectItem itemLabel="Angola" itemValue="Angola" />
+							<f:selectItem itemLabel="Anguilla" itemValue="Anguilla" />
+							<f:selectItem itemLabel="Arabie_Saoudite"
+								itemValue="Arabie_Saoudite" />
+							<f:selectItem itemLabel="Argentine" itemValue="Argentine" />
+							<f:selectItem itemLabel="Armenie" itemValue="Armenie" />
+							<f:selectItem itemLabel="Australie" itemValue="Australie" />
+							<f:selectItem itemLabel="Autriche" itemValue="Autriche" />
+							<f:selectItem itemLabel="Azerbaidjan" itemValue="Azerbaidjan" />
+							<f:selectItem itemLabel="Bahamas" itemValue="Bahamas" />
+							<f:selectItem itemLabel="Bangladesh" itemValue="Bangladesh" />
+							<f:selectItem itemLabel="Barbade" itemValue="Barbade" />
+							<f:selectItem itemLabel="Bahrein" itemValue="Bahrein" />
+							<f:selectItem itemLabel="Belgique" itemValue="Belgique" />
+							<f:selectItem itemLabel="Belize" itemValue="Belize" />
+							<f:selectItem itemLabel="Benin" itemValue="Benin" />
+							<f:selectItem itemLabel="Bermudes" itemValue="Bermudes" />
+							<f:selectItem itemLabel="Bielorussie" itemValue="Bielorussie" />
+							<f:selectItem itemLabel="Bolivie" itemValue="Bolivie" />
+							<f:selectItem itemLabel="Botswana" itemValue="Botswana" />
+							<f:selectItem itemLabel="Bhoutan" itemValue="Bhoutan" />
+							<f:selectItem itemLabel="Boznie_Herzegovine"
+								itemValue="Boznie_Herzegovine" />
+							<f:selectItem itemLabel="Bresil" itemValue="Bresil" />
+							<f:selectItem itemLabel="Brunei" itemValue="Brunei" />
+							<f:selectItem itemLabel="Bulgarie" itemValue="Bulgarie" />
+							<f:selectItem itemLabel="Burkina_Faso" itemValue="Burkina_Faso" />
+							<f:selectItem itemLabel="Burundi" itemValue="Burundi" />
+							<f:selectItem itemLabel="Caiman" itemValue="Caiman" />
+							<f:selectItem itemLabel="Cambodge" itemValue="Cambodge" />
+							<f:selectItem itemLabel="Cameroun" itemValue="Cameroun" />
+							<f:selectItem itemLabel="Canada" itemValue="Canada" />
+							<f:selectItem itemLabel="Canaries" itemValue="Canaries" />
+							<f:selectItem itemLabel="Cap_vert" itemValue="Cap_Vert" />
+							<f:selectItem itemLabel="Chili" itemValue="Chili" />
+							<f:selectItem itemLabel="Chine" itemValue="Chine" />
+							<f:selectItem itemLabel="Chypre" itemValue="Chypre" />
+							<f:selectItem itemLabel="Colombie" itemValue="Colombie" />
+							<f:selectItem itemLabel="Comores" itemValue="Colombie" />
+							<f:selectItem itemLabel="Congo" itemValue="Congo" />
+							<f:selectItem itemLabel="Congo_democratique"
+								itemValue="Congo_democratique" />
+							<f:selectItem itemLabel="Cook" itemValue="Cook" />
+							<f:selectItem itemLabel="Coree_du_Nord" itemValue="Coree_du_Nord" />
+							<f:selectItem itemLabel="Coree_du_Sud" itemValue="Coree_du_Sud" />
+							<f:selectItem itemLabel="Costa_Rica" itemValue="Costa_Rica" />
+							<f:selectItem itemLabel="Cote_d_Ivoire" itemValue="Côte_d_Ivoire" />
+							<f:selectItem itemLabel="Croatie" itemValue="Croatie" />
+							<f:selectItem itemLabel="Cuba" itemValue="Cuba" />
+							<f:selectItem itemLabel="Danemark" itemValue="Danemark" />
+							<f:selectItem itemLabel="Djibouti" itemValue="Djibouti" />
+							<f:selectItem itemLabel="Dominique" itemValue="Dominique" />
+							<f:selectItem itemLabel="Egypte" itemValue="Egypte" />
+							<f:selectItem itemLabel="Emirats" itemValue="Emirats_Arabes_Unis" />
+							<f:selectItem itemLabel="Equateur" itemValue="Equateur" />
+							<f:selectItem itemLabel="Erythree" itemValue="Erythree" />
+							<f:selectItem itemLabel="Espagne" itemValue="Espagne" />
+							<f:selectItem itemLabel="Estonie" itemValue="Estonie" />
+							<f:selectItem itemLabel="Etats_Unis" itemValue="Etats_Unis" />
+							<f:selectItem itemLabel="Ethiopie" itemValue="Ethiopie" />
+							<f:selectItem itemLabel="Falkland" itemValue="Falkland" />
+							<f:selectItem itemLabel="Feroe" itemValue="Feroe" />
+							<f:selectItem itemLabel="Fidji" itemValue="Fidji" />
+							<f:selectItem itemLabel="Finlande" itemValue="Finlande" />
+							<f:selectItem itemLabel="France" itemValue="France" />
+							<f:selectItem itemLabel="Gabon" itemValue="Gabon" />
+							<f:selectItem itemLabel="Gambie" itemValue="Gambie" />
+							<f:selectItem itemLabel="Georgie" itemValue="Georgie" />
+							<f:selectItem itemLabel="Ghana" itemValue="Ghana" />
+							<f:selectItem itemLabel="Gibraltar" itemValue="Gibraltar" />
+							<f:selectItem itemLabel="Grece" itemValue="Grece" />
+							<f:selectItem itemLabel="Grenade" itemValue="Grenade" />
+							<f:selectItem itemLabel="Groenland" itemValue="Groenland" />
+							<f:selectItem itemLabel="Guadeloupe" itemValue="Guadeloupe" />
+							<f:selectItem itemLabel="Guam" itemValue="Guam" />
+							<f:selectItem itemLabel="Guernesey" itemValue="Guernesey" />
+							<f:selectItem itemLabel="Guinee" itemValue="Guinee" />
+							<f:selectItem itemLabel="Guyana" itemValue="Guyana" />
+							<f:selectItem itemLabel="Haiti" itemValue="Haiti" />
+							<f:selectItem itemLabel="Hawaii" itemValue="Hawaii" />
+							<f:selectItem itemLabel="Honduras" itemValue="Honduras" />
+							<f:selectItem itemLabel="Hong_Kong" itemValue="Hong_Kong" />
+							<f:selectItem itemLabel="Hongrie" itemValue="Hongrie" />
+							<f:selectItem itemLabel="Inde" itemValue="Inde" />
+							<f:selectItem itemLabel="Indonesie" itemValue="Indonesie" />
+							<f:selectItem itemLabel="Iraq" itemValue="Iraq" />
+							<f:selectItem itemLabel="Irlande" itemValue="Irlande" />
+							<f:selectItem itemLabel="Islande" itemValue="Islande" />
+							<f:selectItem itemLabel="Italie" itemValue="italie" />
+							<f:selectItem itemLabel="Jamaique" itemValue="Jamaique" />
+							<f:selectItem itemLabel="Jan Mayen" itemValue="Jan Mayen" />
+							<f:selectItem itemLabel="Japon" itemValue="Japon" />
+							<f:selectItem itemLabel="Jersey" itemValue="Jersey" />
+							<f:selectItem itemLabel="Jordanie" itemValue="Jordanie" />
+							<f:selectItem itemLabel="Kazakhstan" itemValue="Kazakhstan" />
+							<f:selectItem itemLabel="Kenya" itemValue="Kenya" />
+							<f:selectItem itemLabel="Kirghizstan" itemValue="Kirghizistan" />
+							<f:selectItem itemLabel="Kiribati" itemValue="Kiribati" />
+							<f:selectItem itemLabel="Koweit" itemValue="Koweit" />
+							<f:selectItem itemLabel="Laos" itemValue="Laos" />
+							<f:selectItem itemLabel="Lesotho" itemValue="Lesotho" />
+							<f:selectItem itemLabel="Lettonie" itemValue="Lettonie" />
+							<f:selectItem itemLabel="Liban" itemValue="Liban" />
+							<f:selectItem itemLabel="Liberia" itemValue="Liberia" />
+							<f:selectItem itemLabel="Liechtenstein" itemValue="Liechtenstein" />
+							<f:selectItem itemLabel="Lituanie" itemValue="Lituanie" />
+							<f:selectItem itemLabel="Luxembourg" itemValue="Luxembourg" />
+							<f:selectItem itemLabel="Lybie" itemValue="Lybie" />
+							<f:selectItem itemLabel="Macao" itemValue="Macao" />
+							<f:selectItem itemLabel="Macedoine" itemValue="Macedoine" />
+							<f:selectItem itemLabel="Madagascar" itemValue="Madagascar" />
+							<f:selectItem itemLabel="Madère" itemValue="Madère" />
+							<f:selectItem itemLabel="Malaisie" itemValue="Malaisie" />
+							<f:selectItem itemLabel="Malawi" itemValue="Malawi" />
+							<f:selectItem itemLabel="Maldives" itemValue="Maldives" />
+							<f:selectItem itemLabel="Mali" itemValue="Mali" />
+							<f:selectItem itemLabel="Malte" itemValue="Malte" />
+							<f:selectItem itemLabel="Man" itemValue="Man" />
+							<f:selectItem itemLabel="Maroc" itemValue="Maroc" />
+							<f:selectItem itemLabel="Marshall" itemValue="Marshall" />
+							<f:selectItem itemLabel="Martinique" itemValue="Martinique" />
+							<f:selectItem itemLabel="Maurice" itemValue="Maurice" />
+							<f:selectItem itemLabel="Mauritanie" itemValue="Mauritanie" />
+							<f:selectItem itemLabel="Mayotte" itemValue="Mayotte" />
+							<f:selectItem itemLabel="Mexique" itemValue="Mexique" />
+							<f:selectItem itemLabel="Micronesie" itemValue="Micronesie" />
+							<f:selectItem itemLabel="Midway" itemValue="Midway" />
+							<f:selectItem itemLabel="Moldavie" itemValue="Moldavie" />
+							<f:selectItem itemLabel="Monaco" itemValue="Monaco" />
+							<f:selectItem itemLabel="Mongolie" itemValue="Mongolie" />
+							<f:selectItem itemLabel="Montserrat" itemValue="Montserrat" />
+							<f:selectItem itemLabel="Mozambique" itemValue="Mozambique" />
+							<f:selectItem itemLabel="Namibie" itemValue="Namibie" />
+							<f:selectItem itemLabel="Nauru" itemValue="Nauru" />
+							<f:selectItem itemLabel="Nepal" itemValue="Nepal" />
+							<f:selectItem itemLabel="Nicaragua" itemValue="Nicaragua" />
+							<f:selectItem itemLabel="Niger" itemValue="Niger" />
+							<f:selectItem itemLabel="Nigeria" itemValue="Nigeria" />
+							<f:selectItem itemLabel="Niue" itemValue="Niue" />
+							<f:selectItem itemLabel="Norfolk" itemValue="Norfolk" />
+							<f:selectItem itemLabel="Norvege" itemValue="Norvege" />
+							<f:selectItem itemLabel="Oman" itemValue="Oman" />
+							<f:selectItem itemLabel="Ouganda" itemValue="Ouganda" />
+							<f:selectItem itemLabel="Ouzbekistan" itemValue="Ouzbekistan" />
+							<f:selectItem itemLabel="Pakistan" itemValue="Pakistan" />
+							<f:selectItem itemLabel="Palau" itemValue="Palau" />
+							<f:selectItem itemLabel="Palestine" itemValue="Palestine" />
+							<f:selectItem itemLabel="Panama" itemValue="Panama" />
+							<f:selectItem itemLabel="Paraguay" itemValue="Paraguay" />
+							<f:selectItem itemLabel="Pays_Bas" itemValue="Pays_Bas" />
+							<f:selectItem itemLabel="Perou" itemValue="Perou" />
+							<f:selectItem itemLabel="Philippines" itemValue="Philippines" />
+							<f:selectItem itemLabel="Pologne" itemValue="Pologne" />
+							<f:selectItem itemLabel="Polynesie" itemValue="Polynesie" />
+							<f:selectItem itemLabel="Porto_Rico" itemValue="Porto_Rico" />
+							<f:selectItem itemLabel="Portugal" itemValue="Portugal" />
+							<f:selectItem itemLabel="Qatar" itemValue="Qatar" />
+							<f:selectItem itemLabel="Reunion" itemValue="Reunion" />
+							<f:selectItem itemLabel="Roumanie" itemValue="Roumanie" />
+							<f:selectItem itemLabel="Royaume_Uni" itemValue="Royaume_Uni" />
+							<f:selectItem itemLabel="Russie" itemValue="Russie" />
+							<f:selectItem itemLabel="Rwanda" itemValue="Rwanda" />
+							<f:selectItem itemLabel="Sahara Occidental"
+								itemValue="Sahara Occidental" />
+							<f:selectItem itemLabel="Sainte_Lucie" itemValue="Sainte_Lucie" />
+							<f:selectItem itemLabel="Saint_Marin" itemValue="Saint_Marin" />
+							<f:selectItem itemLabel="Salomon" itemValue="Salomon" />
+							<f:selectItem itemLabel="Salvador" itemValue="Salvador" />
+							<f:selectItem itemLabel="Samoa_Americaine"
+								itemValue="Samoa_Americaine" />
+							<f:selectItem itemLabel="Sao_Tome_et_Principe"
+								itemValue="Sao_Tome_et_Principe" />
+							<f:selectItem itemLabel="Senegal" itemValue="Senegal" />
+							<f:selectItem itemLabel="Seychelles" itemValue="Seychelles" />
+							<f:selectItem itemLabel="Sierra Leone" itemValue="Sierra Leone" />
+							<f:selectItem itemLabel="Singapour" itemValue="Singapour" />
+							<f:selectItem itemLabel="Slovaquie" itemValue="Slovaquie" />
+							<f:selectItem itemLabel="Somalie" itemValue="Somalie" />
+							<f:selectItem itemLabel="Soudan" itemValue="Soudan" />
+							<f:selectItem itemLabel="Sri_Lanka" itemValue="Sri_Lanka" />
+							<f:selectItem itemLabel="Suede" itemValue="Suede" />
+							<f:selectItem itemLabel="Suisse" itemValue="Suisse" />
+							<f:selectItem itemLabel="Surinam" itemValue="Surinam" />
+							<f:selectItem itemLabel="Swaziland" itemValue="Swaziland" />
+							<f:selectItem itemLabel="Syrie" itemValue="Syrie" />
+							<f:selectItem itemLabel="Tadjikistan" itemValue="Tadjikistan" />
+							<f:selectItem itemLabel="Taiwan" itemValue="Taiwan" />
+							<f:selectItem itemLabel="Tonga" itemValue="Tonga" />
+							<f:selectItem itemLabel="Tanzanie" itemValue="Tanzanie" />
+							<f:selectItem itemLabel="Tchad" itemValue="Tchad" />
+							<f:selectItem itemLabel="Thailande" itemValue="Thailande" />
+							<f:selectItem itemLabel="Tibet" itemValue="Tibet" />
+							<f:selectItem itemLabel="Timor_Oriental"
+								itemValue="Timor_Oriental" />
+							<f:selectItem itemLabel="Togo" itemValue="Togo" />
+							<f:selectItem itemLabel="Trinite_et_Tobago"
+								itemValue="Trinite_et_Tobago" />
+							<f:selectItem itemLabel="Tristan da cunha"
+								itemValue="Tristan de cuncha" />
+							<f:selectItem itemLabel="Tunisie" itemValue="Tunisie" />
+							<f:selectItem itemLabel="Turkmenistan" itemValue="Turmenistan" />
+							<f:selectItem itemLabel="Turquie" itemValue="Turquie" />
+							<f:selectItem itemLabel="Ukraine" itemValue="Ukraine" />
+							<f:selectItem itemLabel="Uruguay" itemValue="Uruguay" />
+							<f:selectItem itemLabel="Vanuatu" itemValue="Vanuatu" />
+							<f:selectItem itemLabel="Vatican" itemValue="Vatican" />
+							<f:selectItem itemLabel="Venezuela" itemValue="Venezuela" />
+							<f:selectItem itemLabel="Vietnam" itemValue="Vietnam" />
+							<f:selectItem itemLabel="Wake" itemValue="Wake" />
+							<f:selectItem itemLabel="Wallis et Futuma"
+								itemValue="Wallis et Futuma" />
+							<f:selectItem itemLabel="Yemen" itemValue="Yemen" />
+							<f:selectItem itemLabel="Yougoslavie" itemValue="Yougoslavie" />
+							<f:selectItem itemLabel="Zambie" itemValue="Zambie" />
+							<f:selectItem itemLabel="Zimbabwe" itemValue="Zimbabwe" />
+
+
+						</p:selectOneMenu>
+						<p:outputLabel value="Ville :">
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.ville}"
+							required="true" requiredMessage="Ville est vide" maxlength="10"
+							title="#{component.valid ? 'Entrer ville' : tooltipsController.getErrorMessage(component.clientId)}"></p:inputText>
+						<p:outputLabel value="Code Postal :">
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.cp}"
+							maxlength="5"
+							title="#{component.valid ? 'Saisir la code postale' : tooltipsController.getErrorMessage(component.clientId)}"
+							validatorMessage="Code Postale invalid"
+							converterMessage="Code Postale Invalid"></p:inputText>
+						<p:outputLabel value="Site Web :">
+						</p:outputLabel>
+						<p:inputText
+							value="#{hirarachyBean.selectedAffiliation.societe.siteWeb}"
+							placeholder="http://"></p:inputText>
+					</h:panelGrid>
+
+
+					<p:commandButton value="Valider" icon="accept"
+						action="#{hirarachyBean.updateAffiliation}"
+						update=":form7:niveau1 :form7:societes"
+						oncomplete="if (!args.validationFailed) {diag_modif.hide()}"></p:commandButton>
+					<p:commandButton value="Annuler" oncomplete="diag_modif.hide()"
+						icon="cancel"></p:commandButton>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+		<p:dialog id="supprimpersonnel" header="Supprimer affiliation"
+			showEffect="fade" hideEffect="explode" modal="true"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:outputPanel autoUpdate="true">
+					<h:panelGrid columns="1">
+						<p:outputLabel
+							value="Vous éte sure pour la supprission de cette affiliation !!"></p:outputLabel>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Valider"
+								action="#{hirarachyBean.deleteAffiliation}"
+								update=":form7:msg :form7:niveau1" ajax="true"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Annuler" oncomplete="diag_supprim.hide()"></p:commandButton>
+
+						</h:panelGrid>
+
+					</h:panelGrid>
+				</p:outputPanel>
+			</h:form>
+		</p:dialog>
+				
+
+</body>
+</html>

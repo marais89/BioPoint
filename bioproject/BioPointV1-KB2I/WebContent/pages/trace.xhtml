@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+
+	
+
+		<h:form id="form">
+		
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Trace des opérateurs" action="/pages/trace.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+			</p:toolbarGroup>
+	<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+	</p:toolbar>
+		
+			<p:growl id="msg"></p:growl>
+			<p:dataTable id="traces" value="#{traceBean.listTrace}" var="trace"
+				filteredValue="#{traceBean.filtredList}" widgetVar="wtrace"
+				paginator="true" paginatorAlwaysVisible="false"
+				paginatorPosition="bottom" rows="20" 
+				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100" sortMode="multiple">
+				<f:facet name="header">
+					<p:outputPanel autoUpdate="true" style="display:inline;">
+						<p:inputText id="globalFilter" placeholder="Rechercher Ici"
+							style="display:inline;vertical-align: middle;width:150px;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;"
+							onkeyup="wtrace.filter()"></p:inputText>
+					</p:outputPanel>
+				</f:facet>
+				<p:column id="idtr" headerText="Numéro d'action" sortBy="idtr">
+					<p:outputLabel value="#{trace.idtr}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Déscription" filterBy="action"
+					filterMatchMode="contains" sortBy="action">
+					<p:outputLabel value="#{trace.action}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Date" filterBy="dateHeure"
+					filterMatchMode="contains" sortBy="dateHeure">
+					<p:outputLabel value="#{trace.dateHeure}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Objet" filterBy="objet"
+					filterMatchMode="contains" sortBy="objet">
+					<p:outputLabel value="#{trace.objet}"></p:outputLabel>
+				</p:column>
+				<p:column headerText="Operateur" filterBy="operateur.login"
+					filterMatchMode="contains" sortBy="operateur.login">
+					<p:outputLabel value="#{trace.operateur.login}"></p:outputLabel>
+				</p:column>
+
+
+			</p:dataTable>
+
+
+		</h:form>
+	</body>
+	</html>

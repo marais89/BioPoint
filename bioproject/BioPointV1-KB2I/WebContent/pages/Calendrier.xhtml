@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+					
+	
+		<h:form id="form">
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Calendrier   " action="/pages/Calendrier.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" icon="add"
+			action="#{calendrierBean.changevalajout()}"
+			oncomplete="diag_modif.show()" update=":form :form_modif_cal" ></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" icon="update" rendered="#{profileBean.loadRights('/pages/Calendrier.xhtml')}"
+			action="#{calendrierBean.changevalmodif()}"
+			oncomplete="diag_modif.show()" style="display:none" update=":form :form_modif_cal" ></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete" rendered="#{profileBean.loadRights('/pages/Calendrier.xhtml')}"
+			oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+		<p:commandButton id="affiche" value="Calendrier annuel" action="#{calendrierBean.initchron()}" icon="calender"
+			oncomplete="diag_timeline.show()"></p:commandButton>	
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":form" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+		</p:toolbar>
+		
+			<p:growl id="messaget"></p:growl>
+			<h:inputHidden value="#{calendrierBean.sizeliste}" id="listsize" />
+
+			<script type="text/javascript"> 
+
+ 
+function start() {   
+
+    window['progress'] = setInterval(function() {  
+        var pbClient = PF('pbClient'),  
+        oldValue = pbClient.getValue(),  
+        newValue = oldValue + 1;  
+
+        pbClient.setValue(pbClient.getValue() + 1);  
+
+        if(newValue === 100) {  
+            clearInterval(window['progress']);  
+        }  
+
+
+    }, 500);  
+}  
+
+</script>
+			<pe:blockUI widgetVar="blockUIWidget"
+				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+				cssOverlay="{backgroundColor: 'gray'}" timeout="2000" centerY="false">
+				<h:panelGrid columns="2">
+					<h:graphicImage library="img" name="ajax_loading.gif"
+						style="margin-right: 12px; vertical-align: middle;width:40px;height:40px " />
+					<h:outputText
+						value="Initialisation des parametre, Patienter SVP..."
+						style="white-space: nowrap;" />
+						 
+				</h:panelGrid>
+				
+				
+			</pe:blockUI>
+			
+			
+
+			<p:dataTable id="tab_cal" var="calendrier"
+				value="#{calendrierBean.listeCalendrier}"
+				widgetVar="diag_calendrier"
+				emptyMessage=" ____ la liste des calendrier est vide "
+				filteredValue="#{calendrierBean.filtredlistCalendrier}"
+				paginator="true" rows="24"
+				selection="#{calendrierBean.listeCalendrierSelectionne}"
+				
+				rowKey="#{calendrier.idcal}" paginatorAlwaysVisible="true"
+				paginatorPosition="bottom"
+				currentPageReportTemplate="{startRecord}-{endRecord} Total {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+				<f:facet name="header">
+					<pe:tooltip global="true" position="left center"
+						targetPosition="right center" forSelector=".ui-state-error" />
+					<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+						onkeyup="diag_calendrier.filter()"
+						style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+					</p:inputText>
+
+				</f:facet>
+				
+				<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+				<p:ajax event="rowSelect" listener="#{calendrierBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+				<p:ajax event="rowSelectCheckbox"
+					listener="#{calendrierBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()"></p:ajax>
+				<p:ajax event="rowUnselectCheckbox"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+				<p:ajax event="rowUnselect"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+				<p:column id="col1" style="width:2%" selectionMode="multiple" />
+				<p:column id="designation" filterBy="designation"
+					headerText="Désignation" sortBy="designation"
+					filterMatchMode="contains">
+					<h:outputText value="#{calendrier.designation}">
+
+					</h:outputText>
+				</p:column>
+
+				<p:column id="typeCal" filterBy="typeCal" headerText="Type"
+					sortBy="typeCal" filterMatchMode="contains">
+					<h:outputText  value="#{calendrier.typeCal}"></h:outputText>
+				</p:column>
+				<p:column id="dateDebut" filterBy="dateDebut" headerText="Date debut"
+					sortBy="dateDebut" filterMatchMode="contains">
+					<h:outputText value="#{calendrier.dateDebut}"></h:outputText>
+				</p:column>
+				<p:column id="dateFin" filterBy="dateFin" headerText="Date fin"
+					sortBy="dateFin" filterMatchMode="contains">
+					<h:outputText value="#{calendrier.dateFin}"></h:outputText>
+				</p:column>
+			</p:dataTable>
+		</h:form>
+
+
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+
+
+		<!-- ***************************** DIAG MODIF ******************************* -->
+
+		<p:dialog id="cal" header="Calendrier" appendTo="@(body)" widgetVar="diag_modif"
+			modal="false" resizable="false">
+			<h:form id="form_modif_cal">
+    
+                   <p:progressBar id="pbar" widgetVar="pbAjax" ajax="true" value="#{calendrierBean.progress}" labelTemplate="{value}%" styleClass="animated">   
+                         </p:progressBar>      
+    
+				<p:panel id="panmodif" >					
+					<p:outputPanel autoUpdate="false" >
+					 <p:outputPanel autoUpdate="true">
+					<p:outputLabel id="out1" value="#{calendrierBean.txt}" rendered="#{calendrierBean.flagbar}" ></p:outputLabel>
+					</p:outputPanel>
+						<h:panelGrid id="pgmodif" columns="2"  >
+							<p:fieldset legend="Information géneral" style="margin-top:20px">
+								<h:panelGrid columns="2">
+									<p:outputLabel value="Type* :"></p:outputLabel>
+									<p:selectOneMenu id="type" 
+										value="#{calendrierBean.clendrierSelectionne.typeCal}"
+										style=" width:100%"
+										requiredMessage="Vous devez selectionner le type de la calendrier"
+										required="false" validatorMessage="Champs invalid" >
+										<f:selectItem itemLabel="Choisissez un type" />
+										<f:selectItem
+											itemLabel="#{calendrierBean.clendrierSelectionne.typeCal}"
+											itemValue="" />
+										<f:selectItems value="#{calendrierBean.listType}" />
+										<f:validateRegex pattern="^[a-zA-Z0-9]+" for="type" />
+									</p:selectOneMenu>
+
+
+									<p:outputLabel value="Désignation* :"></p:outputLabel>
+									<p:inputText
+										value="#{calendrierBean.clendrierSelectionne.designation}"
+										required="false" style=" width:95%"
+										
+										requiredMessage="Champs invalid"
+										title="#{component.valid ? 'Désignation' : tooltipsController.getErrorMessage(component.clientId)}">
+										
+									</p:inputText>
+
+								</h:panelGrid>
+							</p:fieldset>
+							<p:fieldset legend="Période" style="margin-top:20px">
+								<h:panelGrid columns="2">
+
+									<p:outputLabel value="Date début* :"></p:outputLabel>
+									<p:calendar id="cal1" effect="drop" maxdate="#{calendrierBean.datefin}" mindate="#{calendrierBean.datedepart}" 
+										value="#{calendrierBean.clendrierSelectionne.dateDebut}"
+										converterMessage="format date invalide" maxlength="8"
+										placeholder="#{calendrierBean.clendrierSelectionne.dateDebut}"
+										title="#{component.valid ? 'Date début' : tooltipsController.getErrorMessage(component.clientId)}">
+										<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+									</p:calendar>
+
+
+									<p:outputLabel value="Date fin* :"></p:outputLabel>
+									<p:calendar id="cal2" effect="drop" maxdate="#{calendrierBean.datefin}" mindate="#{calendrierBean.datedepart}" 
+										value="#{calendrierBean.clendrierSelectionne.dateFin}"
+										converterMessage="format date invalide" maxlength="8"
+										placeholder="#{calendrierBean.clendrierSelectionne.dateFin}"
+										title="#{component.valid ? 'Date fin' : tooltipsController.getErrorMessage(component.clientId)}">
+										<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+
+									</p:calendar>
+
+								</h:panelGrid>
+							</p:fieldset>
+						</h:panelGrid>
+					</p:outputPanel>
+					<center>
+						<p:commandButton value="Valider" id="bvalider"
+							style=" width:20%;hight:100%; margin-left:1px; margin-top:20px"
+							actionListener="#{calendrierBean.selonexecute()}"
+							immediate="false"
+							onstart="PF('blockUIWidget').block()"
+							onclick="PF('pbAjax').start()"
+							update=":form:messaget :form:tab_cal"
+							oncomplete="PF('blockUIWidget').unblock()"
+							
+							>
+							
+						</p:commandButton>
+						<p:commandButton value="Annuler" id="bannuler"
+							style="margin-left:3px; width:20%;hight:100%"
+							action="#{calendrierBean.vider()}"
+							oncomplete="diag_modif.hide()" />
+					</center>
+
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+		<!-- ************************* DIAG SUPPRIME ************************ -->
+
+		<p:dialog id="supprimcal" header="Supprimer calendrier"
+			modal="false" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim">
+			<h:form id="formsupprim">
+			<p:progressBar widgetVar="pbAjax2" ajax="true" value="#{calendrierBean.progress}" labelTemplate="{value}%" styleClass="animated">   
+                         </p:progressBar> 
+				<p:panel>
+				
+                        
+					<p:outputPanel autoUpdate="true">
+					 <p:outputLabel  value="#{calendrierBean.txt}" rendered="#{calendrierBean.flagbar}"  ></p:outputLabel>
+						<center style="margin-top: 10px">
+
+							<p:graphicImage value="/resources/icons/alert.gif" width="20"
+								height="20" style="margin-top:10px"></p:graphicImage>
+							<p:outputLabel style="color:red; margin-left:10px"
+								value="Voulez vous supprimer l(es) calendrier(s) suivante(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="supcat" style="margin-top:30px"
+							value="#{calendrierBean.listeCalendrierSelectionne}"
+							var="calendrier">
+
+							<p:column id="designation" headerText="Désignation">
+								<h:outputText value="#{calendrier.designation}"></h:outputText>
+							</p:column>
+
+							<p:column id="typeSeq" headerText="Type_calendrier">
+								<h:outputText value="#{calendrier.typeCal}"></h:outputText>
+							</p:column>
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{calendrierBean.removecalendrier(calendrier)}"
+									update="supcat"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px; width:20%"
+								action="#{calendrierBean.supprimcalendrier()}"
+								update=":form:messaget :form:tab_cal"
+								oncomplete="diag_supprim.hide()"
+								onclick="PF('pbAjax2').start()"
+								></p:commandButton>
+							<p:commandButton value="Non" oncomplete="diag_supprim.hide()"
+							action="#{calendrierBean.vider()}"
+								style="margin-left:10px; width:20% "></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+<!-- ************************* DIAG chronogramme ************************ -->
+
+		<p:dialog id="tim" header="calendrier"
+			modal="true" resizable="true"
+			appendTo="@(body)" widgetVar="diag_timeline" width="70%" >
+			<h:form id="formtimeline">
+			 <p:poll interval="2" update=":formtimeline :formtimeline:timeline" />
+				<p:panel>	                       
+					<p:outputPanel autoUpdate="true">
+					<pe:timeline id="timeline" value="#{calendrierBean.model}"  
+             editable="true" eventMargin="10" eventMarginAxis="0"  
+             locale="#{calendrierBean.locale}"  
+             start="#{calendrierBean.start}"  
+             end="#{calendrierBean.end}"  
+             showNavigation="false"   
+             axisOnTop="true" themable="false"
+             max="#{calendrierBean.datefin}" min="#{calendrierBean.datedepart}"
+             zoomable="true" 
+             />  
+					
+					
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+
+</body>
+</html>

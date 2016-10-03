@@ -1,0 +1,41 @@
+
+<ui:composition template="/WEB-INF/templates/layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="title">Dashboard</ui:define>
+	<ui:define name="titre">
+		<p:commandLink value="Dashboard" action="/pages/spagoChart.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+	</ui:define>	
+	<ui:define name="content">
+
+		<h:form id="form7" enctype="multipart/form-data">
+			<p:growl id="msg"></p:growl>
+ <p:scrollPanel  style="width:100%;min-width:1024px">
+	 <h:panelGrid columns="2" style="width:100%">	
+		
+
+      <h:panelGrid columns="1" style="width:115%">
+   
+          <p:column colspan="2"><iframe  id="myframe" name="myframe" width="115%" height="400 px" scrolling="no" marginheight="0" frameborder="0" src="#{spagoBean.getUrlDashAff('81')}" > </iframe></p:column>
+          <p:column colspan="2"><iframe  id="myframe2" name="myframe2" width="115%" height="450 px" scrolling="no" marginheight="0" frameborder="0" src="#{spagoBean.getUrlDashAff('82')}"> </iframe></p:column>
+
+                </h:panelGrid>
+            <p:column colspan="3"><iframe  id="myframe3" name="myframe3" width="60%" height="450 px" scrolling="no" marginheight="0" style="float: right" frameborder="0" src="#{spagoBean.getUrlDashAff('83')}" > </iframe> </p:column>
+    
+
+
+
+
+</h:panelGrid>
+</p:scrollPanel>
+			</h:form>
+		</ui:define>	
+		
+			
+	</ui:composition>		

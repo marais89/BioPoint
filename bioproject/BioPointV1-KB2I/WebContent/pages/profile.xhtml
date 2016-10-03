@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+	<h:form id="form"> 
+	
+	<p:commandLink value="Paramétres" action="/pages/profile.xhtml" style="text-decoration: none;font-size:19px;margin-top:5px;"></p:commandLink>
+	
+	<p:messages id="msg"></p:messages>
+	<p:tabView effect="blind">
+	<p:tab title="Profile">
+	<p:fieldset legend="#{msg['profile.auth']} :">
+		<h:panelGrid columns="2" cellpadding="5px" cellspacing="5px">
+	
+	<p:outputLabel value="#{msg['profile.old']} :"></p:outputLabel>
+	<p:password value="#{profileBean.apass}" style="font-size:19px !important" maxlength="10">
+	
+	</p:password>
+	<p:outputLabel value="#{msg['profile.new']} :"></p:outputLabel>
+	<p:password value="#{profileBean.pass}"  style="font-size:19px !important" match="pass" feedback="true" maxlength="10"></p:password>
+	<p:outputLabel value="#{msg['profile.conf']} :"></p:outputLabel>
+	<p:password id="pass" value="#{profileBean.pass2}"  style="font-size:19px !important" feedback="true" maxlength="10"></p:password></h:panelGrid>
+	</p:fieldset>
+		<p:fieldset legend="#{msg['profile.style']} :">
+	
+	<h:panelGrid columns="2" cellpadding="5px" cellspacing="5px">
+	<p:outputLabel value="Theme actuel :"></p:outputLabel>
+	<p:outputLabel id="themeac" value="#{profileBean.theme}"></p:outputLabel> 
+	<p:outputLabel value="#{msg['profile.theme']} :"></p:outputLabel>
+   <p:themeSwitcher style="width:165px" effect="fade" value="#{profileBean.currentUser.theme}"  id="themePreview">
+            <p:ajax event="change" update="themeac"></p:ajax>
+            <f:selectItems value="#{profileBean.themes}"/>
+         
+            
+ </p:themeSwitcher>
+ 	<p:outputLabel value="#{msg['profile.lang']} :"></p:outputLabel>
+ 
+ <p:selectOneMenu value="#{localeManagedBean.language}" style="height:25px;font-size:16px;width:165px" effect="fade">
+<p:ajax event="change" process="@this" update="@(form :not(.noupdate)) :formwest:menuwest" partialSubmit="true" oncomplete="expandmenu()"></p:ajax>
+									<f:selectItems value="#{localeManagedBean.locales}" />
+								</p:selectOneMenu>
+ 
+  </h:panelGrid>
+ </p:fieldset>
+  <p:commandButton value="#{msg['profile.save']} " icon="accept" action="#{profileBean.updateuser}" update=":form:msg"></p:commandButton>
+ </p:tab>
+ <p:tab title="Paramétre">
+	<ui:repeat var="par" value="#{parametreBean.listparam}">
+	 	<h:panelGrid columns="2" cellpadding="5" cellspacing="5">
+	<p:outputLabel value="#{par.label} :"></p:outputLabel>
+	<p:selectOneMenu value="#{par.valueparam}" rendered="#{par.nomparam.equals('dateformat')}" >
+	<f:selectItem itemLabel="yyyy-MM-dd" itemValue="yyyy-MM-dd" />
+		<f:selectItem itemLabel="yyyy MMM dd" itemValue="yyyy MMM dd"/>
+		<f:selectItem itemLabel="dd-MM-yyyy" itemValue="dd-MM-yyyy"/>
+		<f:selectItem itemLabel="dd/MM/yyyy" itemValue="yyyy/MM/dd"/>
+		<f:selectItem itemLabel="dd MMM yyyy" itemValue="dd MMM yyyy"/>
+	
+	</p:selectOneMenu>
+	<p:inputText value="#{par.valueparam}" title="#{par.description}" rendered="#{!par.nomparam.equals('dateformat')}">
+	</p:inputText>	</h:panelGrid>
+	
+	</ui:repeat>
+	
+	<p:commandButton value="Enregistrer"  action="#{parametreBean.display}" update=":form:msg"></p:commandButton>
+ </p:tab>
+ </p:tabView>
+</h:form> 
+ 
+  </body>
+  </html>

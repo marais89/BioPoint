@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<h:outputStylesheet name="newstyle.css" library="scss"/>
+</h:head>
+<body>
+
+		<h:form id="formcontent">	
+		
+	
+		
+		
+<!-- 		<p:outputPanel id="outputpanal" autoUpdate="true" > -->
+<!-- 		<p:lineChart id="category" value="#{chartView.categoryModel}" legendPosition="e"  animate="true" style="width:99%;margin-top:20px;display:block !important" -->
+<!--      title="Présence dans les 2 derniers semaines" minY="0" maxY="#{chartView.listpersonnel.size()+5}" > -->
+<!--      <body    /> -->
+<!--      </p:lineChart>  -->
+<!--      </p:outputPanel> -->
+     
+  <center>  
+<p:panelGrid columns="3"  style="border:1px solid black !important;"  >
+<p:panel  style="text-align:center;  border:1px solid white ;">
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/biom01.jpg')">
+
+			<div class="overlay"></div>
+
+			<div class="corner-overlay-content">Info</div>
+
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+
+		</div>
+		</p:panel>
+		<p:panel  style="text-align:center;border:1px solid white ;">
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/biom02.jpg')">
+			<div class="overlay"></div>
+			<div class="corner-overlay-content">Info</div>
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+		</div>
+		</p:panel>
+		
+		<p:panel  style="text-align:center;border:1px solid white ;">
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/clavier01.jpg')">
+			<div class="overlay"></div>
+			<div class="corner-overlay-content">Info</div>
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+		</div>
+		</p:panel>
+		
+		
+		<p:panel  style="text-align:center;border:1px solid white ;">		
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/ethernet01.jpg')">
+			<div class="overlay"></div>
+			<div class="corner-overlay-content">Info</div>
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+		</div>
+		</p:panel>
+		
+		<p:panel  style="text-align:center;border:1px solid white ;">		
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/biom05.jpg')">
+			<div class="overlay"></div>
+			<div class="corner-overlay-content">Info</div>
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+		</div>
+		</p:panel>
+		
+		<p:panel  style="text-align:center;border:1px solid white ;">		
+		<div class="content-item" style="background-image:url('${request.contextPath}/resources/img_accueil/world01.jpg')">
+			<div class="overlay"></div>
+			<div class="corner-overlay-content">Info</div>
+			<div class="overlay-content">
+				<h2>Image Ink Logo</h2>
+				<p>Logo for a screen printing company. They wanted a
+					detachable/recognizable brand that didn't need the name of the
+					company.</p>
+			</div>
+		</div>
+		</p:panel>
+		
+	</p:panelGrid>	
+</center> 
+		<!--      <h:panelGrid columns="2" style="margin-top:40px;margin-left:40px;" >      -->
+<!-- <p:scrollPanel mode="native"  styleClass="white" style="width:99%;margin-top:20px;height:500px" > -->
+<!--      <p:dataTable id="personnels" var="personnel" -->
+<!-- 				value="#{personnelBean.listPersonnel2}" widgetVar="diag_personel" -->
+<!-- 				emptyMessage=" ____ la liste des personnels est vide " -->
+<!-- 				filteredValue="#{personnelBean.filtredlistPersonnel}" -->
+<!-- 				paginator="true" rows="20"  -->
+<!-- 				selection="#{personnelBean.selectedpersonnels}" -->
+<!-- 				rowKey="#{personnel.idper}" paginatorAlwaysVisible="true" -->
+<!-- 				paginatorPosition="bottom" -->
+<!-- 				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}" -->
+<!-- 				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" -->
+<!-- 				rowsPerPageTemplate="10,20,25,35,50,75,100"  > -->
+<!-- 				<f:facet name="header"> -->
+<!-- 					<p:inputText id="globalFilter" placeholder="Rechercher Ici....." -->
+<!-- 						onkeyup="diag_personel.filter()" -->
+<!-- 						style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;"> -->
+<!-- 						<p:outputLabel value="#{chartView.dernierDate}" /> -->
+<!-- 					</p:inputText>					 -->
+					
+<!-- 				</f:facet> -->
+				
+			
+				
+<!-- 						<p:column style="width:5%">				 -->
+<!-- 					<p:graphicImage value="#{personnelBean.convertToFile(personnel)}" width="50" height="40" > -->
+<!-- 					</p:graphicImage>	 -->
+										
+<!-- 				</p:column> -->
+				
+<!-- 				<p:column id="matricule" filterBy="matricule" headerText="Matricule" -->
+<!-- 					sortBy="matricule" filterMatchMode="contains"> -->
+<!-- 					<h:outputText value="#{personnel.matricule}" /> -->
+<!-- 				</p:column> -->
+<!-- 				<p:column id="nom" filterBy="fullname" headerText="Nom Prenom" -->
+<!-- 					sortBy="fullname" filterMatchMode="contains"> -->
+
+<!-- 					<h:outputText value="#{personnel.fullname}" /> -->
+<!-- 				</p:column> -->
+				
+<!-- 				<p:column id="affiliation" headerText="Affiliation" > -->
+<!-- 					<h:outputText -->
+<!-- 						value="#{personnel.currentAffiliation.designation}" /> -->
+<!-- 				</p:column>	 -->
+				
+<!-- 				<p:column id="finContrat" headerText="Fin Contrat" > -->
+<!-- 				<center> -->
+<!-- 					<h:outputText -->
+<!-- 						value="#{personnel.finContrat}" /> -->
+<!-- 						</center> -->
+<!-- 				</p:column>	 -->
+				
+<!-- 				<p:column id="Contart" headerText="Contrat" > -->
+<!-- 				<center> -->
+<!-- 						<p:graphicImage value="/resources/img/ok.png" width="35px" height="35px" rendered="#{chartView.conpaireDate(personnel.finContrat)}"/> -->
+<!-- 					<p:graphicImage value="/resources/img/info.png" width="35px" height="35px" rendered="#{!chartView.conpaireDate(personnel.finContrat)}" /> -->
+<!-- 						</center> -->
+<!-- 				</p:column>		 -->
+				
+<!-- 				<p:column id="presence" headerText="Présence" > -->
+<!-- 				<center> -->
+<!-- 					<p:graphicImage value="/resources/imp/green_button.png" width="35px" height="35px" rendered="#{chartView.inList(personnel.idper)}"/> -->
+<!-- 					<p:graphicImage value="/resources/imp/red_button.png" width="35px" height="35px" rendered="#{!chartView.inList(personnel.idper)}" /> -->
+<!-- 					</center>	 -->
+<!-- 					</p:column>	 -->
+						
+<!-- 			</p:dataTable> -->
+<!-- 			</p:scrollPanel> -->
+			
+<!--      <p:pieChart id="custom" value="#{chartView.pieModel}" legendPosition="e" fill="false" showDataLabels="true"   -->
+<!--                 title="presence par affiliation" style="width:600px;height:380px;margin-left:50px" sliceMargin="5" diameter="150" />   -->
+     
+<!--      </h:panelGrid> -->
+			
+		</h:form>
+	
+</body>
+</html>

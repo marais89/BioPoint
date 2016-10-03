@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+		<h:form id="form">
+			<p:growl id="messaget"></p:growl>
+			<h:inputHidden value="#{categorieBean.sizeliste}" id="listsize" />
+			
+	<p:toolbar style="margin-bottom: 7px" >
+	<p:toolbarGroup align="left" >
+<p:commandLink value="Catégorie  " action="/pages/Categorie.xhtml" 
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" icon="add" action="#{categorieBean.changevalajout()}" 
+			oncomplete="diag_modif.show()" ></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" icon="update" action="#{categorieBean.changevalmodif()}" rendered="#{profileBean.loadRights('/pages/Categorie.xhtml')}"
+			oncomplete="diag_modif.show()" style="display:none" ></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete" rendered="#{profileBean.loadRights('/pages/Categorie.xhtml')}"
+			oncomplete="diag_supprim.show()" style="display:none" ></p:commandButton>
+	</p:toolbarGroup>  
+	<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+	</p:toolbar>	
+
+			<p:dataTable id="tab_cat" var="categorie"
+				value="#{categorieBean.listCategorie}" widgetVar="diag_categorie"
+				emptyMessage=" ____ la liste des categorie est vide "
+				filteredValue="#{categorieBean.filtredlistCategorie}"
+				paginator="true" rows="24"
+				selection="#{categorieBean.selectlistcategorie}"
+				rowKey="#{categorie.idcat}" paginatorAlwaysVisible="true"
+				paginatorPosition="bottom"
+				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+				<f:facet name="header">
+				<pe:tooltip global="true" position="left center" targetPosition="right center" forSelector=".ui-state-error"/>
+					<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+						onkeyup="diag_categorie.filter()"
+						style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+					</p:inputText>
+
+
+
+				</f:facet>
+				
+				<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+				<p:ajax event="rowSelect" listener="#{categorieBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+
+				<p:ajax event="rowSelectCheckbox" listener="#{categorieBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()"></p:ajax>
+
+				<p:ajax event="rowUnselectCheckbox"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+
+				<p:ajax event="rowUnselect"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+
+				<p:column id="col1" style="width:2%" selectionMode="multiple" />
+
+
+				<p:column id="desigCat" filterBy="desigCat" headerText="Désignation"
+					sortBy="desigCat" filterMatchMode="contains">
+					<h:outputText value="#{categorie.desigCat}"></h:outputText>
+				</p:column>
+				
+				<p:column id="description" filterBy="description" headerText="Description"
+					sortBy="description" filterMatchMode="contains">
+					<h:outputText value="#{categorie.description}"></h:outputText>
+				</p:column>
+
+			</p:dataTable>
+
+		</h:form>
+
+
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+		<!-- ***************************** DIAG MODIF ******************************* -->
+
+		<p:dialog id="categoriem" header="Catégorie" appendTo="@(body)"
+			widgetVar="diag_modif" modal="true" resizable="false">
+			<h:form id="form_modif_cat">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+
+						<h:panelGrid columns="2">
+
+
+							<p:outputLabel value="Désignation* :"></p:outputLabel>
+							<p:inputText  id="desmod" value="#{categorieBean.categorieSelect.desigCat}"
+								required="true" style=" width:95%" maxlength="20"
+								requiredMessage="La valeur 'désignation' est obligatoire"  
+								title="#{component.valid ? 'Entrer un nom' : tooltipsController.getErrorMessage(component.clientId)}">
+							
+								</p:inputText>
+								<p:outputLabel value="Description  :"></p:outputLabel>
+								<p:inputTextarea rows="3" cols="30" value="#{categorieBean.categorieSelect.description}" counter="display" maxlength="100" counterTemplate="{0} caractères restants." autoResize="false" style="height:40px !important; width:95%" />
+								<h:outputText id="vide" />
+                                        <h:outputText id="display" style="margin-left:25px;color:#480000;"/>
+
+							</h:panelGrid>
+
+							<p:outputLabel />
+							<center>
+							
+								<p:commandButton value="Valider" ajax="true"
+									action="#{categorieBean.selonexecute()}"
+									update=":form:messaget :form:tab_cat" icon="accept"
+									oncomplete="if (!args.validationFailed) {diag_modif.hide()}">
+								</p:commandButton>
+								<p:commandButton value="Annuler" process="@none"
+									style="margin-left:1px; margin-top:20px" icon="cancel"
+									oncomplete="diag_modif.hide()" />
+							
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+		<!-- ************************* DIAG SUPPRIME ************************ -->
+
+		<p:dialog id="supprimcategorie" header="Supprimer catégorie"
+			 modal="true" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim">
+			<h:form id="formsupprim">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<center style="margin-top: 10px">
+
+							<p:graphicImage value="/resources/icons/alert.gif" width="20"
+								height="20" style="margin-top:10px"></p:graphicImage>
+							<p:outputLabel style="color:red; margin-left:10px"
+								value="Voulez vous supprimer l(es) catégorie(s) suivante(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="supcat" style="margin-top:30px"
+							value="#{categorieBean.selectlistcategorie}" var="categorie">
+
+							<p:column id="designation" headerText="Désignation">
+								<p:outputLabel value="#{categorie.desigCat}"></p:outputLabel>
+							</p:column>
+
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{categorieBean.removecategorie(categorie)}"
+									update="supcat"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px;"
+							action="#{categorieBean.supprimCategorie()}"
+								update=":form:messaget :form:tab_cat" icon="accept"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Non" oncomplete="diag_supprim.hide()"
+								style="margin-left:10px;" icon="cancel"></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+
+	</body>
+	</html>

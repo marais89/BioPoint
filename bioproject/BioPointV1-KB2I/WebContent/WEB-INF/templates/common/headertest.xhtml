@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+		xmlns:pe="http://primefaces.org/ui/extensions">
+
+<h:head>
+
+</h:head>
+<body>
+<p:messages id="msgheader"  ></p:messages>
+<script type="text/javascript"> 
+  		
+
+</script>
+	<ui:composition>
+	<script type="text/javascript">
+$(function(){
+        var stickyRibbonTop = $('.blockable').offset().top;
+          
+        $(window).scroll(function(){
+                if( $(window).scrollTop() > stickyRibbonTop ) {
+                	  $(".blockable").fadeIn(3000,function(){
+                        $('.blockable').css({position: 'fixed', top: '0px'});
+                        $('.blockable').css({width: '100%'});
+                      
+                            // Animation complete
+                          });
+                        
+                } else {
+                        $('.blockable').css({position: 'static', top: '0px'});
+                       
+                }
+        });
+});
+
+</script>
+<!-- <p:poll onstart="switchImg()" listener="#{batchBean.start}" interval="200"></p:poll> -->
+<!-- <p:overlayPanel for="batch" style="width:250px;"> -->
+<!-- <p:progressBar widgetVar="pbatch" ajax="true" value="#{batchBean.progress}" labelTemplate="{value}%" style="width:220px;height:25px;border-radius:0px !important"> -->
+<!--         <p:ajax event="complete" onstart="switchnotImg()"/> -->
+<!-- </p:progressBar> -->
+<!-- </p:overlayPanel> -->
+
+<p:outputPanel   autoUpdate="true" >
+<pe:blockUI widgetVar="loadpointage" id="ajaxHeader"
+				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+				cssOverlay="{backgroundColor: 'red'}"  centerY="false">
+				<h:panelGrid columns="2">
+					<h:graphicImage library="img" name="ajax_loading.gif"
+						style="margin-right: 12px; vertical-align: middle;width:30px;height:30px " />
+						
+					<h:outputText id="msgh"
+						value="#{pointageBean2.msg}"
+						style="white-space: nowrap;width: 50px" />
+						 
+				</h:panelGrid>
+			</pe:blockUI>
+</p:outputPanel>
+
+<p:toolbar styleClass="toolbar" >
+			<p:toolbarGroup align="left" styleClass=".clockheader" style="margin-top:6px;" >
+				<p:clock pattern="EEEE dd MMMM yyyy HH:mm" mode="server" />
+			</p:toolbarGroup>
+<p:toolbarGroup align="right" >
+
+
+<h:panelGrid columns="10" >
+
+<!-- <p:commandLink  id="sss"   > -->
+<!-- <p:graphicImage id="sss2" title="Pointage synchronisé" value="/resources/imp/database_accept.png" width="25" height="25" style="vertical-align:middle;margin-right:10px"/> -->
+<!-- <p:ajax  event="click" listener="#{pointageBean2.mettrnew()}"  /> -->
+<!-- </p:commandLink> -->
+
+
+<!-- <p:outputPanel autoUpdate="true"  > -->
+<!-- <p:graphicImage id="loadgig" library="img" rendered="#{pointageBean2.flag3}" name="ajax_loading.gif" 	style="margin-right: 12px; vertical-align:middle;margin-right:-2px;margin-top:-10px; width:25px;height:25px; " />	 -->
+<!-- </p:outputPanel> -->
+
+<p:poll id="poll" interval="120" rendered="#{pointageBean2.indice}" ignoreAutoUpdate="true" listener="#{pointageBean2.execut()}" update="formheader:loadpointage formheader:gif1 formheader:gif2 formheader:gif3"  >
+<p:commandLink  id="loadpointage"  action="#{pointageBean2.test()}"  onclick="PF('loadpointage').block()" oncomplete="PF('loadpointage').unblock()" update=":formheader :formheader:loadpointage :formheader:gif3" >
+<p:graphicImage id="gif1" title="Pointage synchronisé" value="/resources/imp/database_accept.png" width="25" height="25" style="vertical-align:middle;margin-right:10px" rendered="#{pointageBean2.flag1}"/>
+<p:graphicImage id="gif2" title="#{pointageBean2.valx} nouveaux pointages" value="/resources/imp/base-alarm.gif"  width="25" height="25" style="vertical-align:middle;margin-right:10px" rendered="#{pointageBean2.flag2}" />
+<p:graphicImage id="gif3" title="chargement des pointage en cours ..."  value="/resources/imp/base-down.gif" width="25" height="25" style="vertical-align:middle;margin-right:10px" rendered="#{pointageBean2.flag3}"/>
+<p:ajax event="click" listener="#{pointageBean2.fr()}" update="formheader:loadpointage"  />
+<pe:tooltip for="loadpointage" showEvent="focus" hideEvent="blur">
+</pe:tooltip>  
+</p:commandLink>
+</p:poll>
+
+				<ui:repeat var="alert" value="#{alertBean.listalert}">
+					<a href="#{alert.getUrl()}"
+						style="display: block-inline; text-decoration: none"> <p:outputLabel
+							value="#{alert.nbalert}"
+							style="color:white;text-decoration: blink;width:20px;height:30px;font-size:10px !important;
+								background-color:red;padding:5px 5px 5px 5px; -moz-border-radius: 70px; 
+   -webkit-border-radius: 70px; 
+   border-radius: 70px;display:inline;vertical-align:middle;text-decoration: none !important;" />
+						<h:graphicImage value="#{alert.icon}" title="#{alert.description}"
+							styleClass="aletetat"
+							style="cursor:pointer;margin-right:15px;vertical-align:middle;"
+							width="20px" height="20px" onclick="#{alert.action}">
+						</h:graphicImage>
+					</a>
+				</ui:repeat>
+				
+<!-- 				<p:commandLink icon="wait" id="batch" actionListener="#{batchBean.updateList}" > -->
+<!-- 				<p:graphicImage id="syncp" value="/resources/img/sync.png" width="22" height="22" style="vertical-align:middle;"/> -->
+<!-- 			    <p:graphicImage id="syncp2" value="/resources/img/ajax-loader1.gif" width="22" height="22" style="display:none;vertical-align:middle;"/> -->
+				
+<!-- 				</p:commandLink> -->
+				
+			  <p:splitButton value="#{msg['layout.bien']} #{loginController.login}" icon="conf">
+<p:menuitem value="Paramétre" url="/pages/profile.xhtml"  icon="config"></p:menuitem>
+<p:menuitem value="Déconnexion" url="/logout" icon="disconnect">
+           </p:menuitem></p:splitButton>
+           
+           </h:panelGrid>
+</p:toolbarGroup>
+		</p:toolbar>			
+			 
+		<p:toolbar style="height:42px;padding-top:6px;z-index:10;" id="toolbar" styleClass="blockable ui-widget-header">
+			<p:toolbarGroup align="left" style=" padding-left: 30px; ">
+				
+<ui:insert name="titre"></ui:insert>
+			</p:toolbarGroup>
+			<p:toolbarGroup align="left" style="margin-left:30px">
+			<ui:insert name="crud">
+			
+			</ui:insert>
+			
+				
+				
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right" style=" padding-left: 30px; ">
+                       
+                               
+<ui:insert name="icon">
+</ui:insert>
+                       </p:toolbarGroup>
+
+		</p:toolbar>
+
+ <pe:tooltip global="true" position="top, center"
+			targetPosition="top, center" forSelector="aletetat" />
+
+
+<p:dialog widgetVar="correctDiag" appendTo="@(body)" modal="true" 
+		width="900" header="Correction des pointages" maximizable="false">
+		<h:form id="form33" prependId="false">
+			<p:messages id="msg"></p:messages>
+			<p:dataTable var="mvt" value="#{alertBean.listMvtCorrect}" id="mvts"
+				editable="true" rows="10" paginator="true"
+				paginatorPosition="bottom">
+				<p:ajax event="rowEdit" 
+					listener="#{alertBean.onedit}" update="mvts" />
+				<p:column style="width:2%">
+			<p:rowToggler />
+				</p:column>
+				<p:column headerText="Id sur Terminal" style="width:6%">
+					<h:outputText value="#{mvt.bckId}" />
+				</p:column>
+
+				<p:column headerText="Terminal">
+					<h:outputText value="#{mvt.terminaux.libelle}" />
+				</p:column>
+
+
+				<p:column headerText="Personnel" style="width:180px">
+					<p:cellEditor>
+
+						<f:facet name="output">
+							<h:outputText
+								value="#{mvt.personnel==null?'Inconnue':mvt.personnel.fullname}"></h:outputText>
+						</f:facet>
+						<f:facet name="input">
+							<p:selectOneMenu value="#{mvt.personnel}"
+								converter="personnelConverter" style="width:180px">
+								<p:ajax event="change"  process="@this"></p:ajax>
+								<f:selectItems value="#{alertBean.listPersonnels}" var="pers"
+									itemLabel="#{pers.fullname}" itemValue="#{pers}" />
+							</p:selectOneMenu>
+						</f:facet>
+					</p:cellEditor>
+				</p:column>
+				<p:column style="width:6%">
+					<p:rowEditor />
+				</p:column>
+				<p:rowExpansion>
+					<p:dataTable var="mvtd" value="#{mvt.listmvt}" id="mvtsd"
+						editable="true" rows="10" paginator="true"
+						paginatorPosition="bottom" paginatorAlwaysVisible="false">
+						<p:column headerText="Jour">
+							<h:outputText value="#{mvtd.jour}" />
+						</p:column>
+						<p:column headerText="Heure">
+							<h:outputText value="#{mvtd.heure}" />
+						</p:column>
+						<p:column headerText="Etat">
+							<h:graphicImage
+								value="#{mvtd.bcketat.equals('E')?'/resources/img/in.png':'/resources/img/out.png'}"
+								width="30" height="32" />
+						</p:column>
+						<p:column headerText="Moyen">
+							<h:outputText value="#{mvtd.moyen}" />
+						</p:column>
+					</p:dataTable>
+				</p:rowExpansion>
+			</p:dataTable>
+			<p:commandButton value="Valider" type="submit" icon="accept"
+				oncomplete="correctDiag.hide()" action="#{alertBean.insertMVt}"></p:commandButton>
+			<p:commandButton value="Annuler" icon="cancel"
+				oncomplete="correctDiag.hide()"></p:commandButton>
+				
+		</h:form>
+
+	</p:dialog>
+	</ui:composition>
+</body>
+</html>

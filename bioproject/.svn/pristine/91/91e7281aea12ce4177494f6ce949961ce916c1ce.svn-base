@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>	
+	
+
+		<h:form id="form">
+		<p:toolbar>
+	<p:toolbarGroup align="left" >
+	<p:commandLink value="Console" action="/pages/Terminaux.xhtml" style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter" 
+			action="#{terminauxBean.changevalajout()}"
+			oncomplete="diag_ajout.show()" icon="add"
+			></p:commandButton>
+		<p:commandButton id="modif" value="Modifier" icon="update" update=":form_ajout_term:display"
+			action="#{terminauxBean.changevalmodif()}" rendered="#{profileBean.loadRights('/pages/sequence.xhtml')}"
+			oncomplete="diag_ajout.show()" style="display:none"
+			></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer" icon="delete" rendered="#{profileBean.loadRights('/pages/sequence.xhtml')}"
+			oncomplete="diag_supprim.show()" style="display:none"
+			></p:commandButton>
+		</p:toolbarGroup>
+		<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+		</p:toolbar>
+		
+			<p:growl id="messaget"></p:growl>
+			<h:inputHidden value="#{terminauxBean.sizeliste}" id="listsize" />
+
+
+
+			<p:dataTable id="tab_ter" var="terminaux"
+				value="#{terminauxBean.listeterminaux}" widgetVar="diag_terminal"
+				emptyMessage=" ____ la liste des terminaux est vide "
+				filteredValue="#{terminauxBean.filtredlistTerminaux}"
+				paginator="true" rows="24"
+				selection="#{terminauxBean.listeterminalselectionner}"
+				rowKey="#{terminaux.idter}" paginatorAlwaysVisible="true"
+				paginatorPosition="bottom"
+				currentPageReportTemplate="Showing {startRecord}-{endRecord} out of {totalRecords}"
+				paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="10,20,25,35,50,75,100">
+
+				<f:facet name="header">
+					<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+						onkeyup="diag_terminal.filter()"
+						style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+					</p:inputText>
+
+				</f:facet>
+				<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+				<p:ajax event="rowSelect" listener="#{terminauxBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+
+				<p:ajax event="rowSelectCheckbox" listener="#{terminauxBean.affect}"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()"></p:ajax>
+
+				<p:ajax event="rowUnselectCheckbox"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+
+				<p:ajax event="rowUnselect"
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="unsize()"></p:ajax>
+
+				<p:column id="col1" style="width:2%" selectionMode="multiple" />
+
+
+				<p:column id="libelle" filterBy="libelle" headerText="Libelle"
+					sortBy="libelle" filterMatchMode="contains">
+					<h:outputText value="#{terminaux.libelle}"></h:outputText>
+				</p:column>
+
+				<p:column id="type" filterBy="type" headerText="Type" sortBy="type"
+					filterMatchMode="contains">
+					<h:outputText value="#{terminaux.type}"></h:outputText>
+				</p:column>
+				<p:column id="ip" filterBy="ip" headerText="IP" sortBy="ip"
+					filterMatchMode="contains">
+					<h:outputText value="#{terminaux.ip}"></h:outputText>
+				</p:column>
+				<p:column id="rsVitesse" filterBy="rsVitesse"
+					headerText="RS_Vitesse" sortBy="rsVitesse"
+					filterMatchMode="contains">
+					<h:outputText value="#{terminaux.rsVitesse}"></h:outputText>
+				</p:column>
+				<p:column id="rsCom" filterBy="rsCom" sortBy="rsCom"
+					headerText="RS_Com" filterMatchMode="contains">
+					<h:outputText value="#{terminaux.rsCom}"></h:outputText>
+				</p:column>
+				<p:column id="nserie" filterBy="nserie" headerText="Numero_serie"
+					sortBy="nserie" filterMatchMode="contains">
+					<h:outputText value="#{terminaux.nserie}"></h:outputText>
+				</p:column>
+						<p:column id="nature"  headerText="Type" >
+						<h:outputText value="#{terminaux.enrollement?'Enrollement':'Pointage'}"></h:outputText>
+					</p:column>
+				<p:column id="active" headerText="Etat" style="width:60px">
+					<center>
+						<p:graphicImage value="/resources/icons/active.png" width="40"
+							height="30" rendered="#{terminaux.actif}">
+						</p:graphicImage>
+						<p:graphicImage value="/resources/icons/desactive.png" width="40"
+							height="30" rendered="#{!terminaux.actif}">
+						</p:graphicImage>
+					</center>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+
+
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+		<!-- ************************** DIAG AJOUT *********************** -->
+
+		<p:dialog id="terminal" header="Terminal" appendTo="@(body)" widgetVar="diag_ajout"
+			modal="true" resizable="false">
+			<h:form id="form_ajout_term">
+				<p:outputPanel id="display">
+
+					<h:panelGrid columns="1">
+
+						<p:fieldset legend="Information générale">
+
+							<h:panelGrid columns="4" cellpadding="5" cellspacing="5">
+
+								<p:outputLabel value="Type de terminal :"></p:outputLabel>
+								<p:selectOneMenu id="customRadio2"
+									value="#{terminauxBean.bradio}">
+									<f:selectItem itemLabel="Pointage" itemValue="1" />
+									<f:selectItem itemLabel="Enrollement" itemValue="2" />
+								</p:selectOneMenu>
+								<p:outputLabel value="Libelé :" style="margin-top:10px"></p:outputLabel>
+								<p:inputText id="la1"
+									value="#{terminauxBean.terminalselectionner.libelle}"
+									required="true"
+									validatorMessage="Il ne faut pas utiliser les caractères spéciaux"
+									requiredMessage="la valeur 'libelle' est obligatoire"
+									maxlength="20"
+									title="#{component.valid ? 'Entrer le libelle' : tooltipsController.getErrorMessage(component.clientId)}">
+								</p:inputText>
+
+								<p:outputLabel value="Type"></p:outputLabel>
+								<p:selectOneMenu
+									value="#{terminauxBean.terminalselectionner.type}"
+									required="true"
+									requiredMessage="vous devez selectionner un type !!!"
+									style="width:100% !important">
+									<p:ajax event="change" listener="#{terminauxBean.switchmode}"
+										update="dtreseau"></p:ajax>
+									<f:selectItems value="#{terminauxBean.listType}" />
+
+								</p:selectOneMenu>
+								<p:outputLabel value="Etat du terminal : "
+									style="margin-top:50px"></p:outputLabel>
+								<p:selectBooleanButton
+									value="#{terminauxBean.terminalselectionner.actif}"
+									onLabel="Active" offLabel="Désactive" onIcon="ui-icon-check"
+									offIcon="ui-icon-close" style="width:100%" />
+
+
+							</h:panelGrid>
+
+						</p:fieldset>
+						<p:fieldset legend="Configuration Réseaux" style="margin-top:10px">
+
+							<h:panelGrid id="dtreseau" columns="4" cellspacing="5"
+								cellpadding="5">
+
+								<p:outputLabel value="IP* :" style="margin-top:50px"
+									rendered="#{terminauxBean.mode}"></p:outputLabel>
+								<p:inputText id="inputBoxId" rendered="#{terminauxBean.mode}"
+									value="#{terminauxBean.terminalselectionner.ip}"
+									required="true"
+									requiredMessage="la valeur 'IP' est obligatoire"
+									validatorMessage="format ip non valide"
+									title="#{component.valid ? 'Entrer l adresse ip' : tooltipsController.getErrorMessage(component.clientId)}">
+									<f:validateRegex
+										pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+										for="inputBoxId" />
+								</p:inputText>
+								<p:outputLabel value="Port :" rendered="#{terminauxBean.mode}"></p:outputLabel>
+								<p:spinner value="#{terminauxBean.terminalselectionner.port}"
+									maxlength="4" min="40" max="10000"
+									rendered="#{terminauxBean.mode}"></p:spinner>
+								<p:outputLabel value="RS_Vitesse :" style="margin-top:50px"
+									rendered="#{!terminauxBean.mode}"></p:outputLabel>
+								<p:selectOneMenu rendered="#{!terminauxBean.mode}"
+									value="#{terminauxBean.terminalselectionner.rsVitesse}"
+									style="width:100% !important">
+									<f:selectItem itemLabel="Choisissez une vitesse" />
+									<f:selectItems value="#{terminauxBean.listeVitesse}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel value="RS_Com :"
+									rendered="#{!terminauxBean.mode}"></p:outputLabel>
+								<p:selectOneMenu rendered="#{!terminauxBean.mode}"
+									value="#{terminauxBean.terminalselectionner.rsCom}"
+									style="width:100% !important">
+									<f:selectItem itemLabel="Com1" itemValue="Com1" />
+									<f:selectItem itemLabel="Com2" itemValue="Com2" />
+									<f:selectItem itemLabel="Com3" itemValue="Com3" />
+									<f:selectItem itemLabel="Com4" itemValue="Com4" />
+									<f:selectItem itemLabel="Com5" itemValue="Com5" />
+									<f:selectItem itemLabel="Com6" itemValue="Com6" />
+									<f:selectItem itemLabel="Com7" itemValue="Com7" />
+									<f:selectItem itemLabel="Com8" itemValue="Com8" />
+
+								</p:selectOneMenu>
+								<p:outputLabel value="N°Serie :"></p:outputLabel>
+								<p:inputText id="ns"
+									value="#{terminauxBean.terminalselectionner.nserie}"
+									required="true" maxlength="10"
+									requiredMessage="la valeur 'Numero_serie' est obligatoire"
+									title="#{component.valid ? 'Entrer le numro de serie' : tooltipsController.getErrorMessage(component.clientId)}">
+								</p:inputText>
+				<p:outputLabel value="Plateforme :"></p:outputLabel>
+								<p:inputText id="nf"
+									value="#{terminauxBean.terminalselectionner.platform}"
+									required="true" maxlength="10"
+									requiredMessage="la valeur plateforme est obligatoire"
+									title="#{component.valid ? 'Entrer plateforme' : tooltipsController.getErrorMessage(component.clientId)}">
+								</p:inputText>
+							</h:panelGrid>
+
+						</p:fieldset>
+						<p:fieldset legend="Sécurité">
+							<h:panelGrid columns="4" cellpadding="5" cellspacing="5">
+								<p:outputLabel value="Identifiant :"></p:outputLabel>
+								<p:inputText
+									value="#{terminauxBean.terminalselectionner.deviceId}"
+									converterMessage="identifiant invalid" maxlength="7"
+									requiredMessage="identifiant est vide" converter="javax.faces.Integer"
+									title="#{component.valid ? 'Entrer identifiant termianl' : tooltipsController.getErrorMessage(component.clientId)}">
+								</p:inputText>
+																<p:outputLabel value="Mot de passe :"></p:outputLabel>
+								<p:inputText
+									value="#{terminauxBean.terminalselectionner.password}"
+									required="true" requiredMessage="mot de passe est vide" maxlength="10"
+									title="#{component.valid ? 'Entrer mot de passe  termianl' : tooltipsController.getErrorMessage(component.clientId)}">
+									</p:inputText>
+							</h:panelGrid>
+
+						</p:fieldset>
+						<p:fieldset legend="Serveur Proxy">
+
+							<h:panelGrid columns="4" cellpadding="8">
+								<p:outputLabel value="Adresse Ip :"></p:outputLabel>
+								<p:inputText id="inputBoxId2"
+									value="#{terminauxBean.terminalselectionner.serverIp}"
+									required="true" maxlength="16"
+									requiredMessage="la valeur 'IP' est obligatoire"
+									validatorMessage="format ip non valide"
+									title="#{component.valid ? 'Entrer l adresse ip' : tooltipsController.getErrorMessage(component.clientId)}">
+									<f:validateRegex
+										pattern="^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+										for="inputBoxId" />
+								</p:inputText>
+								<p:outputLabel value="Port :"></p:outputLabel>
+								<p:spinner
+									value="#{terminauxBean.terminalselectionner.serverPort}"
+									maxlength="4" min="1000" max="10000"></p:spinner>
+
+							</h:panelGrid>
+						</p:fieldset>
+					</h:panelGrid>
+
+					<p:commandButton value="Annuler" update="form_ajout_term"
+						style="margin-left:10px;float:right"
+						oncomplete="diag_ajout.hide()" icon="cancel"
+						actionListener="#{terminauxBean.reset()}" process="@this" />
+
+					<p:commandButton value="Valider" icon="accept"
+						style=" width:25%;float:right;"
+						action="#{terminauxBean.selonexecute()}"
+						update=":form:messaget :form:tab_ter"
+						oncomplete=" if (!args.validationFailed) {diag_ajout.hide()}" />
+
+				</p:outputPanel>
+
+			</h:form>
+		</p:dialog>
+
+		<!-- ************************* DIAG SUPPRIME ************************ -->
+
+		<p:dialog id="supprimterminal" header="Supprimer terminal" modal="true" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<center style="margin-top: 10px">
+							<p:outputLabel style="font-size:16px;margin-left:10px"
+								value="Voulez vous supprimer l(es) element(s) suivant(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="supterminal" style="margin-top:30px"
+							value="#{terminauxBean.listeterminalselectionner}" var="terminal">
+
+							<p:column id="libele" headerText="Libele">
+								<p:outputLabel value="#{terminal.libelle}"></p:outputLabel>
+							</p:column>
+
+							<p:column id="nserie" headerText="Numero_serie">
+								<p:outputLabel value="#{terminal.nserie}"></p:outputLabel>
+							</p:column>
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{terminauxBean.removeterminal(terminal)}"
+									update="supterminal"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px; width:20%"
+								action="#{terminauxBean.supprimterminaux()}"
+								update=":form:messaget :form:tab_ter"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Non" oncomplete="diag_supprim.hide()"
+								style="margin-left:10px; width:20% "></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+
+	</body></html>

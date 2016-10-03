@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+    version="2.1">
+    <factory>
+    <exception-handler-factory>
+        org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory
+    </exception-handler-factory>
+</factory>
+<application>
+  <resource-bundle>
+   <base-name>resources.messages.message</base-name>
+   <var>msg</var>
+  </resource-bundle>
+  <!-- Ajout de la langue par défaut et des langues supportées -->
+  <locale-config>
+  <default-locale>fr</default-locale>
+   <supported-locale>fr</supported-locale>
+   <supported-locale>en</supported-locale>
+      <supported-locale>it</supported-locale>
+         <supported-locale>de</supported-locale>
+   
+  </locale-config> </application>
+ 
+<application>
+  <el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+ </application>
+ <managed-bean>
+    <managed-bean-name>currentDate</managed-bean-name>
+    <managed-bean-class>java.util.Date</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+</managed-bean>
+</faces-config>

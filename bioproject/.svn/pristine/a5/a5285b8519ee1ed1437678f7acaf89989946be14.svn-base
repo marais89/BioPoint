@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	     xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core" >
+<f:view >
+
+	<h:head>
+	<h:outputStylesheet name="login.css" library="css"></h:outputStylesheet>
+ <!--[if lt IE 9]>
+          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+	<h:outputScript name="login.js" library="js" target="body"></h:outputScript>
+	</h:head>
+	<h:body>
+	
+ <div id="main">
+        	
+        	<h1>Bio-Point</h1>
+        	
+        	<h:form>
+        		
+        		<div class="row email">
+	    			<h:inputText   id="j_username" name="email" required="true" label="username"  requiredMessage="Nom d'utilisateur vide" />
+        		</div>
+        		
+        		<div class="row pass">
+        			<h:inputSecret   id="j_password" name="password1" label="password" required="true"  requiredMessage="Mot de passe vide " />
+        		</div>
+        		<div class="row pass">
+        		 <c:if test="${param.fail!=null}">  
+    <h3 style="font-size:20; color:#FF1C19;">Nom d'utilisateur ou mot de pass est incorrect</h3>
+    
+</c:if> </div>
+<div class="row pass">
+ <h:commandButton  type="submit" id="login" value="Se connecter" 
+        action="#{loginController.doLogin}" /><p:spacer width="20"></p:spacer>
+        </div>
+        		
+        		<!-- The rotating arrow -->
+        		<div class="arrowCap"></div>
+        		<div class="arrow"></div>
+        		
+        		<p class="meterText">Password Meter</p>
+        		
+        		
+        	</h:form>
+        </div>
+        
+        <footer>
+	        
+        </footer>
+        
+        <!-- JavaScript includes - jQuery, the complexify plugin and our own script.js -->
+
+		     
+		
+
+	</h:body>
+</f:view>
+</html>

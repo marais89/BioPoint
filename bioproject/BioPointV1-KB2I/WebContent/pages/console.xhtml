@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>		
+	
+<h:form id="form" enctype="multipart/form-data">
+
+<p:toolbar>
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Console" action="/pages/console.xhtml" style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton styleClass="consolebt" value="Charger les pointages" icon="load" style="display:none;" 
+			  action="#{consoleBean.loadMvt}" ajax="true" onstart="PF('loadmvt').block()" oncomplete="PF('loadmvt').unblock()"></p:commandButton>
+		<p:commandButton styleClass="consolebt" value="Mettre à jour" icon="upgrade"  style="display:none;"
+		action="#{consoleBean.loadIdentifaction}" ajax="true" ></p:commandButton>
+		<p:commandButton styleClass="consolebt" value="Synchroniser" icon="synchronize"  style="display:none;"
+		action="#{consoleBean.synchronize}" ajax="true"  ></p:commandButton>
+		<p:commandButton styleClass="consolebt" value="Corriger Date"   style="display:none;"
+		action="#{consoleBean.correctDate}" ajax="true" icon="clock"></p:commandButton>
+	</p:toolbarGroup>
+	<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+	</p:toolbar>
+
+<p:messages id="msg" showDetail="true"></p:messages>
+
+<pe:blockUI widgetVar="blockUIWidget" timeout="20000"
+				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+				cssOverlay="{backgroundColor: 'gray'}"  centerY="false">
+				<h:panelGrid columns="2">
+					<h:graphicImage library="img" name="ajax_loading.gif"
+						style="margin-right: 12px; vertical-align: middle;width:30px;height:30px " />
+					<h:outputText
+						value="Connexion en cours, Patienter SVP..."
+						style="white-space: nowrap;width: 50px" />
+						 
+				</h:panelGrid>				
+			</pe:blockUI>
+<!-- 				<pe:blockUI widgetVar="blockUIWidget" target="ters" -->
+<!-- 				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}" -->
+<!-- 				cssOverlay="{backgroundColor: 'gray'}" timeout="100000" centerY="false"> -->
+<!-- 				<h:panelGrid columns="2"> -->
+<!-- 					<h:graphicImage value="/resources/img/ajax-loader1.gif" -->
+<!-- 						style="margin-right: 12px; vertical-align: middle;" /> -->
+<!-- 					<h:outputText value="Connexion en cours ..." -->
+<!-- 						style="white-space: nowrap;" /> -->
+<!-- 				</h:panelGrid> -->
+<!-- 			</pe:blockUI> -->
+
+				<pe:blockUI widgetVar="loadmvt" 
+				css="{top: '10px', left: '', right: '10px', cursor: 'wait'}"
+				cssOverlay="{backgroundColor: 'gray'}"  centerY="false">
+				<h:panelGrid columns="2">
+					<h:graphicImage library="img" name="ajax_loading.gif"
+						style="margin-right: 12px; vertical-align: middle;width:30px;height:30px " />
+					<h:outputText 
+						value="Patienter SVP, Réception des données en cours..."
+						style="white-space: nowrap;width: 50px" />
+						 
+				</h:panelGrid>
+			</pe:blockUI>
+			
+			
+		<p:dataTable id="ters" value="#{consoleBean.listactif}" var="terminaux" selection="#{consoleBean.selectedTerminaux}"  rowKey="#{terminaux.idter}"
+		rowIndexVar="index" rowStyleClass="#{terminaux.idter==consoleBean.terminaux.idter?'edit':''}">
+								
+								<p:ajax event="rowSelectCheckbox" listener="#{consoleBean.selectConsole}"  oncomplete="displayconsole()"></p:ajax>
+					
+				<p:ajax event="rowUnselect"  listener="#{consoleBean.UnselectConsole}" oncomplete="undisplayconsole()"></p:ajax>
+				<p:ajax event="rowSelect" listener="#{consoleBean.selectConsole}"  oncomplete="displayconsole()"></p:ajax>
+
+				<p:ajax event="rowUnselectCheckbox" listener="#{consoleBean.UnselectConsole}"  oncomplete="undisplayconsole()"></p:ajax>
+							<p:column width="3%" selectionMode="multiple"></p:column>
+		<p:column id="photo" headerText="" style="width:5%">
+		<h:graphicImage value="/resources/img/finger.jpg" width="50" height="30" />
+		</p:column>
+		<p:column id="libelle" filterBy="libelle" headerText="Libelle"
+						sortBy="libelle" filterMatchMode="contains">
+						<h:outputText value="#{terminaux.libelle}"></h:outputText>
+					</p:column>
+						<p:column id="ip" filterBy="ip" headerText="IP:Port" sortBy="ip"
+						filterMatchMode="contains">
+						<h:outputText value="#{terminaux.ip}:#{terminaux.port}"></h:outputText>
+					</p:column>
+						<p:column id="type"  headerText="Type" >
+						<h:outputText value="#{terminaux.enrollement?'Enrollement':'Pointage'}"></h:outputText>
+					</p:column>
+					<p:column headerText="Etat" >
+						<h:outputText value="#{terminaux.etat}"></h:outputText>
+					</p:column>
+										<p:column headerText="Status">
+					 <p:progressBar interval="1" widgetVar="#{terminaux.idter}" ajax="true" value="#{(consoleBean.terminaux==null or terminaux.idter!=consoleBean.terminaux.idter)?'0':consoleBean.terminaux.progress}" style="height:20px;font-size:13px;" labelTemplate="{value}%" styleClass="animated" global="true">
+        <p:ajax event="complete"  update=":form:msg"/>
+    </p:progressBar>
+					</p:column>
+		</p:dataTable>
+		</h:form>
+		<p:dialog id="pointer" widgetVar="di
+		agpointer" appendTo="@(body)" showEffect="blind">
+		<h:form id="form2">
+		<p:outputPanel autoUpdate="true">
+		<p:fieldset legend="">
+		<h:panelGrid columns="4">
+		<p:outputLabel value="Pointeuse"></p:outputLabel>
+				<p:outputLabel value="#{consoleBean.terminaux.libelle}"></p:outputLabel>
+		<p:outputLabel value="N°Serie"></p:outputLabel>
+				<p:outputLabel value="#{consoleBean.terminaux.nserie}"></p:outputLabel>
+					<p:outputLabel value="Adresse Ip"></p:outputLabel>
+				<p:outputLabel value="#{consoleBean.terminaux.ip}"></p:outputLabel>
+					<p:outputLabel value="Plateforme"></p:outputLabel>
+				<p:outputLabel value="#{consoleBean.terminaux.platform}"></p:outputLabel>
+					<p:outputLabel value="Status"></p:outputLabel>
+				<p:outputLabel value="#{consoleBean.msg}"></p:outputLabel>
+		</h:panelGrid>
+		</p:fieldset>
+		</p:outputPanel>
+		</h:form>
+		</p:dialog>
+		
+		
+		
+		
+		
+		<p:dialog appendTo="@(body)" widgetVar="diagimport" modal="true">
+  	<h:form id="formimportg" enctype="multipart/form-data">  
+  	<h:dataTable var="file" value="#{importBean.listFiles}" id="files" cellpadding="5" style="width:100%" >
+  	<h:column>
+  	<h:graphicImage value="/resources/img/file.png" width="30" height="30"/>
+  	</h:column>
+  	<h:column>
+  	<h:outputLabel value="#{file.substring(15)}" />
+  	</h:column></h:dataTable>
+  <h:panelGrid columns="2" cellpadding="8"  cellspacing="5">
+  <p:outputLabel value="Source :"></p:outputLabel>
+  <p:selectOneMenu value="#{importBean.idter}" >
+  <f:selectItems value="#{importBean.listdisplayTerminaux}"/>
+  </p:selectOneMenu>
+  <p:outputLabel value="Fichier :"></p:outputLabel>
+<p:fileUpload id="file" 
+										fileUploadListener="#{importBean.handleFileUpload}"
+										label="Fichier" uploadLabel="Charger" update="files"
+										cancelLabel="Annuler" mode="advanced" multiple="true"
+										sizeLimit="10000000" allowTypes="/(\.|\/)(dat|xml|csv)$/" /> 
+</h:panelGrid>
+<p:commandButton value="Importer" action="#{importBean.uplodatMvt}" update=":form:msg" oncomplete="diagimport.hide()"></p:commandButton>
+<p:commandButton value="Annuler" oncomplete="diagimport.hide()"></p:commandButton>
+</h:form> 
+</p:dialog>
+		
+
+		</body></html>

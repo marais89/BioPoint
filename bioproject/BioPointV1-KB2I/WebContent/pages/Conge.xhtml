@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+	
+	
+
+	
+		<h:form id="form">
+		
+		<p:toolbar style="margin-bottom: 7px" >
+	<p:toolbarGroup align="left" >
+		<p:commandLink value="Congé  " action="/pages/Conge.xhtml"
+			style="text-decoration: none;font-size:19px;margin-top:5px;margin-right:20px"></p:commandLink>
+		<p:commandButton id="ajout" value="Ajouter"  icon="add"
+			action="#{congeBeans.changevalajout()}"
+			oncomplete="diag_ajout.show()"></p:commandButton>
+		<p:commandButton id="modif" value="Modifier"  icon="update"
+			action="#{congeBeans.changevalmodif()}" rendered="#{profileBean.loadRights('/pages/Conge.xhtml')}"
+			oncomplete="diag_ajout.show()" style="display:none"></p:commandButton>
+		<p:commandButton id="supprim" value="Supprimer"  icon="delete" rendered="#{profileBean.loadRights('/pages/Conge.xhtml')}"
+			oncomplete="diag_supprim.show()" style="display:none"></p:commandButton>
+			</p:toolbarGroup>
+			<p:toolbarGroup align="right" >
+	<p:splitButton value="Import/Export">
+	<p:menuitem value="Import" oncomplete="diagimport.show()"></p:menuitem>
+	<p:menuitem value="Export" update=":content2" action="changeEmport()" ></p:menuitem>
+	</p:splitButton>
+	</p:toolbarGroup>
+			</p:toolbar>
+		
+			<p:growl id="messaget"></p:growl>
+			<h:inputHidden value="#{congeBeans.sizeliste}" id="listsize" />
+			
+
+				<p:dataTable id="tab_conge" var="conge"
+					value="#{congeBeans.listconge}" widgetVar="diag_conge"
+					emptyMessage=" ____ la liste des_conges est vide "
+					filteredValue="#{congeBeans.filtredlistconge}"   paginator="true"
+					rows="24" selection="#{congeBeans.listcongeSelectionne}"
+					rowKey="#{conge.idcon}" paginatorAlwaysVisible="true"
+					paginatorPosition="bottom"
+					currentPageReportTemplate="{startRecord}-{endRecord} Total {totalRecords}"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,20,25,35,50,75,100" lazy="false">
+
+					<f:facet name="header">
+						<pe:tooltip global="true" position="left center"
+							targetPosition="right center" forSelector=".ui-state-error" />
+
+					
+
+						<p:inputText id="globalFilter" placeholder="Rechercher Ici....."
+							onkeyup="diag_conge.filter()"
+							style="width:150px;	-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;margin-right:87%;">
+						</p:inputText>
+
+					</f:facet>
+					
+					<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" ></p:ajax>
+					<p:ajax event="rowSelect" listener="#{congeBeans.affect}"
+						update=":form:listsize :form:modif :form:supprim"
+						oncomplete="getsize()"></p:ajax>
+
+					<p:ajax event="rowSelectCheckbox" listener="#{congeBeans.affect}"
+						update=":form:listsize :form:modif :form:supprim"
+						oncomplete="getsize()"></p:ajax>
+
+					<p:ajax event="rowUnselectCheckbox"
+						update=":form:listsize :form:modif :form:supprim"
+						oncomplete="unsize()"></p:ajax>
+
+					<p:ajax event="rowUnselect"
+						update=":form:listsize :form:modif :form:supprim"
+						oncomplete="unsize()"></p:ajax>
+						
+						<p:ajax event="toggleSelect" 
+					update=":form:listsize :form:modif :form:supprim"
+					oncomplete="getsize()" partialSubmit="true"></p:ajax>
+
+					<p:column id="col1" style="width:2%" selectionMode="multiple" />
+
+
+					<p:column id="personnel" filterBy="personnel"
+						headerText="personnel" sortBy="personnel.prenom"
+						filterMatchMode="contains">
+						<h:outputText value="#{conge.personnel.nom} #{conge.personnel.prenom}"></h:outputText>
+					</p:column>
+
+					<p:column id="motif" filterBy="motif" headerText="motif"
+						sortBy="motif.designation" filterMatchMode="contains">
+						<h:outputText value="#{conge.motif.designation}"></h:outputText>
+					</p:column>
+					<p:column id="type" filterBy="type" headerText="type" sortBy="type"
+						filterMatchMode="contains">
+						<h:outputText value="#{conge.type}"></h:outputText>
+					</p:column>
+					<p:column id="debut" filterBy="debut" headerText="debut"
+						sortBy="debut" filterMatchMode="contains">
+						<h:outputText value="#{conge.debut}" >
+						 <f:convertDateTime pattern="dd.MM.yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+					<p:column id="fin" filterBy="fin" sortBy="fin" headerText="fin"
+						filterMatchMode="contains">
+						<h:outputText value="#{conge.fin}">
+						 <f:convertDateTime pattern="dd.MM.yyyy HH:mm" />
+						</h:outputText>
+					</p:column>
+
+				</p:dataTable>
+		</h:form>
+
+		<!-- /*/*/**/*/*/**/*/**/*/  DIAGLOGUE */*/*/*/*/*/*/*/*/*/*/ -->
+		<!-- ************************** DIAG AJOUT *********************** -->
+
+		<p:dialog id="conge" header="Conge" appendTo="@(body)" widgetVar="diag_ajout"
+			modal="true" width="40%" resizable="false">
+			<h:form id="form_ajout_conge">			
+							
+               <h:panelGrid columns="1">
+					<p:messages id="messagef"/>
+					<h:panelGrid columns="2">
+					
+						<p:fieldset legend="Information générale" style="margin-top:20px;width:280px">
+
+							<h:panelGrid columns="2" style="margin-left:0px">					
+							
+								<p:outputLabel value="Personnel* :"></p:outputLabel>	
+								
+								
+															
+								<p:selectOneMenu id="c1" value="#{congeBeans.congeselectionne.personnel}" rendered="#{congeBeans.indice}" converter="personnelConverter" style="width:162px;height:28px" 
+									required="true" filter="true" filterText="Filter"
+									filterMatchMode="startsWith" >
+									<f:selectItem itemLabel="Selectionnez..."/>
+									<f:selectItems value="#{personnelBean.listpersonnel}"  var="pers" itemLabel="#{pers.nom} #{pers.prenom}" itemValue="#{pers}"/>				 
+										<p:ajax event="change" ignoreAutoUpdate="true" partialSubmit="true" listener="#{congeBeans.returnDernierDateConge(congeBeans.congeselectionne.personnel.idper)}"   ></p:ajax>	
+								</p:selectOneMenu> 
+								<p:outputLabel value="#{congeBeans.congeselectionne.personnel.nom} #{congeBeans.congeselectionne.personnel.prenom}"  rendered="#{!congeBeans.indice}" title="Nom et Prénom" />		
+																			
+								
+								<p:outputLabel value="Motif* :"></p:outputLabel>								
+								
+								<h:panelGrid id="panelmotif" columns="2" width="139px" >
+								
+								<p:outputPanel autoUpdate="true" >
+								<p:selectOneMenu id="selectmotif" value="#{congeBeans.motif}"  rendered="#{!congeBeans.flagMotif}" style="width:137px !important;" converter="motifConverter"  >
+								<f:selectItem itemLabel="#{congeBeans.congeselectionne.motif.designation}"/>
+								<f:selectItems value="#{congeBeans.listemotif}" var="mot"  itemLabel="#{mot.designation}" itemValue="#{mot}" />	
+										<p:ajax  event="change" ignoreAutoUpdate="true" partialSubmit="true" listener="#{congeBeans.chargemotif()}" ></p:ajax>										
+								</p:selectOneMenu>								
+								</p:outputPanel>
+								
+								<p:commandLink id="addMotif" style="margin-left:0px;"  oncomplete="diag_motif.show()" ignoreAutoUpdate="true">
+								<p:graphicImage value="/resources/img_rapport/note_add.png"  width="30px" height="30px" />
+								<p:ajax  event="click" ignoreAutoUpdate="true" />
+								</p:commandLink>	
+								</h:panelGrid>								
+								
+								<p:outputLabel value="Type* :"></p:outputLabel>
+								<p:selectOneMenu value="#{congeBeans.congeselectionne.type}" style="width:165px"  required="true" requiredMessage="vous devez préciser un type" >
+								<f:selectItem itemLabel="Selectionnez..."/>
+								<f:selectItems value="#{congeBeans.listType}"  />
+									<p:ajax event="change" ignoreAutoUpdate="true" partialSubmit="true" update=":form_ajout_conge:cal3 :form_ajout_conge:calendar :form_ajout_conge:cal :form_ajout_conge:tp" listener="#{congeBeans.returnDernierDateConge(congeBeans.congeselectionne.personnel.idper)}" ></p:ajax>	
+								</p:selectOneMenu>								
+							</h:panelGrid>
+							
+						</p:fieldset>
+						
+						
+						
+							<p:fieldset legend="Période" style="margin-top:20px;width:290px; height:150px">
+							<p:outputPanel id="cal3" autoUpdate="false">
+							<h:panelGrid id="calendar" columns="1" >
+				
+							<h:panelGrid id="cal" columns="2" style="margin-top:0px;margin-left:10px">
+								<p:outputLabel value="Date* :"  rendered="#{!congeBeans.flagcalendar}"></p:outputLabel>
+								<p:calendar effect="drop"  rendered="#{!congeBeans.flagcalendar}" required="true" requiredMessage="date debut obligatoire"
+									value="#{congeBeans.date}" 
+									converterMessage="format date invalide" maxlength="8"
+									
+									title="#{component.valid ? 'Date début' : tooltipsController.getErrorMessage(component.clientId)}" readonlyInput="true" >
+									<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+									<p:ajax event="dateSelect" ignoreAutoUpdate="true" partialSubmit="true"  />
+								</p:calendar>
+						
+								<p:outputLabel value="Date début* :"  rendered="#{congeBeans.flagcalendar}" ></p:outputLabel>
+								<p:calendar effect="drop"  rendered="#{congeBeans.flagcalendar}" required="true" requiredMessage="date debut obligatoire"
+									value="#{congeBeans.congeselectionne.debut}" 
+									converterMessage="format date invalide" maxlength="8" 
+									placeholder="#{congeBeans.congeselectionne.debut}" 									
+									title="#{component.valid ? 'Date début' : tooltipsController.getErrorMessage(component.clientId)}" readonlyInput="true" >
+									<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+									<p:ajax event="dateSelect" ignoreAutoUpdate="true" partialSubmit="true" update=":form_ajout_conge:cal" listener="#{congeBeans.maximumDate()}" />
+								</p:calendar>
+								
+								<p:outputLabel value="Heure début :"  rendered="#{!congeBeans.flagcalendar}"></p:outputLabel> 
+								 <pe:timePicker value="#{congeBeans.congeselectionne.debut}" pattern="HH:mm"  mode="popup" widgetVar="popupTimeWidget" 
+                               label="Inline time picker"  rendered="#{!congeBeans.flagcalendar}" style="width:100%" required="true"  requiredMessage="Valeur heure debut est obligatoire" >
+                               <p:ajax event="change" ignoreAutoUpdate="true" listener="#{congeBeans.returnHour()}" update=":form_ajout_conge:tp" />
+                               </pe:timePicker>
+                              
+
+								<p:outputLabel value="Date fin* :" rendered="#{congeBeans.flagcalendar}"></p:outputLabel>
+								<p:calendar  id="calendar2" effect="drop" rendered="#{congeBeans.flagcalendar}" required="true" requiredMessage="date obligatoire"
+									value="#{congeBeans.congeselectionne.fin}" 
+									converterMessage="format date invalide" maxlength="8" maxdate="#{congeBeans.maxDate}"
+									placeholder="#{congeBeans.congeselectionne.fin}" mindate="#{congeBeans.congeselectionne.debut}"
+									title="#{component.valid ? 'Date fin' : tooltipsController.getErrorMessage(component.clientId)}" readonlyInput="true" >								
+									<f:convertDateTime locale="fr" pattern="dd/MM/yy" type="date" />
+								</p:calendar>
+								
+								<p:outputLabel id="cal2" value="Heure fin :" rendered="#{!congeBeans.flagcalendar}"></p:outputLabel>
+								
+								 <pe:timePicker id="tp" value="#{congeBeans.congeselectionne.fin}" pattern="HH:mm"  mode="popup" widgetVar="popupTimeWidget" startHours="#{congeBeans.valheure}"
+                               label="Inline time picker"  rendered="#{!congeBeans.flagcalendar}" style="width:100%" required="true"  requiredMessage="Valeur heure debut est obligatoire" >
+                              
+                               </pe:timePicker>  
+								
+							</h:panelGrid>
+							</h:panelGrid>
+								</p:outputPanel>
+						</p:fieldset>
+						
+					</h:panelGrid>
+					</h:panelGrid>
+<center>
+					<p:commandButton id="vb" value="Valider" rendered="#{congeBeans.validbutton}"
+						style=" width:20%; margin-top:30px"
+						action="#{congeBeans.selonexecute()}"
+						update=":form:messaget :form:tab_conge :form_ajout_conge:cal3 :form_ajout_conge:calendar :form_ajout_conge:cal :form_ajout_conge:tp"  />
+					<p:commandButton value="Annuler" update=":form_ajout_conge :form"
+						style="margin-left:10px; width:20%;margin-top:40px"
+						action="#{congeBeans.vider()}"
+						oncomplete="diag_ajout.hide() " process="@this" />
+</center>
+				
+
+			</h:form>
+		</p:dialog>
+		<!-- ************************** DIAG SUPPRIME *********************** -->
+	<p:dialog id="supprimconge" header="Supprimer" modal="true" resizable="false"
+			appendTo="@(body)" widgetVar="diag_supprim" width="400">
+			<h:form id="formsupprim">
+				<p:panel>
+					<p:outputPanel autoUpdate="true">
+						<center style="margin-top: 10px">
+
+							<p:graphicImage value="/resources/icons/alert.gif" width="20"
+								height="20" style="margin-top:10px"></p:graphicImage>
+							<p:outputLabel style="color:red; margin-left:10px"
+								value="Voulez vous supprimer l(es) element(s) suivant(s) !!!"></p:outputLabel>
+
+						</center>
+
+						<p:dataTable id="supconge" style="margin-top:30px"
+							value="#{congeBeans.listcongeSelectionne}" var="conge">
+
+							<p:column id="personnel" headerText="Pérsonnel">
+								<p:outputLabel value="#{conge.personnel.nom} #{conge.personnel.prenom}"></p:outputLabel>
+							</p:column>
+
+							<p:column id="motif" headerText="Motif">
+								<p:outputLabel value="#{conge.motif.designation}"></p:outputLabel>
+							</p:column>
+							<p:column id="type" headerText="Type">
+								<p:outputLabel value="#{conge.type}"></p:outputLabel>
+							</p:column>
+
+							<p:column>
+								<p:commandButton icon="ui-icon-trash" style="width:100%"
+									action="#{congeBeans.removeconge(conge)}"
+									update="supconge"></p:commandButton>
+							</p:column>
+						</p:dataTable>
+						<center>
+							<p:commandButton value="Oui" style="margin-top:30px; width:20%"
+								action="#{congeBeans.supprimconge()}"
+								update=":form:messaget :form:tab_conge"
+								oncomplete="diag_supprim.hide()"></p:commandButton>
+							<p:commandButton value="Non" oncomplete="diag_supprim.hide()"
+								style="margin-left:10px; width:20% " process="@this"></p:commandButton>
+						</center>
+					</p:outputPanel>
+				</p:panel>
+			</h:form>
+		</p:dialog>
+			<!-- ************************** DIAG MOTIF *********************** -->
+			<p:dialog id="motif" header="Ajout motif" appendTo="@(body)" widgetVar="diag_motif"
+			modal="true" width="17%" resizable="false"  >
+			<h:form id="form_ajout_mot">
+				<p:outputPanel autoUpdate="true">							
+							<h:panelGrid columns="2" style="margin-left:20px ">								
+								<p:outputLabel value="Désignation* :" style="margin-top:30px"></p:outputLabel>
+								<p:inputText id="la1"
+									value="#{congeBeans.strMotif}"
+									required="true"
+									requiredMessage="la valeur 'Désignation' est obligatoire"
+									maxlength="20"
+									title="#{component.valid ? 'Désignation' : tooltipsController.getErrorMessage(component.clientId)}"	>
+								</p:inputText>								
+				        	</h:panelGrid>
+
+<center>
+					<p:commandButton value="Valider" 
+						style=" width:30%; margin-top:40px" 
+						action="#{congeBeans.ajouterMotif()}"
+						update=":form:messaget :form_ajout_conge:selectmotif" 
+						oncomplete=" if (!args.validationFailed) {diag_motif.hide()} " >
+					
+						</p:commandButton>
+					<p:commandButton value="Annuler" 
+						update=":form"
+						style="margin-left:5px; width:30%;margin-top:40px"
+						oncomplete="diag_motif.hide()" process="@this" />
+</center>
+				</p:outputPanel>
+
+			</h:form>
+		</p:dialog>
+	
+</body>
+</html>

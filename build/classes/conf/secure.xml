@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:b="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+	<http pattern="/login.xhtml*" security="none" />
+	<http pattern="/resources/**" security="none" />
+
+	<http auto-config='true'>
+		<form-login login-page="/login.xhtml" authentication-failure-url="/login.xhtml?fail"
+			always-use-default-target="true" default-target-url="/pages/dashboard.xhtml" />
+		<logout logout-success-url="/login.xhtml" logout-url="/logout" delete-cookies="JSESSIONID" />		
+		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="myFilter" />
+		<access-denied-handler error-page="/login.xhtml?acess" />
+		<session-management session-fixation-protection="newSession"
+			invalid-session-url="/login.xhtml"></session-management>
+	</http>
+
+	<b:bean id="myFilter" class="org.bio.security.MyFilterSecurityInterceptor">
+		<b:property name="authenticationManager" ref="authenticationManager" />
+		<b:property name="accessDecisionManager" ref="accessDecisionManager" />
+		<b:property name="securityMetadataSource" ref="securityMetadataSource" />
+	</b:bean>
+
+	<b:bean id="userDetailsService" class="org.bio.service.UserDetailsServiceImpl"></b:bean>
+	<b:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<b:property name="userDetailsService" ref="userDetailsService" />
+	</b:bean>
+	<b:bean id="authenticationManager"
+		class="org.springframework.security.authentication.ProviderManager">
+		<b:property name="providers">
+			<b:list>
+				<b:ref local="daoAuthenticationProvider" />
+			</b:list>
+		</b:property>
+	</b:bean>
+	
+	<b:bean id="sucess" class="org.bio.web.MyAuthSuccessHandler" />
+	<b:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
+	<authentication-manager>
+		<authentication-provider user-service-ref="userDetailsService">
+			<password-encoder ref="encoder"></password-encoder>
+		</authentication-provider>
+	</authentication-manager>
+
+	<b:bean id="roleService" class="org.bio.service.RoleServiceImpl"/>
+	<b:bean id="accessDecisionManager" class="org.bio.security.MyAccessDecisionManager" />
+
+	<b:bean id="securityMetadataSource" class="org.bio.security.MyFilterSecurityMetadataSource">
+		<b:constructor-arg ref="roleService">
+		</b:constructor-arg>
+	</b:bean>
+
+</b:beans>

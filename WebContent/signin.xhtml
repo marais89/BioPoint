@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	     xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core" >
+<f:view >
+
+	<h:head>	
+	<h:outputStylesheet name="login.css" library="css"></h:outputStylesheet>
+	
+ <!--[if lt IE 9]>
+          <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+	</h:head>
+	<h:body style="background-image:url('${request.contextPath}/resources/img/login.png')">
+	<h:form id="loginForm" prependId="false"> 
+<center>
+		
+
+  
+	<p:panel header="Connexion" style="width:50%;margin-top:18%;align:center" styleClass="box">
+	<p:messages id="msg"></p:messages>       	
+	<h:panelGrid columns="2" cellspacing="8" cellpadding="8">
+	<h:outputLabel for="j_username" value="Nom d'utilisateur :" />
+<h:inputText   id="j_username" name="login" required="true" label="username" styleClass="user"  requiredMessage="Nom d'utilisateur vide" autocomplete="off" />
+	<h:outputLabel for="j_password" value="Mot de passe :" />
+  <h:inputSecret   id="j_password"  label="password" required="true"  styleClass="user" requiredMessage="Mot de passe vide " autocomplete="off"/>
+	
+	<h:commandButton  type="submit" id="login" value="Se connecter" 
+        action="#{loginController.doLogin}"  styleClass="ui-widget-header btcon"/>
+       
+        
+                <h:commandButton id="cancel"  styleClass="ui-widget-header btcon" type="reset" value="Annuler" />
+	</h:panelGrid>
+	
+	</p:panel>
+</center>	
+	
+	</h:form>
+	</h:body>
+	</f:view>
+	</html>

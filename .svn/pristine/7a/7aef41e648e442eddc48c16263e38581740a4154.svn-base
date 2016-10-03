@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+</h:head>
+<body>
+
+	<ui:composition>
+		<h:form id="formwest1">
+			<script language ="JavaScript" type= "text/javascript">
+
+var Mouse_X;   // Variable globale Position X de la Mouse;
+var Mouse_Y;   // Variable globale Position Y de la Mouse;
+
+function WhereMouse( evt ){
+
+evt = !evt ? event : evt
+
+Mouse_X = evt.clientX; 
+Mouse_Y = evt.clientY;
+
+var w = window.innerWidth;
+var h = window.innerHeight;
+
+var scroll_x=document.body.scrollLeft || document.documentElement.scrollLeft;
+var scroll_y=document.body.scrollTop || document.documentElement.scrollTop;
+
+var pers= (((Mouse_Y-150) *100)/(h-150));
+var msl=1200-(h-150);
+var persScrol= (pers*msl)/100
+
+
+if(218 >Mouse_X)
+{ if(Mouse_Y> 150){window.scrollTo(0,persScrol)}}
+
+}
+typeof window.addEventListener == 'undefined' ? document.attachEvent("onmousemove",WhereMouse) : document.addEventListener('mousemove',WhereMouse,false);
+
+ </script> 
+		
+		<center id="map" style="position:fixed;margin-top:-90px" >
+	
+			<p:graphicImage value="#{contextBean.logo}" 
+				 style="vertical-align:middle;" styleClass="noupdate" width="218" height="90"></p:graphicImage>
+</center>
+
+			<p:panel id="header" style="height:100%;overflow-x:hidden !important;overflow-y:auto !important;margin-top:90px"   >
+		
+
+
+<!-- 				<p:panelMenu id="menuwest" style="width:117%;height:100% !important; margin-left:-15px;" model="#{contextBean.simpleMenuModel}"  > -->
+<!-- 				</p:panelMenu> -->
+				
+
+<div  style="width:217px;margin-left:-17px;margin-top:-7px;" >
+<!-- <center style="width:217px;position:fixed;" > -->
+<!--   <p:graphicImage value="/resources/icons/scrollup.png" height="50px" width="50px" />  -->
+<!-- </center> -->
+<!-- <center style="width:215px;position:fixed !important;margin-top:200px" > -->
+<!--   <p:graphicImage value="/resources/icons/scrolldown.png" height="50px" width="50px" />  -->
+<!-- </center> -->
+    
+  <nav class="vertical" >
+    <ul id="westList" >
+    <c:forEach var="i" begin="0"
+					end="#{contextBean.subs.size()-1}">
+      <li  >
+        <a href="#">#{contextBean.subs.get(i).label}</a>
+        <div>
+        <c:forEach var="j" begin="0"	end="#{contextBean.lDMI.get(i).size()-1}">
+          <ul   >
+            <li >
+<!--  <f:ajax   render=":content2">            -->
+<h:commandLink action="#{contextBean.changePage(i,j)}"  onclick="afficheBoule('#{contextBean.lDMI.get(i).get(j).icon}')"   > 
+ 
+ <i class="#{contextBean.lDMI.get(i).get(j).icon}"  style="margin-right:10px;margin-top:15px"/> 
+ #{contextBean.lDMI.get(i).get(j).value}
+ <p:graphicImage title="#{contextBean.lDMI.get(i).get(j).icon}" value="/resources/icons/bouleVert.png"  height="25px" width="20px" style="float: right;margin-top:5px"  styleClass="westMenuUl" />
+<p:ajax ignoreAutoUpdate="true" update=":content2"  ></p:ajax>
+</h:commandLink>
+<!--  </f:ajax> -->
+ </li>
+          </ul>
+          </c:forEach>
+        </div>
+      </li>
+     </c:forEach>
+    </ul> 
+  </nav>
+</div>
+				
+       <!--  ***  -->
+				
+			</p:panel>
+		</h:form>
+	</ui:composition>
+</body>
+</html>
